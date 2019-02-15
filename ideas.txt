@@ -1,0 +1,3 @@
+Price comparison webpage
+StackOverflow-like page for uni assignments
+ThePirateBay 2.0
