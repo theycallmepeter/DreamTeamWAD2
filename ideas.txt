@@ -1,5 +1,0 @@
-Price comparison webpage
-StackOverflow-like page for uni assignments
-ThePirateBay 2.0
-Group collaborated note-taking
-Webpage where users can post news stories written by them
