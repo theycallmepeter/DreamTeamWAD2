@@ -1,0 +1,22 @@
+{% extends 'gliocas/base.html' %}
+
+{% block title_block %}
+    Subjects
+{% endblock %}
+
+{% block body_block %}
+    <h3> This is the list of subjects </h3>
+
+    <div>
+        {% if subjects %}
+        <ul>
+            {% for subject in subjects %}
+                <li><a href="{% url 'show_subject' subject.slug %}"> {{ subject.name }}</a></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <strong>There are no subjects.</strong>
+        {% endif %}
+    </div>
+
+{% endblock %}
