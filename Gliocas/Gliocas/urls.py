@@ -18,10 +18,10 @@ from django.conf.urls import url
 from django.conf.urls import include
 from django.urls import path
 
-from gliocas import views
+from gliocas_app import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^gliocas/', include('gliocas.urls')),
+    url(r'^gliocas_app/', include('gliocas_app.urls')),
     url(r'^admin/', admin.site.urls),
 ]

@@ -4,7 +4,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Gliocas.settings')
 
 import django
 django.setup()
-from gliocas.models import Subject, Course, Question
+from gliocas_app.models import Subject, Course, Question
 
 def populate():
     

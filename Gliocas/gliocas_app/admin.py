@@ -1,5 +1,5 @@
 from django.contrib import admin
-from gliocas.models import Course, Subject, Question
+from gliocas_app.models import Course, Subject, Question
 # Register your models here.
 
 #class SubjectAdmin(admin.ModelAdmin):

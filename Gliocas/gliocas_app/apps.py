@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class GliocasConfig(AppConfig):
-    name = 'gliocas'
+    name = 'gliocas_app'
