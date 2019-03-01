@@ -14,11 +14,11 @@
 ----
 
 ## Models / DB
-### Model implementation [unassigned]
-User model (not done)
-Answer model (not done)
-Reply/comment model (not done)
-Update population script (not done)
+### Model implementation [Pepe]
+User model (done)
+Answer model (done)
+Reply/comment model (done)
+Update population script (WIP)
 ?
 ## Users & Logins
 ### Login API [unassigned]
