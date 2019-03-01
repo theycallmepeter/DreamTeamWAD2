@@ -15,11 +15,15 @@
 
 ## Models / DB
 ### Model implementation [Pepe]
+Subject model (done)
+Course model (done)
 User model (done)
+Question model (done)
 Answer model (done)
-Reply/comment model (done)
+Reply model (done)
+Followed model (done)
 Update population script (WIP)
-?
+
 ## Users & Logins
 ### Login API [unassigned]
 Research Google/Facebook/? login API (not done)
