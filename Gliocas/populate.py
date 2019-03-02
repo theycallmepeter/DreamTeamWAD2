@@ -1,5 +1,4 @@
 import datetime
-import hashlib
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Gliocas.settings')
 
@@ -7,28 +6,31 @@ import django
 django.setup()
 from django.contrib.auth.models import User
 from gliocas_app.models import Subject, Course, Question
-from gliocas_app.models import Answer, Reply, UserProfile
+from gliocas_app.models import Answer, Reply
 
 def populate():
-    user = UserProfile.objects.create_user('john',
-                                           'lennon@thebeatles.com', 'johnpassword')
-    user.save()
+    users = {"random_boy" : add_user("random_boy"),
+             "space_pilot" : add_user("space_pilot"),
+             "fresher671" : add_user("fresher671"),
+             "python_boy" : add_user("python_boy"),
+             "rango" : add_user("rango"),
+             "proudScottish" : add_user("proudScottish")}
     maths2c_questions = [
         {"title" : "I don't understand dimensions",
          "text" : "HELP I DON'T GET THIS AND IM GONNA FAIL",
-         "poster" : "random_boy"},
+         "poster" : users["random_boy"]},
         {"title" : "On the subject of acceleration",
          "text" : "Should I try spinning? I've heard it's a good trick",
-         "poster" : "space_pilot"},
+         "poster" : users["space_pilot"]},
         ]
     maths1r_questions = [
         {"title" : "How do I solve quadratic equations?",
          "text" : ("Basically, I have the equation x^2 + x - 2 = 0 and I"
                    " don't know how to solve it"),
-         "poster" : "fresher671"},
+         "poster" : users["fresher671"]},
         {"title" : "Can anyone explain me differentiation?",
          "text" : "It's hard, I don't get it",
-         "poster" : "fresher671"},
+         "poster" : users["fresher671"]},
         ]
     maths3h_questions = []
     maths2a_questions = []
@@ -37,14 +39,14 @@ def populate():
          "text" : ("I don't get why making a comparison between two strings"
                    " is a bug pattern according to SpotBugs. Please help"
                    " I need to finish this for tomorrow"),
-         "poster" : "python_boy"},
+         "poster" : users["python_boy"]},
         ]
     wad_questions = [
         {"title" : "I have to create a webpage how do I do it?",
          "text" : ("I don't get why making a comparison between two strings"
                    " is a bug pattern according to SpotBugs. Please help"
                    " I need to finish this for tomorrow"),
-         "poster" : "rango"},
+         "poster" : users["rango"]},
         ]
     cs1p_questions = []
     cs1q_questions = []
@@ -53,7 +55,7 @@ def populate():
          "text" : ("I took this subject and I have no idea about what"
                    " we are doing. Can anyone tell me, to begin with,"
                    " who is this Robert Burns?"),
-         "poster" : "proudScottish"},
+         "poster" : users["proudScottish"]},
         ]
     genderHistory_questions = []
     spanishHistory_questions = []
@@ -80,21 +82,27 @@ def populate():
         s = add_subject(subject)
         for course in Subjects[subject]:
             c = add_course(course, s)
-            '''
             for question in Subjects[subject][course]:
                 q = add_question(question["title"], question["text"],
                              c, question["poster"])
-            '''
 
     for s in Subject.objects.all():
         print("subject " + str(s) + ":")
         for c in Course.objects.filter(subject=s):
             print("\tcourse " + str(c) + ":")
-            '''
             for q in Question.objects.filter(course=c):
-                print("\t\t{0} - {1} - {2}".format(str(s),str(c),str(q)))
-            '''
+                print("\t\t", "title", q.title)
+                print("\t\t", "text", q.text)
+                print("\t\t", "poster", q.poster)
+                print("\t\t", "date", q.date)
 
+
+def add_user(name):
+    user = User.objects.get_or_create(username=name,
+                                 email='email@email.com',
+                                 password='contraseña')[0]
+    user.save()
+    return user
 
 def add_subject(name):
     subject = Subject.objects.get_or_create(name=name)[0]
@@ -107,10 +115,10 @@ def add_course(name, subject):
     return course
 
 def add_question(title, text, course, poster):
-    question = Question.objects.get_or_create(course=course, poster=poster)[0]
-    question.title = title
+    question = Question.objects.get_or_create(course=course, poster=poster,
+                                              title=title,
+                                              date = datetime.datetime.now())[0]
     question.text = text
-    question.date = datetime.datetime.now()
     question.save()
     return question
 
