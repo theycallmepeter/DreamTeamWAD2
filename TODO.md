@@ -14,7 +14,7 @@
 ----
 
 ## Models / DB
-### Model implementation [Pepe]
+### Model implementation [Pepe | pepe]
 Subject model (done)
 Course model (done)
 User model (done)
@@ -22,7 +22,7 @@ Question model (done)
 Answer model (done)
 Reply model (done)
 Followed model (done)
-Update population script (WIP)
+Update population script (done)
 
 ## Users & Logins
 ### Login API [unassigned]
