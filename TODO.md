@@ -14,16 +14,17 @@
 ----
 
 ## Models / DB
-### Model implementation [unassigned]
-User model (not done)
+### Model implementation [Pepe | pepe]
+Subject model (done)
+Course model (done)
+User model (done)
+Question model (done)
+Answer model (done)
+Reply model (done)
+Followed model (done)
+Update population script (done)
 
-Answer model (not done)
 
-Reply/comment model (not done)
-
-Update population script (not done)
-
-?
 ## Users & Logins
 ### Login API [unassigned]
 Research Google/Facebook/? login API (not done)
