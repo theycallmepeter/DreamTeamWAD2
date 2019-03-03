@@ -83,6 +83,20 @@ def user_login(request):
     return render(request,'gliocas_app/login.html', context = context_dict)
 
 @login_required
+def like_question(request):
+    question_id = None
+    if request.method == 'GET':
+        question_id = request.GET['question_id']
+    likes = 0
+    if question_id:
+        question = question.objects.get(id=int(question_id))
+        if question:
+            likes = question.likes + 1
+            question.likes = likes
+            question.save()
+    return HttpResponse(likes)
+
+@login_required
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('index'))
