@@ -1,9 +1,27 @@
 {% extends 'gliocas_app/base.html' %}
+{% load staticfiles %}
 
 {% block title_block %}
-    Index
+    register
 {% endblock %}
 
 {% block body_block %}
     <h3> This is the register page </h3>
-{% endblock %} 
+
+    {% if registered %}
+    <strong>Thank you for registering!</strong>
+    <a href="{% url 'index' %}">return home</a>
+
+    {%else%}
+
+    <form id = "user_form" class="" action="{% url 'register' %}" method="post"
+    enctype="multipart/form-data">
+
+    {%csrf_token%}
+
+    {{user_form.as_p}}
+    {{profile_form.as_p}}
+
+    </form>
+
+{% endblock %}

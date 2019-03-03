@@ -3,7 +3,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-
+from gliocas_app.forms import UserForm, UserProfileForm
+from django.contrib.auth.models import User
 from gliocas_app.models import Subject, Course, Question
 
 def index(request):
@@ -75,9 +76,47 @@ def add_question(request, subject_slug, course_slug):
     return render(request,'gliocas_app/add_question.html', context = context_dict)
 
 def register(request):
-    context_dict = {}
+    registered = False
+
+    if request.method == 'POST':
+
+        #get data from forms
+        user_form = UserForm(data=request.POST)
+        profile_form = UserProfileForm(data=request.POST)
+
+        #check if forms are valid
+        if user_form.is_valid() and profile_form.is_valid():
+
+            #check if username exists
+            if User.objects.filter(username=self.cleaned_data['username']).exists():
+
+                user = user_form.save()
+
+                user.set_password(user.password)
+                user.save()
+
+                profile = profile_form.save(commit=False)
+                profile.user = user
+
+                profile.save()
+
+                registered = True
+            else:
+                print(user_form.errors, profile_form.errors)
+        else:
+            user_form= UserForm()
+            profile_form=UserProfileForm()
+
+
+        return render(request,'gliocas_app/register.html',
+                        {'user_form':user_form,
+                        'profile_form':profile_form,
+                        'registered':registered})
+
+
+
     return render(request,'gliocas_app/register.html', context = context_dict)
-    
+
 def user_login(request):
     context_dict = {}
     return render(request,'gliocas_app/login.html', context = context_dict)
