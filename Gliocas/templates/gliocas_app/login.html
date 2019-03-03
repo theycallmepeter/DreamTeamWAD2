@@ -5,5 +5,13 @@
 {% endblock %}
 
 {% block body_block %}
-    <h3> This is the login page </h3>
+    <h3> Login to gliocas </h3>
+    <form id="login_form" method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      Username: <input type="text" name="username" value="" size="50" />
+      <br />
+      Password: <input type="password" name="password" value="" size="50" />
+      <br />
+      <input type="submit" value="login" />
+    </form>
 {% endblock %}
