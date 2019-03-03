@@ -48,7 +48,7 @@ class Question(models.Model):
                                on_delete=models.SET(get_sentinel_user))
     title = models.CharField(max_length=titleLength)
     text = models.TextField(max_length=textLength)
-    date = models.DateTimeField()
+    date = models.DateTimeField(null=True)
     views = models.IntegerField(default=0)
     upvotes = models.IntegerField(default=0)
     slug = models.SlugField(unique=True)
@@ -66,7 +66,7 @@ class Answer(models.Model):
     poster = models.ForeignKey(User,
                                on_delete=models.SET(get_sentinel_user))
     text = models.TextField(max_length=textLength)
-    date = models.DateTimeField()
+    date = models.DateTimeField(null=True)
     upvotes = models.IntegerField(default=0)
     
     def __str__(self):
@@ -78,7 +78,7 @@ class Reply(models.Model):
     poster = models.ForeignKey(User,
                                on_delete=models.SET(get_sentinel_user))
     text = models.TextField(max_length=textLength)
-    date = models.DateTimeField()
+    date = models.DateTimeField(null=True)
     upvotes = models.IntegerField(default=0)
     
     def __str__(self):
