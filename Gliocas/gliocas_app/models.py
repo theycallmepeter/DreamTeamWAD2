@@ -3,9 +3,10 @@ from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 
 def get_sentinel_user():
-    return User.objects.get_or_create(username='Deleted',
-                                      email='obiwan@kenobi.com',
-                                      password='High ground')[0]
+    user = User.objects.get_or_create(username='Deleted')[0]
+    user.email = 'obiwan@kenobi.com'
+    user.password = 'High ground'
+    return user
 
 '''
 class UserProfile(models.Model):
@@ -58,7 +59,7 @@ class Question(models.Model):
         super(Question, self).save(*args, **kwargs)
     
     def __str__(self):
-        return self.name
+        return self.title
 
 class Answer(models.Model):
     textLength = 32768
@@ -70,7 +71,7 @@ class Answer(models.Model):
     upvotes = models.IntegerField(default=0)
     
     def __str__(self):
-        return self.name
+        return self.text
 
 class Reply(models.Model):
     textLength = 32768
@@ -80,13 +81,16 @@ class Reply(models.Model):
     text = models.TextField(max_length=textLength)
     date = models.DateTimeField(null=True)
     upvotes = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name_plural = 'Replies'
     
     def __str__(self):
-        return self.name
+        return self.text
 
 class Followed(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return self.course.name + " followed by " + self.poster.username

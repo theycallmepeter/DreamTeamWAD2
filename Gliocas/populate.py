@@ -5,8 +5,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Gliocas.settings')
 import django
 django.setup()
 from django.contrib.auth.models import User
-from gliocas_app.models import Subject, Course, Question
-from gliocas_app.models import Answer, Reply
+from gliocas_app.models import Subject, Course, Question, Answer, Reply
 
 def populate():
     users = {"random_boy" : add_user("random_boy"),
@@ -113,7 +112,8 @@ def populate():
                "Computing Science" : compSci_courses,
                "Literature" : literature_courses,
                "Gender Studies" : genderStudies_courses,
-               "History" : history_courses}
+               "History" : history_courses,
+                "Economics" : {}}
 
     for subject in Subjects:
         s = add_subject(subject)
@@ -146,9 +146,9 @@ def populate():
 
 
 def add_user(name):
-    user = User.objects.get_or_create(username=name,
-                                 email='email@email.com',
-                                 password='contraseña')[0]
+    user = User.objects.get_or_create(username=name)[0]
+    user.email = 'email@email.com'
+    user.password = 'password'
     user.save()
     return user
 
