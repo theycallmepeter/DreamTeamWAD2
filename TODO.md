@@ -1,6 +1,6 @@
 # Stuff that needs doing
 
-## Syntax: 
+## Syntax:
 ### \#\# Category
 ### \#\#\# Feature 1 [who is working on it | name of branch]
 ### Task 1 (not done/WIP/done)
@@ -14,22 +14,27 @@
 ----
 
 ## Models / DB
-### Model implementation [Pepe | pepe]
-Subject model (done)
-Course model (done)
-User model (done)
-Question model (done)
-Answer model (done)
-Reply model (done)
-Followed model (done)
-Update population script (done)
+### Model implementation [unassigned]
+User model (not done)
 
+Answer model (not done)
 
+Reply/comment model (not done)
+
+Update population script (not done)
+
+?
 ## Users & Logins
-### Login API [unassigned]
-Research Google/Facebook/? login API (not done)
+### Login API Riso
+Research Google/Facebook/? login API (done, too complicated, ditching it)
 
-Use knowledge to create tasks (not done)
+Use knowledge to create tasks (WIP)
+
+create database models for users (WIP)
+
+create password restrictions is settings file (WIP)
+
+make a working login/register page(WIP)
 
 ...
 API usable to create accounts in our DB (not done)
@@ -55,7 +60,7 @@ Base template (not done)
 ?
 
 ## Functionality
-### Asking questions [Peter]
+### Asking questions [unassigned]
 User can create question (not done)
 
 User can edit/delete question (not done)
