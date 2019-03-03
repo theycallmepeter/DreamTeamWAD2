@@ -55,7 +55,7 @@ Base template (not done)
 ?
 
 ## Functionality
-### Asking questions [unassigned]
+### Asking questions [Peter]
 User can create question (not done)
 
 User can edit/delete question (not done)
