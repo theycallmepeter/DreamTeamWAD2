@@ -87,20 +87,18 @@ def register(request):
         #check if forms are valid
         if user_form.is_valid():
 
-            #check if username exists
-            if not(User.objects.filter(username=request.POST['username']).exists()):
+            user = user_form.save()
 
-                user = user_form.save()
+            user.set_password(user.password)
+            user.save()
 
-                user.set_password(user.password)
-                user.save()
+            registered = True
+            username = user_form.cleaned_data['username']
+            password = user_form.cleaned_data['password']
 
-                #profile = UserProfile()
-                #profile.user = user
+            user = authenticate(username=username, password=password)
 
-                #profile.save()
-
-                registered = True
+            login(request,user)
 
         else:
             print(user_form.errors)
