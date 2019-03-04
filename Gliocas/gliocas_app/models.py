@@ -3,9 +3,10 @@ from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 
 def get_sentinel_user():
-    return User.objects.get_or_create(username='Deleted',
-                                      email='obiwan@kenobi.com',
-                                      password='High ground')[0]
+    user = User.objects.get_or_create(username='Deleted')[0]
+    user.email = 'obiwan@kenobi.com'
+    user.password = 'High ground'
+    return user
 
 '''
 class UserProfile(models.Model):
@@ -41,7 +42,7 @@ class Course(models.Model):
         return self.name
 
 class Question(models.Model):
-    titleLength = 64
+    titleLength = 256
     textLength = 32768
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     poster = models.ForeignKey(User,
@@ -50,7 +51,6 @@ class Question(models.Model):
     text = models.TextField(max_length=textLength)
     date = models.DateTimeField(null=True)
     views = models.IntegerField(default=0)
-    upvotes = models.IntegerField(default=0)
     slug = models.SlugField(unique=True)
 
     def save(self, *args, **kwargs):
@@ -58,7 +58,7 @@ class Question(models.Model):
         super(Question, self).save(*args, **kwargs)
     
     def __str__(self):
-        return self.name
+        return self.title
 
 class Answer(models.Model):
     textLength = 32768
@@ -67,10 +67,9 @@ class Answer(models.Model):
                                on_delete=models.SET(get_sentinel_user))
     text = models.TextField(max_length=textLength)
     date = models.DateTimeField(null=True)
-    upvotes = models.IntegerField(default=0)
     
     def __str__(self):
-        return self.name
+        return self.text
 
 class Reply(models.Model):
     textLength = 32768
@@ -79,14 +78,52 @@ class Reply(models.Model):
                                on_delete=models.SET(get_sentinel_user))
     text = models.TextField(max_length=textLength)
     date = models.DateTimeField(null=True)
-    upvotes = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name_plural = 'Replies'
     
     def __str__(self):
-        return self.name
+        return self.text
 
 class Followed(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return self.course.name + " followed by " + self.poster.username
+
+class UpvoteQuestion(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # If upvoted, positive is true, otherwise is false
+    positive = models.BooleanField(default=True)
+
+    def __str__(self):
+        if (positive):
+            return self.question.title + " upvoted by " + self.user.username
+        else:
+            return self.question.title + " downvoted by " + self.user.username
+
+class UpvoteAnswer(models.Model):
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # If upvoted, positive is true, otherwise is false
+    positive = models.BooleanField(default=True)
+
+    def __str__(self):
+        if (positive):
+            return "Answer upvoted by " + self.user.username
+        else:
+            return "Answer downvoted by " + self.user.username
+
+class UpvoteReply(models.Model):
+    reply = models.ForeignKey(Reply, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # If upvoted, positive is true, otherwise is false
+    positive = models.BooleanField(default=True)
+
+    def __str__(self):
+        if (positive):
+            return "Reply upvoted by " + self.user.username
+        else:
+            return "Reply downvoted by " + self.user.username

@@ -1,6 +1,6 @@
 # Stuff that needs doing
 
-## Syntax: 
+## Syntax:
 ### \#\# Category
 ### \#\#\# Feature 1 [who is working on it | name of branch]
 ### Task 1 (not done/WIP/done)
@@ -26,10 +26,16 @@ Update population script (done)
 
 
 ## Users & Logins
-### Login API [unassigned]
-Research Google/Facebook/? login API (not done)
+### Login API Riso
+Research Google/Facebook/? login API (done, too complicated, ditching it)
 
-Use knowledge to create tasks (not done)
+Use knowledge to create tasks (WIP)
+
+create database models for users (WIP)
+
+create password restrictions is settings file (WIP)
+
+make a working login/register page(WIP)
 
 ...
 API usable to create accounts in our DB (not done)
