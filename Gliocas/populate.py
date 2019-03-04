@@ -22,17 +22,18 @@ def populate():
          "text" : "HELP I DON'T GET THIS AND IM GONNA FAIL",
          "poster" : users["random_boy"],
          "views" : 10,
-         "upvotes" : -6,
          "answers" : {}},
         {"title" : "On the subject of acceleration",
          "text" : "Should I try spinning? I've heard it's a good trick",
          "poster" : users["space_pilot"],
          "views" : 501,
-         "upvotes" : 66,
+         "upvotes" : [users["the_senate"], users["random_boy"],
+                      users["space_pilot"], users["boromir"],
+                      users["helpful_student"], users["proudScottish"]]
          "answers" : [
              {"text" : "DO IT",
-              "poster" : users["the_senate"],
-              "upvotes" : 66},]},
+              "poster" : users["the_senate"]},
+             ]},
         ]
     maths1r_questions = [
         {"title" : "How do I solve quadratic equations?",
@@ -40,17 +41,21 @@ def populate():
                    " don't know how to solve it"),
          "poster" : users["fresher671"],
          "views" : 3,
-         "upvotes" : 0,
+         "upvotes" : [users["fresher671"], users["random_boy"]]
+         "downvotes" : [users["the_senate"], users["space_pilot"],
+                        users["boromir"]]
          "answers" : {}},
         {"title" : "Can anyone explain me differentiation?",
          "text" : "It's hard, I don't get it",
          "poster" : users["fresher671"],
          "views" : 420,
-         "upvotes" : -69,
+         "downvotes" : [users["the_senate"], users["random_boy"],
+                        users["space_pilot"], users["boromir"],
+                        users["proudScottish"]]
          "answers" : [
              {"text" : "Wait for integration, you'll have some laughts",
-              "poster" : users["the_senate"],
-              "upvotes" : 333},]},
+              "poster" : users["the_senate"]},
+             ]},
         ]
     maths3h_questions = []
     maths2a_questions = []
@@ -61,13 +66,12 @@ def populate():
                    " I need to finish this for tomorrow"),
          "poster" : users["python_boy"],
          "views" : 49,
-         "upvotes" : 7,
          "answers" : [
              {"text" : ("In Java strings are objects, so if you want to"
                         " compare two string you need to use"
                         " string1.equals(string2)"),
-              "poster" : users["helpful_student"],
-              "upvotes" : 10,},]},
+              "poster" : users["helpful_student"]},
+             ]},
         ]
     wad_questions = [
         {"title" : "I have to create a webpage how do I do it?",
@@ -75,11 +79,10 @@ def populate():
                    " for tomorrow and we don't know what to do. Any ideas"),
          "poster" : users["rango"],
          "views" : 123,
-         "upvotes" : -3,
          "answers" : [
              {"text" : "One does not simply create a website",
-              "poster" : users["boromir"],
-              "upvotes" : 9},]},
+              "poster" : users["boromir"]},
+             ]},
         ]
     cs1p_questions = []
     cs1q_questions = []
@@ -90,7 +93,6 @@ def populate():
                    " who is this Robert Burns?"),
          "poster" : users["proudScottish"],
          "views" : 17,
-         "upvotes" : 5,
          "answers" : {}},
         ]
     genderHistory_questions = []
@@ -121,11 +123,9 @@ def populate():
             c = add_course(course, s)
             for question in Subjects[subject][course]:
                 q = add_question(question["title"], question["text"],
-                                 c, question["poster"], question["views"],
-                                 question["upvotes"])
+                                 c, question["poster"], question["views"])
                 for answer in question["answers"]:
-                    a = add_answer(answer["text"], q, answer["poster"],
-                                   answer["upvotes"])
+                    a = add_answer(answer["text"], q, answer["poster"])
 
     for s in Subject.objects.all():
         print("subject " + str(s) + ":")
@@ -137,12 +137,10 @@ def populate():
                 print("\t\t", "poster", q.poster)
                 print("\t\t", "date", q.date)
                 print("\t\t", "views", q.views)
-                print("\t\t", "upvotes", q.upvotes)
                 for a in Answer.objects.filter(question=q):
                     print("\t\t\t", "text", a.text)
                     print("\t\t\t", "poster", a.poster)
                     print("\t\t\t", "date", a.date)
-                    print("\t\t\t", "upvotes", a.upvotes)
 
 
 def add_user(name):
@@ -162,21 +160,19 @@ def add_course(name, subject):
     course.save()
     return course
 
-def add_question(title, text, course, poster, views=0, upvotes=0):
+def add_question(title, text, course, poster, views=0):
     question = Question.objects.get_or_create(course=course, poster=poster,
                                               title=title)[0]
     question.date = datetime.datetime.now()
     question.text = text
     question.views = views
-    question.upvotes = upvotes
     question.save()
     return question
 
-def add_answer(text, question, poster, upvotes=0):
+def add_answer(text, question, poster):
     answer = Answer.objects.get_or_create(question=question,
                                           poster=poster, text=text)[0]
     answer.date = datetime.datetime.now()
-    answer.upvotes = upvotes
     answer.save()
     return answer
 
