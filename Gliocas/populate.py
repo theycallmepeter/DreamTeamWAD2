@@ -29,7 +29,7 @@ def populate():
          "views" : 501,
          "upvotes" : [users["the_senate"], users["random_boy"],
                       users["space_pilot"], users["boromir"],
-                      users["helpful_student"], users["proudScottish"]]
+                      users["helpful_student"], users["proudScottish"]],
          "answers" : [
              {"text" : "DO IT",
               "poster" : users["the_senate"]},
@@ -41,9 +41,9 @@ def populate():
                    " don't know how to solve it"),
          "poster" : users["fresher671"],
          "views" : 3,
-         "upvotes" : [users["fresher671"], users["random_boy"]]
+         "upvotes" : [users["fresher671"], users["random_boy"]],
          "downvotes" : [users["the_senate"], users["space_pilot"],
-                        users["boromir"]]
+                        users["boromir"]],
          "answers" : {}},
         {"title" : "Can anyone explain me differentiation?",
          "text" : "It's hard, I don't get it",
@@ -51,7 +51,7 @@ def populate():
          "views" : 420,
          "downvotes" : [users["the_senate"], users["random_boy"],
                         users["space_pilot"], users["boromir"],
-                        users["proudScottish"]]
+                        users["proudScottish"]],
          "answers" : [
              {"text" : "Wait for integration, you'll have some laughts",
               "poster" : users["the_senate"]},

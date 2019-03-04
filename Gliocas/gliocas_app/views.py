@@ -3,7 +3,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.views.generic import RedirectView
 
+from gliocas_app.forms import QuestionForm
 from gliocas_app.models import Subject, Course, Question
 
 def index(request):
@@ -69,7 +71,7 @@ def show_question(request, subject_slug, course_slug, question_slug):
     return render(request,'gliocas_app/question.html', context = context_dict)
 
 def add_question(request, subject_slug, course_slug):
-    form = CategoryForm()
+    form = QuestionForm(course = course_slug, user = request.user.username)
 
     if request.method == 'POST':
 
@@ -93,8 +95,19 @@ def user_login(request):
     context_dict = {}
     return render(request,'gliocas_app/login.html', context = context_dict)
 
+
+class PostLikeRedirect(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        slug = self.kwargs.get("slug")
+        question = get_object_or_404(Question, slug = slug)
+        question_url = question.get_absolute_url()
+        user = self.request.user
+        if user.is_authenticated():
+            like_question(self.request, question)
+        return obj_url
+
 @login_required
-def like_question(request):
+def like_question(request, question, ):
     question_id = None
     if request.method == 'GET':
         question_id = request.GET['question_id']
