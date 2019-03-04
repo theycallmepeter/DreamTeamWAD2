@@ -6,4 +6,19 @@
 
 {% block body_block %}
     <h3> This is where you can add a question to {{ subject }}'s {{ course }} </h3>
+
+	<div>
+		 <form id="question_form" method="post" action="/subject/{{subject}}/{{course}}/add_question/">
+		 	{% csrf_token %}
+		 	{% for hidden in form.hidden_fields %}
+		 		{{ hidden }}
+		 	{% endfor %}
+		 	{% for field in form.visible_fields %}
+		 		{{ field.errors }}
+		 		{{ field.help_text }}
+		 		{{ field }}
+		 	{% endfor %}
+		<input type="submit" name="submit" value="Ask Question"/>
+	</form>
+	</div>	
 {% endblock %}

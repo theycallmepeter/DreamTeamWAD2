@@ -69,7 +69,18 @@ def show_question(request, subject_slug, course_slug, question_slug):
     return render(request,'gliocas_app/question.html', context = context_dict)
 
 def add_question(request, subject_slug, course_slug):
+    form = CategoryForm()
+
+    if request.method == 'POST':
+
+        if form.is_valid():
+            form.save(commit=True)
+            return show_course(request, subject_slug, course_slug)
+        else:
+            print(form.errors)
+
     context_dict = {}
+    context_dict['form'] = form
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     context_dict['course'] = Course.objects.get(slug=course_slug)
     return render(request,'gliocas_app/add_question.html', context = context_dict)
