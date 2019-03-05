@@ -70,12 +70,15 @@ def show_question(request, subject_slug, course_slug, question_slug):
 
     return render(request,'gliocas_app/question.html', context = context_dict)
 
+@login_required
 def add_question(request, subject_slug, course_slug):
     form = QuestionForm(course = course_slug, user = request.user.username)
 
     if request.method == 'POST':
-
+        form = QuestionForm(request.POST)
+        print('FORM POSTED', form)
         if form.is_valid():
+            print('FORM VALID')
             form.save(commit=True)
             return show_course(request, subject_slug, course_slug)
         else:
@@ -85,6 +88,8 @@ def add_question(request, subject_slug, course_slug):
     context_dict['form'] = form
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     context_dict['course'] = Course.objects.get(slug=course_slug)
+    context_dict['course_slug'] = course_slug.lower()
+    context_dict['subject_slug'] = subject_slug.lower()
     return render(request,'gliocas_app/add_question.html', context = context_dict)
 
 def register(request):
