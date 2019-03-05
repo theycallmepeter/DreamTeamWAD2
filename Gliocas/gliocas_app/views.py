@@ -3,8 +3,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.views.generic import RedirectView
-
 from gliocas_app.forms import QuestionForm
 from gliocas_app.models import Subject, Course, Question
 
@@ -70,17 +70,27 @@ def show_question(request, subject_slug, course_slug, question_slug):
 
     return render(request,'gliocas_app/question.html', context = context_dict)
 
-@login_required
+# @login_required
 def add_question(request, subject_slug, course_slug):
-    form = QuestionForm(course = course_slug, user = request.user.username)
-
+    
+    form = QuestionForm()
+    try:
+        course = Course.objects.get(slug=course_slug)
+        #TODO implement with user = request.user.pk after auth is finished
+        user = User.objects.get(username = 'peter').pk
+    except Course.DoesNotExist:
+        course = None
+        user = None
     if request.method == 'POST':
         form = QuestionForm(request.POST)
-        print('FORM POSTED', form)
         if form.is_valid():
-            print('FORM VALID')
-            form.save(commit=True)
-            return show_course(request, subject_slug, course_slug)
+            if course and user:
+                question = form.save(commit=False)
+                question.course = course
+                question.poster_id = user
+                question.views = 0
+                question.save()
+                return show_course(request, subject_slug, course_slug)
         else:
             print(form.errors)
 
