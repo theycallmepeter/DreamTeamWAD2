@@ -128,7 +128,7 @@ def user_login(request):
                 return HttpResponseRedirect(reverse('index'))
             else:
 
-                return HttpResponse("Your Rango account is disabled.")
+                return HttpResponse("Your Gliocas account is disabled.")
         else:
             print("Invalid login details: {0}, {1}".format(username, password))
             return HttpResponse("Invalid login details supplied.")
