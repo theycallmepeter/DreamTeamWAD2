@@ -31,11 +31,11 @@ Research Google/Facebook/? login API (done, too complicated, ditching it)
 
 Use knowledge to create tasks (WIP)
 
-create database models for users (WIP)
+create database models for users (done)
 
-create password restrictions is settings file (WIP)
+create password restrictions is settings file (done)
 
-make a working login/register page(WIP)
+make a working login/register page(done)
 
 ...
 API usable to create accounts in our DB (not done)
