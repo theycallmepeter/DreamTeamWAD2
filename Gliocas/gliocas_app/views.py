@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
+from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -77,7 +78,7 @@ def add_question(request, subject_slug, course_slug):
     try:
         course = Course.objects.get(slug=course_slug)
         #TODO implement with user = request.user.pk after auth is finished
-        user = User.objects.get(username = 'peter').pk
+        user = User.objects.get_or_create(username = 'peter')[0].pk
     except Course.DoesNotExist:
         course = None
         user = None
@@ -89,6 +90,7 @@ def add_question(request, subject_slug, course_slug):
                 question.course = course
                 question.poster_id = user
                 question.views = 0
+                question.slug = slugify(question.pk) 
                 question.save()
                 return show_course(request, subject_slug, course_slug)
         else:

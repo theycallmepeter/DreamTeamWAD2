@@ -24,8 +24,8 @@ class QuestionForm(forms.ModelForm):
 	date = forms.DateTimeField(widget=forms.HiddenInput(), initial=timezone.now)
 	views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 	# upvotes = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
-	slug = forms.SlugField(widget=forms.HiddenInput(), required=False)
+	# slug = forms.SlugField(widget=forms.HiddenInput(), required=False)
 
 	class Meta:
 		model = Question
-		fields = ('title', 'text',)
+		fields = ('title', 'text', 'date', 'views',) #'slug')
