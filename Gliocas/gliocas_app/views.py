@@ -3,7 +3,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-
+from gliocas_app.forms import UserForm
+from django.contrib.auth.models import User
 from gliocas_app.models import Subject, Course, Question
 
 def home(request):
@@ -75,12 +76,64 @@ def add_question(request, subject_slug, course_slug):
     return render(request,'gliocas_app/add_question.html', context = context_dict)
 
 def register(request):
-    context_dict = {}
-    return render(request,'gliocas_app/register.html', context = context_dict)
-    
+    registered = False
+
+    if request.method == 'POST':
+
+        #get data from forms
+        user_form = UserForm(data=request.POST)
+
+        #check if forms are valid
+        if user_form.is_valid():
+
+            user = user_form.save()
+
+            user.set_password(user.password)
+            user.save()
+
+            registered = True
+            username = user_form.cleaned_data['username']
+            password = user_form.cleaned_data['password']
+
+            user = authenticate(username=username, password=password)
+
+            login(request,user)
+
+        else:
+            print(user_form.errors)
+    else:
+        user_form= UserForm()
+
+
+    return render(request,'gliocas_app/register.html',
+                        {'user_form':user_form,
+                        'registered':registered})
+
+
 def user_login(request):
-    context_dict = {}
-    return render(request,'gliocas_app/login.html', context = context_dict)
+
+    if request.method == 'POST':
+
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        if user:
+
+            if user.is_active:
+
+                login(request, user)
+                return HttpResponseRedirect(reverse('index'))
+            else:
+
+                return HttpResponse("Your Gliocas account is disabled.")
+        else:
+
+            return HttpResponse("Invalid login details supplied.")
+
+    else:
+        return render(request, 'gliocas_app/login.html', {})
 
 @login_required
 def user_logout(request):
