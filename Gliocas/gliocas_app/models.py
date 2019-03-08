@@ -89,6 +89,9 @@ class Followed(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    class Meta:
+        verbose_name_plural = 'Followed courses'
+
     def __str__(self):
         return self.course.name + " followed by " + self.poster.username
 
@@ -99,7 +102,7 @@ class UpvoteQuestion(models.Model):
     positive = models.BooleanField(default=True)
 
     def __str__(self):
-        if (positive):
+        if (self.positive):
             return self.question.title + " upvoted by " + self.user.username
         else:
             return self.question.title + " downvoted by " + self.user.username
@@ -111,10 +114,10 @@ class UpvoteAnswer(models.Model):
     positive = models.BooleanField(default=True)
 
     def __str__(self):
-        if (positive):
-            return "Answer upvoted by " + self.user.username
+        if (self.positive):
+            return "Answer with pk " + str(self.answer.pk) + " upvoted by " + self.user.username
         else:
-            return "Answer downvoted by " + self.user.username
+            return "Answer with pk " + str(self.answer.pk) + " downvoted by " + self.user.username
 
 class UpvoteReply(models.Model):
     reply = models.ForeignKey(Reply, on_delete=models.CASCADE)
@@ -122,8 +125,11 @@ class UpvoteReply(models.Model):
     # If upvoted, positive is true, otherwise is false
     positive = models.BooleanField(default=True)
 
+    class Meta:
+        verbose_name_plural = 'Upvote replies'
+
     def __str__(self):
-        if (positive):
-            return "Reply upvoted by " + self.user.username
+        if (self.positive):
+            return "Reply with pk " + str(self.reply.pk) + " upvoted by " + self.user.username
         else:
-            return "Reply downvoted by " + self.user.username
+            return "Reply with pk " + str(self.reply.pk) + " downvoted by " + self.user.username
