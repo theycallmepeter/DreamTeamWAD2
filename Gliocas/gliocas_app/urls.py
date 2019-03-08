@@ -2,7 +2,7 @@ from django.conf.urls import url
 from gliocas_app import views
 
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
+    url(r'^$', views.home, name='home'),
     url(r'^about/', views.about, name='about'),
     url(r'^contact/', views.contact, name='contact'),
     url(r'^subjects/', views.subjects, name='subjects'),

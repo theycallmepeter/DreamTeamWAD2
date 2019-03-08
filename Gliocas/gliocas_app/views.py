@@ -6,11 +6,11 @@ from django.contrib.auth.decorators import login_required
 
 from gliocas_app.models import Subject, Course, Question
 
-def index(request):
+def home(request):
     context_dict = {}
     subject_list = Subject.objects.all()
     context_dict['subjects'] = subject_list
-    return render(request, 'gliocas_app/index.html', context = context_dict)
+    return render(request, 'gliocas_app/home.html', context = context_dict)
 
 def about(request):
     context_dict = {}
@@ -85,4 +85,4 @@ def user_login(request):
 @login_required
 def user_logout(request):
     logout(request)
-    return HttpResponseRedirect(reverse('index'))
+    return HttpResponseRedirect(reverse('home'))

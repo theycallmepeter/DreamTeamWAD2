@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 {% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'gliocas_app/css/base.css' %}">
 <html>
     <head>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,900" rel="stylesheet">        <link rel="icon" href="{% static 'gliocas_app/img/favicon.png' %}">
         <title>
             Gliocas -
             {% block title_block %}
@@ -10,21 +12,32 @@
         </title>
     </head>
     <body>
+        <nav>
+            <img id=background src="{% static 'gliocas_app/img/base/background.png' %}" alt="background">
+            <div id="nav-bar">
+                <a href="{% url 'home' %}"><img id=home height="30em" src="{% static 'gliocas_app/img/base/logo_flat_dark.png' %}" alt="logo"></a>
+                <div id="category">Browse</div>
+                <div id="about"><a href="{% url 'about' %}">About</a></div>
+                <div id="contact"><a href="{% url 'contact' %}">Contact</a></div>
+                <input id="search" type="text" placeholder="What are you looking for?">
+            </div>
+
+        </nav>
+        <div id=content></div>
+        <!--
         <div>
         {% block body_block %}
         {% endblock %}
         </div>
-        <hr/>
+        
         
         <div>
             <ul>
-                <li><a href="{% url 'index' %}">Index</a></li>
-                <li><a href="{% url 'about' %}">About</a></li>
-                <li><a href="{% url 'contact' %}">Contact</a></li>
                 <li><a href="{% url 'login' %}">Login</a></li>
                 <li><a href="{% url 'register' %}">Register</a></li>
                 <li><a href="{% url 'logout' %}">Logout</a></li>
             </ul>
         </div>
+        -->
     </body>
 </html>
