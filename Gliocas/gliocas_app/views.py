@@ -73,14 +73,14 @@ def show_question(request, subject_slug, course_slug, question_slug):
 
     return render(request,'gliocas_app/question.html', context = context_dict)
 
-# @login_required
+@login_required
 def add_question(request, subject_slug, course_slug):
     
     form = QuestionForm()
     try:
         course = Course.objects.get(slug=course_slug)
         #TODO implement with user = request.user.pk after auth is finished
-        user = User.objects.get_or_create(username = 'peter')[0].pk
+        user = request.user.pk
     except Course.DoesNotExist:
         course = None
         user = None
@@ -92,7 +92,8 @@ def add_question(request, subject_slug, course_slug):
                 question.course = course
                 question.poster_id = user
                 question.views = 0
-                question.slug = slugify(question.pk) 
+                question.save()
+                #2nd save so we have a unique slug from pk, will fix later
                 question.save()
                 return show_course(request, subject_slug, course_slug)
         else:
