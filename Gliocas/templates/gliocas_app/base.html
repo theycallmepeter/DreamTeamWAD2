@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 {% load staticfiles %}
 <link rel="stylesheet" type="text/css" href="{% static 'gliocas_app/css/base.css' %}">
-<html>
+<html lang="en-US">
     <head>
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,900" rel="stylesheet">        <link rel="icon" href="{% static 'gliocas_app/img/favicon.png' %}">
+        <link href="https://fonts.googleapis.com/css?family=Raleway:600" rel="stylesheet">
         <title>
             Gliocas -
             {% block title_block %}
@@ -21,15 +22,16 @@
                 <div id="contact"><a href="{% url 'contact' %}">Contact</a></div>
                 <input id="search" type="text" placeholder="What are you looking for?">
             </div>
+            {% block body_block %}
+            {% endblock %}
 
         </nav>
-        <div id=content></div>
-        <!--
-        <div>
-        {% block body_block %}
-        {% endblock %}
+        <div class=content>
+            <h2>Title</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
         </div>
-        
+
+        <!--
         
         <div>
             <ul>
