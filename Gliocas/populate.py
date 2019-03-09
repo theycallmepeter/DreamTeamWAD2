@@ -6,6 +6,7 @@ import django
 django.setup()
 from django.contrib.auth.models import User
 from gliocas_app.models import Subject, Course, Question, Answer, Reply
+from gliocas_app.models import UpvoteQuestion, UpvoteAnswer, UpvoteReply
 
 def populate():
     users = {"random_boy" : add_user("random_boy"),
@@ -22,6 +23,8 @@ def populate():
          "text" : "HELP I DON'T GET THIS AND IM GONNA FAIL",
          "poster" : users["random_boy"],
          "views" : 10,
+         "upvotes" : [],
+         "downvotes" : [],
          "answers" : {}},
         {"title" : "On the subject of acceleration",
          "text" : "Should I try spinning? I've heard it's a good trick",
@@ -30,9 +33,14 @@ def populate():
          "upvotes" : [users["the_senate"], users["random_boy"],
                       users["space_pilot"], users["boromir"],
                       users["helpful_student"], users["proudScottish"]],
+         "downvotes" : [],
          "answers" : [
              {"text" : "DO IT",
-              "poster" : users["the_senate"]},
+              "poster" : users["the_senate"],
+              "upvotes" : [users["the_senate"], users["random_boy"],
+                           users["space_pilot"], users["boromir"],
+                           users["helpful_student"], users["proudScottish"]],
+              "downvotes" : [],},
              ]},
         ]
     maths1r_questions = [
@@ -40,7 +48,7 @@ def populate():
          "text" : ("Basically, I have the equation x^2 + x - 2 = 0 and I"
                    " don't know how to solve it"),
          "poster" : users["fresher671"],
-         "views" : 3,
+         "views" : 7,
          "upvotes" : [users["fresher671"], users["random_boy"]],
          "downvotes" : [users["the_senate"], users["space_pilot"],
                         users["boromir"]],
@@ -49,12 +57,17 @@ def populate():
          "text" : "It's hard, I don't get it",
          "poster" : users["fresher671"],
          "views" : 420,
+         "upvotes" : [],
          "downvotes" : [users["the_senate"], users["random_boy"],
                         users["space_pilot"], users["boromir"],
                         users["proudScottish"]],
          "answers" : [
              {"text" : "Wait for integration, you'll have some laughts",
-              "poster" : users["the_senate"]},
+              "poster" : users["the_senate"],
+              "upvotes" : [users["the_senate"], users["random_boy"],
+                           users["space_pilot"], users["boromir"],
+                           users["proudScottish"]],
+              "downvotes" : [],},
              ]},
         ]
     maths3h_questions = []
@@ -66,11 +79,16 @@ def populate():
                    " I need to finish this for tomorrow"),
          "poster" : users["python_boy"],
          "views" : 49,
+         "upvotes" : [users["python_boy"], users["helpful_student"]],
+         "downvotes" : [users["the_senate"],users["space_pilot"],
+                        users["boromir"]],
          "answers" : [
              {"text" : ("In Java strings are objects, so if you want to"
                         " compare two string you need to use"
                         " string1.equals(string2)"),
-              "poster" : users["helpful_student"]},
+              "poster" : users["helpful_student"],
+              "upvotes" : [users["python_boy"]],
+              "downvotes" : [],},
              ]},
         ]
     wad_questions = [
@@ -79,9 +97,17 @@ def populate():
                    " for tomorrow and we don't know what to do. Any ideas"),
          "poster" : users["rango"],
          "views" : 123,
+         "upvotes" : [users["rango"]],
+         "downvotes" : [users["the_senate"], users["random_boy"],
+                        users["space_pilot"], users["boromir"],
+                        users["proudScottish"]],
          "answers" : [
              {"text" : "One does not simply create a website",
-              "poster" : users["boromir"]},
+              "poster" : users["boromir"],
+              "upvotes" : [users["the_senate"], users["random_boy"],
+                           users["space_pilot"], users["boromir"],
+                           users["proudScottish"]],
+              "downvotes" : [users["rango"]],},
              ]},
         ]
     cs1p_questions = []
@@ -93,6 +119,8 @@ def populate():
                    " who is this Robert Burns?"),
          "poster" : users["proudScottish"],
          "views" : 17,
+         "upvotes" : [],
+         "downvotes" : [],
          "answers" : {}},
         ]
     genderHistory_questions = []
@@ -124,8 +152,16 @@ def populate():
             for question in Subjects[subject][course]:
                 q = add_question(question["title"], question["text"],
                                  c, question["poster"], question["views"])
+                for upvote in question["upvotes"]:
+                    add_upvoteQuestion(q, upvote, True)
+                for downvote in question["downvotes"]:
+                    add_upvoteQuestion(q, downvote, False)
                 for answer in question["answers"]:
                     a = add_answer(answer["text"], q, answer["poster"])
+                    for upvote in answer["upvotes"]:
+                        add_upvoteAnswer(a, upvote, True)
+                    for downvote in answer["downvotes"]:
+                        add_upvoteAnswer(a, downvote, False)
 
     for s in Subject.objects.all():
         print("subject " + str(s) + ":")
@@ -137,10 +173,24 @@ def populate():
                 print("\t\t", "poster", q.poster)
                 print("\t\t", "date", q.date)
                 print("\t\t", "views", q.views)
+                upvotes = 0
+                for q_up in UpvoteQuestion.objects.filter(question=q):
+                    if q_up.positive == True:
+                        upvotes = upvotes + 1
+                    else:
+                        upvotes = upvotes - 1
+                print("\t\t", "upvotes", upvotes)
                 for a in Answer.objects.filter(question=q):
                     print("\t\t\t", "text", a.text)
                     print("\t\t\t", "poster", a.poster)
                     print("\t\t\t", "date", a.date)
+                    upvotes = 0
+                    for a_up in UpvoteAnswer.objects.filter(answer=a):
+                        if a_up.positive == True:
+                            upvotes = upvotes + 1
+                        else:
+                            upvotes = upvotes - 1
+                    print("\t\t\t", "upvotes", upvotes)
 
 
 def add_user(name):
@@ -175,6 +225,25 @@ def add_answer(text, question, poster):
     answer.date = datetime.datetime.now()
     answer.save()
     return answer
+
+def add_upvoteQuestion(question, user, positive=True):
+    upvote = UpvoteQuestion.objects.get_or_create(question=question,
+                                                  user=user)[0]
+    upvote.positive = positive
+    upvote.save()
+    return upvote
+
+def add_upvoteAnswer(answer, user, positive=True):
+    upvote = UpvoteAnswer.objects.get_or_create(answer=answer, user=user)[0]
+    upvote.positive = positive
+    upvote.save()
+    return upvote
+
+def add_upvoteReply(reply, user, positive=True):
+    upvote = UpvoteReply.objects.get_or_create(reply=reply, user=user)[0]
+    upvote.positive = positive
+    upvote.save()
+    return upvote
 
 
 # Start execution here!
