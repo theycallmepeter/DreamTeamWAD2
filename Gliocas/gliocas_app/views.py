@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.template.defaultfilters import slugify
@@ -8,7 +8,7 @@ from django.views.generic import RedirectView
 from gliocas_app.forms import QuestionForm
 from gliocas_app.forms import UserForm
 from django.contrib.auth.models import User
-from gliocas_app.models import Subject, Course, Question
+from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply
 
 
 def index(request):
@@ -168,29 +168,32 @@ def user_login(request):
         return render(request, 'gliocas_app/login.html', {})
 
 
-class PostLikeRedirect(RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
-        slug = self.kwargs.get("slug")
-        question = get_object_or_404(Question, slug = slug)
-        question_url = question.get_absolute_url()
-        user = self.request.user
-        if user.is_authenticated():
-            like_question(self.request, question)
-        return obj_url
+# class PostLikeRedirect(RedirectView):
+#     def get_redirect_url(self, *args, **kwargs):
+#         slug = self.kwargs.get("slug")
+#         question = get_object_or_404(Question, slug = slug)
+#         question_url = question.get_absolute_url()
+#         user = self.request.user
+#         if user.is_authenticated():
+#             like_question(self.request, question)
+#         return obj_url
 
 @login_required
-def like_question(request, question, ):
-    question_id = None
-    if request.method == 'GET':
-        question_id = request.GET['question_id']
-    likes = 0
-    if question_id:
-        question = question.objects.get(id=int(question_id))
-        if question:
-            likes = question.likes + 1
-            question.likes = likes
-            question.save()
-    return HttpResponse(likes)
+def like_question(request, subject_slug, course_slug, question_slug, like):
+    question = get_object_or_404(Question, slug = question_slug)
+    user = request.user
+    if UpvoteQuestion.objects.filter(question=question, user=user).exists():
+        UpvoteQuestion.objects.get(question=question, user=user).delete()
+        print('deleted upvote')
+    elif like == '1':
+        upvote = UpvoteQuestion.objects.create(question=question, user=user)
+        upvote.save()
+        print('upvoted')
+    else:
+        upvote = UpvoteQuestion.objects.create(question=question, user=user, positive=False)
+        upvote.save()
+        print('downvoted')
+    return show_question(request, subject_slug, course_slug, question)
 
 @login_required
 def user_logout(request):

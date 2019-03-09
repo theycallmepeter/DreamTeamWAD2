@@ -62,11 +62,11 @@ Base template (not done)
 
 ## Functionality
 ### Asking questions [Peter]
-User can create question (not done)
+User can create question (DONE)
 
 User can edit/delete question (not done)
 
-Users can rate question (not done)
+Users can rate question (DONE)
 
 User notified when question is answered/reply made (not done)
 
