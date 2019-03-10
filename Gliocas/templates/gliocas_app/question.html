@@ -6,5 +6,8 @@
 
 {% block body_block %}
     <h3> Question about {{ question.title }} from {{ course.name}} in subject {{ subject.name }} </h3>
+    <h5> {{question.text}} </h5>
+    <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='1' %}"> Like</a>
+    <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='0' %}"> Dislike</a>
 
 {% endblock %}

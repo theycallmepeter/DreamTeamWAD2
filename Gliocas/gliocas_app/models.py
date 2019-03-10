@@ -1,6 +1,8 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
+from django.utils.crypto import get_random_string
+
 
 def get_sentinel_user():
     user = User.objects.get_or_create(username='Deleted')[0]
@@ -51,11 +53,7 @@ class Question(models.Model):
     text = models.TextField(max_length=textLength)
     date = models.DateTimeField(null=True)
     views = models.IntegerField(default=0)
-    slug = models.SlugField(unique=True)
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.pk)
-        super(Question, self).save(*args, **kwargs)
+    slug = models.SlugField(max_length=8, default=get_random_string, unique=True)
     
     def __str__(self):
         return self.title

@@ -1,11 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
+from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.views.generic import RedirectView
+from gliocas_app.forms import QuestionForm
 from gliocas_app.forms import UserForm
 from django.contrib.auth.models import User
-from gliocas_app.models import Subject, Course, Question
+from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply
 
 
 def index(request):
@@ -70,8 +73,31 @@ def show_question(request, subject_slug, course_slug, question_slug):
 
     return render(request,'gliocas_app/question.html', context = context_dict)
 
+@login_required
 def add_question(request, subject_slug, course_slug):
+    
+    form = QuestionForm()
+    try:
+        course = Course.objects.get(slug=course_slug)
+        user = request.user
+    except (Course.DoesNotExist, User.DoesNotExist):
+        course = None
+        user = None
+    if request.method == 'POST':
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            if course and user:
+                question = form.save(commit=False)
+                question.course = course
+                question.poster = user
+                question.views = 0
+                question.save()
+                return show_question(request, subject_slug, course_slug, question.slug)
+        else:
+            print(form.errors)
+
     context_dict = {}
+    context_dict['form'] = form
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     context_dict['course'] = Course.objects.get(slug=course_slug)
     return render(request,'gliocas_app/add_question.html', context = context_dict)
@@ -135,6 +161,17 @@ def user_login(request):
 
     else:
         return render(request, 'gliocas_app/login.html', {})
+
+@login_required
+def like_question(request, subject_slug, course_slug, question_slug, like):
+    question = get_object_or_404(Question, slug = question_slug)
+    user = request.user
+    if UpvoteQuestion.objects.filter(question=question, user=user).exists():
+        UpvoteQuestion.objects.get(question=question, user=user).delete()
+    else:
+        upvote = UpvoteQuestion.objects.create(question=question, user=user, positive=(like == '1'))
+        upvote.save()
+    return show_question(request, subject_slug, course_slug, question_slug)
 
 @login_required
 def user_logout(request):
