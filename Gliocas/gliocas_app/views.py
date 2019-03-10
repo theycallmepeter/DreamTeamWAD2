@@ -93,8 +93,6 @@ def add_question(request, subject_slug, course_slug):
                 question.poster_id = user
                 question.views = 0
                 question.save()
-                #2nd save so we have a unique slug from pk, will fix later
-                question.save()
                 return show_course(request, subject_slug, course_slug)
         else:
             print(form.errors)
