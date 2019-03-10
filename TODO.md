@@ -14,18 +14,26 @@
 ----
 
 ## Models / DB
+
 ### Model implementation [Pepe | pepe]
 Subject model (done)
+
 Course model (done)
+
 User model (done)
+
 Question model (done)
+
 Answer model (done)
+
 Reply model (done)
+
 Followed model (done)
+
 Update population script (done)
 
-
 ## Users & Logins
+
 ### Login API Riso
 Research Google/Facebook/? login API (done, too complicated, ditching it)
 
@@ -46,8 +54,6 @@ user/username/answers (not done)
 
 user/username/replies (not done)
 
-
-
 ### User's private pages [unassigned]
 user/settings (not done)
 
@@ -56,12 +62,13 @@ user/following (not done)
 ?
 ## Visuals
 
-### CSS/generic looks [unassigned]
-Base template (not done)
+### CSS/generic looks [Cho | user-interface ]
+Base template (WIP)
 
 ?
 
 ## Functionality
+
 ### Asking questions [Peter]
 User can create question (DONE)
 
@@ -74,7 +81,7 @@ User notified when question is answered/reply made (not done)
 User can pick final answer (not done)
 
 
-### Answering questions [unassigned]
+### Answering questions [Peter]
 User can supply answer to question (not done)
 
 User can edit/delete answer (not done)
@@ -84,7 +91,7 @@ Answers can be rated by users (not done)
 User notified when answer receives reply/comment (not done)
 
 
-### Commenting/replying to answers [unassigned]
+### Commenting/replying to answers [Peter]
 Users can make comments/replies to answers (not done)
 
 User can edit/delete comment (not done)
