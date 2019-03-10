@@ -1,9 +1,9 @@
-import datetime
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Gliocas.settings')
 
 import django
 django.setup()
+from django.utils import timezone
 from django.contrib.auth.models import User
 from gliocas_app.models import Subject, Course, Question, Answer, Reply
 from gliocas_app.models import UpvoteQuestion, UpvoteAnswer, UpvoteReply
@@ -192,11 +192,19 @@ def populate():
                             upvotes = upvotes - 1
                     print("\t\t\t", "upvotes", upvotes)
 
+    admin = User.objects.get_or_create(username='admin',is_staff=True,is_superuser=True)[0]
+    admin.email = 'admin@admin.com'
+    admin.password = 'admin'
+    admin.set_password(admin.password)
+    admin.save()
+
+
 
 def add_user(name):
     user = User.objects.get_or_create(username=name)[0]
     user.email = 'email@email.com'
     user.password = 'password'
+    user.set_password(user.password)
     user.save()
     return user
 
@@ -213,7 +221,7 @@ def add_course(name, subject):
 def add_question(title, text, course, poster, views=0):
     question = Question.objects.get_or_create(course=course, poster=poster,
                                               title=title)[0]
-    question.date = datetime.datetime.now()
+    question.date = timezone.now()
     question.text = text
     question.views = views
     question.save()
@@ -222,7 +230,7 @@ def add_question(title, text, course, poster, views=0):
 def add_answer(text, question, poster):
     answer = Answer.objects.get_or_create(question=question,
                                           poster=poster, text=text)[0]
-    answer.date = datetime.datetime.now()
+    answer.date = timezone.now()
     answer.save()
     return answer
 

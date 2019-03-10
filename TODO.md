@@ -37,16 +37,17 @@ create password restrictions is settings file (done)
 
 make a working login/register page(done)
 
-...
-API usable to create accounts in our DB (not done)
-### User-specific pages [unassigned]
+### User-specific pages [Samuel | user_pages ]
 user/<username> (not done)
 
 user/username/questions (not done)
 
 user/username/answers (not done)
 
-?
+user/username/replies (not done)
+
+
+
 ### User's private pages [unassigned]
 user/settings (not done)
 
@@ -72,7 +73,7 @@ User notified when question is answered/reply made (not done)
 
 User can pick final answer (not done)
 
-?
+
 ### Answering questions [unassigned]
 User can supply answer to question (not done)
 
@@ -82,7 +83,7 @@ Answers can be rated by users (not done)
 
 User notified when answer receives reply/comment (not done)
 
-?
+
 ### Commenting/replying to answers [unassigned]
 Users can make comments/replies to answers (not done)
 
@@ -90,4 +91,3 @@ User can edit/delete comment (not done)
 
 Users can rate comments/replies (not done)
 
-?
