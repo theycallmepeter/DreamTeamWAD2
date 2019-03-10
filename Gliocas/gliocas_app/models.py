@@ -53,11 +53,7 @@ class Question(models.Model):
     text = models.TextField(max_length=textLength)
     date = models.DateTimeField(null=True)
     views = models.IntegerField(default=0)
-    slug = models.SlugField(max_length=8, default=get_random_string(length=9), unique=True)
-
-    # def save(self, *args, **kwargs):
-    #     self.slug = slugify(self.pk)
-    #     super(Question, self).save(*args, **kwargs)
+    slug = models.SlugField(max_length=8, default=get_random_string, unique=True)
     
     def __str__(self):
         return self.title

@@ -79,9 +79,8 @@ def add_question(request, subject_slug, course_slug):
     form = QuestionForm()
     try:
         course = Course.objects.get(slug=course_slug)
-        #TODO implement with user = request.user.pk after auth is finished
-        user = request.user.pk
-    except Course.DoesNotExist:
+        user = request.user
+    except (Course.DoesNotExist, User.DoesNotExist):
         course = None
         user = None
     if request.method == 'POST':
@@ -90,10 +89,10 @@ def add_question(request, subject_slug, course_slug):
             if course and user:
                 question = form.save(commit=False)
                 question.course = course
-                question.poster_id = user
+                question.poster = user
                 question.views = 0
                 question.save()
-                return show_course(request, subject_slug, course_slug)
+                return show_question(request, subject_slug, course_slug, question.slug)
         else:
             print(form.errors)
 
@@ -101,8 +100,6 @@ def add_question(request, subject_slug, course_slug):
     context_dict['form'] = form
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     context_dict['course'] = Course.objects.get(slug=course_slug)
-    context_dict['course_slug'] = course_slug.lower()
-    context_dict['subject_slug'] = subject_slug.lower()
     return render(request,'gliocas_app/add_question.html', context = context_dict)
 
 def register(request):
@@ -165,33 +162,16 @@ def user_login(request):
     else:
         return render(request, 'gliocas_app/login.html', {})
 
-
-# class PostLikeRedirect(RedirectView):
-#     def get_redirect_url(self, *args, **kwargs):
-#         slug = self.kwargs.get("slug")
-#         question = get_object_or_404(Question, slug = slug)
-#         question_url = question.get_absolute_url()
-#         user = self.request.user
-#         if user.is_authenticated():
-#             like_question(self.request, question)
-#         return obj_url
-
 @login_required
 def like_question(request, subject_slug, course_slug, question_slug, like):
     question = get_object_or_404(Question, slug = question_slug)
     user = request.user
     if UpvoteQuestion.objects.filter(question=question, user=user).exists():
         UpvoteQuestion.objects.get(question=question, user=user).delete()
-        print('deleted upvote')
-    elif like == '1':
-        upvote = UpvoteQuestion.objects.create(question=question, user=user)
-        upvote.save()
-        print('upvoted')
     else:
-        upvote = UpvoteQuestion.objects.create(question=question, user=user, positive=False)
+        upvote = UpvoteQuestion.objects.create(question=question, user=user, positive=(like == '1'))
         upvote.save()
-        print('downvoted')
-    return show_question(request, subject_slug, course_slug, question)
+    return show_question(request, subject_slug, course_slug, question_slug)
 
 @login_required
 def user_logout(request):
