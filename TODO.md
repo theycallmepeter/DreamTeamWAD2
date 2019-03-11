@@ -98,3 +98,10 @@ User can edit/delete comment (not done)
 
 Users can rate comments/replies (not done)
 
+
+### Search functionality [Pepe | pepe ]
+Search function (not done)
+
+Search bar and search template (not done)
+
+Ordering of results (not done)
