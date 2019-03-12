@@ -1,0 +1,15 @@
+{% extends 'gliocas_app/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    user {{ username }}
+{% endblock %}
+
+{% block body_block %}
+
+    {% if exists %}
+        <h3> {{username}}'s page </h3>
+    {% else %}
+        <h3> User '{{ username }}' does not exist. </h3>
+    {% endif %}
+{% endblock %}

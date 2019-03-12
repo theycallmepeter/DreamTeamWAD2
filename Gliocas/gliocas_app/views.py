@@ -177,3 +177,15 @@ def like_question(request, subject_slug, course_slug, question_slug, like):
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('index'))
+
+def user(request, username):
+    context_dict = {'username' : username}
+    try:
+        user = User.objects.get(username = username)
+        context_dict['exists'] = True
+    except User.DoesNotExist:
+        context_dict['exists'] = False
+
+    print(context_dict['exists'])
+    
+    return render(request, 'gliocas_app/user.html', context_dict)
