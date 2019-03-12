@@ -183,9 +183,23 @@ def user(request, username):
     try:
         user = User.objects.get(username = username)
         context_dict['exists'] = True
+        context_dict['searched_user'] = user
+        context_dict['numquestions'] = len(Question.objects.filter(poster = user))
     except User.DoesNotExist:
         context_dict['exists'] = False
 
-    print(context_dict['exists'])
-    
     return render(request, 'gliocas_app/user.html', context_dict)
+
+
+def user_questions(request, username):
+    context_dict = {'username' : username}
+    try:
+        user = User.objects.get(username = username)
+        context_dict['exists'] = True
+        context_dict['searched_user'] = user
+        context_dict['questions'] = Question.objects.filter(poster = user)
+        context_dict['numquestions'] = len(context_dict['questions'])
+    except User.DoesNotExist:
+        context_dict['exists'] = False
+    
+    return render(request, 'gliocas_app/user_questions.html', context_dict)

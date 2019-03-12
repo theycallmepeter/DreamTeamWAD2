@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^subject/(?P<subject_slug>[\w\-]+)/(?P<course_slug>[\w\-]+)/(?P<question_slug>[\w\-]+)/$', views.show_question, name='show_question'),
     url(r'^subject/(?P<subject_slug>[\w\-]+)/(?P<course_slug>[\w\-]+)/(?P<question_slug>[\w\-]+)/like/(?P<like>[\d])/$', views.like_question, name='like_question'),
     url(r'^user/(?P<username>[\w\-@_+.]+)/$', views.user, name='user'),
+    url(r'^user/(?P<username>[\w\-@_+.]+)/questions/$', views.user_questions, name='user_questions'),
     url(r'^register/$', views.register, name='register'),
     url(r'^login/$', views.user_login, name='login'),
     url(r'^logout/$', views.user_logout, name='logout'),
