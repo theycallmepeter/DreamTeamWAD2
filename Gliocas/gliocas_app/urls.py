@@ -6,6 +6,7 @@ urlpatterns = [
     url(r'^about/', views.about, name='about'),
     url(r'^contact/', views.contact, name='contact'),
     url(r'^subjects/', views.subjects, name='subjects'),
+    url(r'^subjects/add_subject/', views.add_subject, name='add_subject'),
     url(r'^subject/(?P<subject_slug>[\w\-]+)/$', views.show_subject, name='show_subject'),
     url(r'^subject/(?P<subject_slug>[\w\-]+)/add_course/$', views.add_course, name='add_course'),
     url(r'^subject/(?P<subject_slug>[\w\-]+)/(?P<course_slug>[\w\-]+)/add_question/$', views.add_question, name='add_question'),

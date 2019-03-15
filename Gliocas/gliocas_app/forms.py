@@ -1,5 +1,5 @@
 from django import forms
-from gliocas_app.models import Question, Course
+from gliocas_app.models import Question, Course, Subject
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
@@ -38,12 +38,16 @@ class UserForm(forms.ModelForm):
 
 class CourseForm(forms.ModelForm):
     maxLength = 64
-    textLength = 32768
-
     name = forms.CharField(max_length=maxLength, help_text="Please enter the short name of your course (e.g. 2A)", required = True)
 
     class Meta:
         model = Course
         fields = ('name',)
 
+class SubjectForm(forms.ModelForm):
+    maxLength = 64
+    name = forms.CharField(max_length=maxLength, help_text="Please enter the subject you'd like to add.", required = True)
 
+    class Meta:
+        model = Subject
+        fields = ('name',)
