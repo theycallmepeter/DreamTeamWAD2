@@ -1,11 +1,12 @@
-import datetime
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Gliocas.settings')
 
 import django
 django.setup()
+from django.utils import timezone
 from django.contrib.auth.models import User
 from gliocas_app.models import Subject, Course, Question, Answer, Reply
+from gliocas_app.models import UpvoteQuestion, UpvoteAnswer, UpvoteReply
 
 def populate():
     users = {"random_boy" : add_user("random_boy"),
@@ -22,35 +23,52 @@ def populate():
          "text" : "HELP I DON'T GET THIS AND IM GONNA FAIL",
          "poster" : users["random_boy"],
          "views" : 10,
-         "upvotes" : -6,
+         "upvotes" : [],
+         "downvotes" : [],
          "answers" : {}},
         {"title" : "On the subject of acceleration",
          "text" : "Should I try spinning? I've heard it's a good trick",
          "poster" : users["space_pilot"],
          "views" : 501,
-         "upvotes" : 66,
+         "upvotes" : [users["the_senate"], users["random_boy"],
+                      users["space_pilot"], users["boromir"],
+                      users["helpful_student"], users["proudScottish"]],
+         "downvotes" : [],
          "answers" : [
              {"text" : "DO IT",
               "poster" : users["the_senate"],
-              "upvotes" : 66},]},
+              "upvotes" : [users["the_senate"], users["random_boy"],
+                           users["space_pilot"], users["boromir"],
+                           users["helpful_student"], users["proudScottish"]],
+              "downvotes" : [],},
+             ]},
         ]
     maths1r_questions = [
         {"title" : "How do I solve quadratic equations?",
          "text" : ("Basically, I have the equation x^2 + x - 2 = 0 and I"
                    " don't know how to solve it"),
          "poster" : users["fresher671"],
-         "views" : 3,
-         "upvotes" : 0,
+         "views" : 7,
+         "upvotes" : [users["fresher671"], users["random_boy"]],
+         "downvotes" : [users["the_senate"], users["space_pilot"],
+                        users["boromir"]],
          "answers" : {}},
         {"title" : "Can anyone explain me differentiation?",
          "text" : "It's hard, I don't get it",
          "poster" : users["fresher671"],
          "views" : 420,
-         "upvotes" : -69,
+         "upvotes" : [],
+         "downvotes" : [users["the_senate"], users["random_boy"],
+                        users["space_pilot"], users["boromir"],
+                        users["proudScottish"]],
          "answers" : [
              {"text" : "Wait for integration, you'll have some laughts",
               "poster" : users["the_senate"],
-              "upvotes" : 333},]},
+              "upvotes" : [users["the_senate"], users["random_boy"],
+                           users["space_pilot"], users["boromir"],
+                           users["proudScottish"]],
+              "downvotes" : [],},
+             ]},
         ]
     maths3h_questions = []
     maths2a_questions = []
@@ -61,13 +79,17 @@ def populate():
                    " I need to finish this for tomorrow"),
          "poster" : users["python_boy"],
          "views" : 49,
-         "upvotes" : 7,
+         "upvotes" : [users["python_boy"], users["helpful_student"]],
+         "downvotes" : [users["the_senate"],users["space_pilot"],
+                        users["boromir"]],
          "answers" : [
              {"text" : ("In Java strings are objects, so if you want to"
                         " compare two string you need to use"
                         " string1.equals(string2)"),
               "poster" : users["helpful_student"],
-              "upvotes" : 10,},]},
+              "upvotes" : [users["python_boy"]],
+              "downvotes" : [],},
+             ]},
         ]
     wad_questions = [
         {"title" : "I have to create a webpage how do I do it?",
@@ -75,11 +97,18 @@ def populate():
                    " for tomorrow and we don't know what to do. Any ideas"),
          "poster" : users["rango"],
          "views" : 123,
-         "upvotes" : -3,
+         "upvotes" : [users["rango"]],
+         "downvotes" : [users["the_senate"], users["random_boy"],
+                        users["space_pilot"], users["boromir"],
+                        users["proudScottish"]],
          "answers" : [
              {"text" : "One does not simply create a website",
               "poster" : users["boromir"],
-              "upvotes" : 9},]},
+              "upvotes" : [users["the_senate"], users["random_boy"],
+                           users["space_pilot"], users["boromir"],
+                           users["proudScottish"]],
+              "downvotes" : [users["rango"]],},
+             ]},
         ]
     cs1p_questions = []
     cs1q_questions = []
@@ -90,7 +119,8 @@ def populate():
                    " who is this Robert Burns?"),
          "poster" : users["proudScottish"],
          "views" : 17,
-         "upvotes" : 5,
+         "upvotes" : [],
+         "downvotes" : [],
          "answers" : {}},
         ]
     genderHistory_questions = []
@@ -121,11 +151,17 @@ def populate():
             c = add_course(course, s)
             for question in Subjects[subject][course]:
                 q = add_question(question["title"], question["text"],
-                                 c, question["poster"], question["views"],
-                                 question["upvotes"])
+                                 c, question["poster"], question["views"])
+                for upvote in question["upvotes"]:
+                    add_upvoteQuestion(q, upvote, True)
+                for downvote in question["downvotes"]:
+                    add_upvoteQuestion(q, downvote, False)
                 for answer in question["answers"]:
-                    a = add_answer(answer["text"], q, answer["poster"],
-                                   answer["upvotes"])
+                    a = add_answer(answer["text"], q, answer["poster"])
+                    for upvote in answer["upvotes"]:
+                        add_upvoteAnswer(a, upvote, True)
+                    for downvote in answer["downvotes"]:
+                        add_upvoteAnswer(a, downvote, False)
 
     for s in Subject.objects.all():
         print("subject " + str(s) + ":")
@@ -137,18 +173,38 @@ def populate():
                 print("\t\t", "poster", q.poster)
                 print("\t\t", "date", q.date)
                 print("\t\t", "views", q.views)
-                print("\t\t", "upvotes", q.upvotes)
+                upvotes = 0
+                for q_up in UpvoteQuestion.objects.filter(question=q):
+                    if q_up.positive == True:
+                        upvotes = upvotes + 1
+                    else:
+                        upvotes = upvotes - 1
+                print("\t\t", "upvotes", upvotes)
                 for a in Answer.objects.filter(question=q):
                     print("\t\t\t", "text", a.text)
                     print("\t\t\t", "poster", a.poster)
                     print("\t\t\t", "date", a.date)
-                    print("\t\t\t", "upvotes", a.upvotes)
+                    upvotes = 0
+                    for a_up in UpvoteAnswer.objects.filter(answer=a):
+                        if a_up.positive == True:
+                            upvotes = upvotes + 1
+                        else:
+                            upvotes = upvotes - 1
+                    print("\t\t\t", "upvotes", upvotes)
+
+    admin = User.objects.get_or_create(username='admin',is_staff=True,is_superuser=True)[0]
+    admin.email = 'admin@admin.com'
+    admin.password = 'admin'
+    admin.set_password(admin.password)
+    admin.save()
+
 
 
 def add_user(name):
     user = User.objects.get_or_create(username=name)[0]
     user.email = 'email@email.com'
     user.password = 'password'
+    user.set_password(user.password)
     user.save()
     return user
 
@@ -162,23 +218,40 @@ def add_course(name, subject):
     course.save()
     return course
 
-def add_question(title, text, course, poster, views=0, upvotes=0):
+def add_question(title, text, course, poster, views=0):
     question = Question.objects.get_or_create(course=course, poster=poster,
                                               title=title)[0]
-    question.date = datetime.datetime.now()
+    question.date = timezone.now()
     question.text = text
     question.views = views
-    question.upvotes = upvotes
     question.save()
     return question
 
-def add_answer(text, question, poster, upvotes=0):
+def add_answer(text, question, poster):
     answer = Answer.objects.get_or_create(question=question,
                                           poster=poster, text=text)[0]
-    answer.date = datetime.datetime.now()
-    answer.upvotes = upvotes
+    answer.date = timezone.now()
     answer.save()
     return answer
+
+def add_upvoteQuestion(question, user, positive=True):
+    upvote = UpvoteQuestion.objects.get_or_create(question=question,
+                                                  user=user)[0]
+    upvote.positive = positive
+    upvote.save()
+    return upvote
+
+def add_upvoteAnswer(answer, user, positive=True):
+    upvote = UpvoteAnswer.objects.get_or_create(answer=answer, user=user)[0]
+    upvote.positive = positive
+    upvote.save()
+    return upvote
+
+def add_upvoteReply(reply, user, positive=True):
+    upvote = UpvoteReply.objects.get_or_create(reply=reply, user=user)[0]
+    upvote.positive = positive
+    upvote.save()
+    return upvote
 
 
 # Start execution here!
