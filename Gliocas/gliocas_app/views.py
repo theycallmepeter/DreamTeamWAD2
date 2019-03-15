@@ -8,6 +8,7 @@ from django.views.generic import RedirectView
 from gliocas_app.forms import QuestionForm
 from gliocas_app.forms import UserForm
 from django.contrib.auth.models import User
+from gliocas_app.search import search_query
 from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply
 
 def home(request):
@@ -71,6 +72,16 @@ def show_question(request, subject_slug, course_slug, question_slug):
         context_dict['course'] = None
 
     return render(request,'gliocas_app/question.html', context = context_dict)
+
+def search(request):
+    result_list=[]
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+        if query:
+            result_list = search_query(query)
+        return render(request,'gliocas_app/search.html', {'result_list': result_list,
+                                                          "user_query" : query})
+    return render(request,'gliocas_app/search.html', {'result_list': result_list})
 
 @login_required
 def add_question(request, subject_slug, course_slug):
