@@ -1,10 +1,23 @@
 <!DOCTYPE html>
 {% load staticfiles %}
-<link rel="stylesheet" type="text/css" href="{% static 'gliocas_app/css/base.css' %}">
 <html lang="en-US">
     <head>
-        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,900" rel="stylesheet">        <link rel="icon" href="{% static 'gliocas_app/img/favicon.png' %}">
+        <!-- meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">  
+        
+        <!-- Google fonts-->
         <link href="https://fonts.googleapis.com/css?family=Raleway:600" rel="stylesheet">
+        
+        <!-- BoostrapCDN -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        
+        <!-- CSS Script -->
+        <link rel="stylesheet" type="text/css" href="{% static 'gliocas_app/css/base.css' %}">
+
+        <!-- favicon-->
+        <link rel="icon" href="{% static 'gliocas_app/img/favicon.png' %}">
+
         <title>
             Gliocas -
             {% block title_block %}
@@ -13,41 +26,67 @@
         </title>
     </head>
     <body>
-        <nav>
-            <img id=background src="{% static 'gliocas_app/img/base/background.png' %}" alt="background">
-            <div id="nav-bar">
-                <a href="{% url 'home' %}"><img id=home height="30em" src="{% static 'gliocas_app/img/base/logo_flat_dark.png' %}" alt="logo"></a>
-                <div id="category">Browse</div>
-                <div id="about"><a href="{% url 'about' %}">About</a></div>
-                <div id="contact"><a href="{% url 'contact' %}">Contact</a></div>
-                <input id="search" type="text" placeholder="What are you looking for?">
-            </div>
-            {% block body_block %}
-            {% endblock %}
+        <div class="img-fluid" style="background-image: url('{% static 'gliocas_app/img/base/background.png' %}'); background-repeat: no-repeat; background-position: top left; object-fit: none; background-size: 100%;">
 
-        </nav>
-        <div class=content>
-            <h2>Title</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        </div>
-
-        <!--
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(0,0,0,0);">
         
-        <div>
-            <ul>
-                {% if user.is_authenticated %}
-                <li><a href="{% url 'logout' %}">Logout</a></li>
-                {%else%}
-                <li><a href="{% url 'login' %}">Login</a></li>
-                <li><a href="{% url 'register' %}">Register</a></li>
-                {%endif%}
-            </ul>
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'gliocas_app/img/base/logo_flat_dark.png' %}" width="auto" height="30" alt="">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarToggler">
+                <ul class="navbar-nav col-sm mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Browse <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                    </li>
+                </ul>
+                <form class="form-inline col-6 my-0 my-lg-0 search-bar">
+                    <input class="form-control w-100 rounded-pill search" type="search" placeholder="What are you looking for?">
+                </form>
+                <div class="col-sm"></div>
+            </div>
+        </nav>
+
+        <div class="container">
+            {% block body_block %}
+
+            {% endblock %}
+        
+            <!--
+            <div>
+                <ul>
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                    {%else%}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'register' %}">Register</a></li>
+                    {%endif%}
+                </ul>
+            </div>
+            -->
+            
         </div>
-        -->
-        <div id=footer>
-            <div id=copyright>© Gliocas, 2019. All Rights Reserved.</div>
-            <img id=footer-mascot src="{% static 'gliocas_app/img/base/mascot.png' %}" alt="mascot">
-            <img id=footer-pattern src="{% static 'gliocas_app/img/base/footer pattern.png' %}" alt="footer pattern">
-        </div>
+
+        <!-- Footer -->
+        <footer class="page-footer font-small blue">
+            <!-- Copyright -->
+            <div class="footer-copyright text-center py-3">
+                © Gliocas, 2019. All Rights Reserved.
+            </div>
+        </footer>
+
+        <!-- Boostrap Scripts -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        
     </body>
 </html>

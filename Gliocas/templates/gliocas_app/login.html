@@ -1,22 +1,43 @@
-{% extends 'gliocas_app/base.html' %}
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en-US">
+  <head>
+    <!-- meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">  
 
-{% block title_block %}
-    Index
-{% endblock %}
+    <!-- BoostrapCDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-{% block body_block %}
+    <!-- CSS Script -->
+    <link rel="stylesheet" type="text/css" href="{% static 'gliocas_app/css/login.css' %}">
 
-    {%if user.is_authenticated%}
-    <strong>you are already logged in!</strong>
-    {%else%}
-    <h3> Login to gliocas </h3>
-    <form id="login_form" method="post" action="{% url 'login' %}">
-      {% csrf_token %}
-      Username: <input type="text" name="username" value="" size="50" />
-      <br />
-      Password: <input type="password" name="password" value="" size="50" />
-      <br />
-      <input type="submit" value="login" />
-    </form>
-    {%endif%}
-{% endblock %}
+    <!-- favicon-->
+    <link rel="icon" href="{% static 'gliocas_app/img/favicon.png' %}">
+
+    <title>
+      Gliocas - Log in
+    </title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row h-100 justify-content-center align-items-center">
+        <div class="col-6 card my-3 rounded shadow-lg text-center">
+          <div class="card-body">
+            <img class="my-4" src="{% static 'gliocas_app/img/login/logo.png' %}" width="auto" height="30%" alt="">
+            <form id="login_form" method="post" action="{% url 'login' %}">
+              {% csrf_token %}
+              <input type="email" id="inputEmail" class="form-control h-40 rounded-pill" placeholder="Email address" required="" autofocus="">
+              <br />
+              <input type="password" id="inputPassword" class="form-control h-40 rounded-pill" placeholder="Password" required="">              <br />
+              <button class="btn btn-lg h-40 btn-primary btn-block rounded-pill" type="submit" value="login">Sign in</button>              
+            </form>
+            {%if user.is_authenticated%}
+              <strong>you are already logged in!</strong>
+            {%endif%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
