@@ -150,7 +150,7 @@ def user_login(request):
             if user.is_active:
 
                 login(request, user)
-                return HttpResponseRedirect(reverse('index'))
+                return HttpResponseRedirect(reverse('home'))
             else:
 
                 return HttpResponse("Your Gliocas account is disabled.")
