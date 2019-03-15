@@ -5,11 +5,11 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import RedirectView
-from gliocas_app.forms import QuestionForm, CourseForm, SubjectForm
+from gliocas_app.forms import QuestionForm, CourseForm, SubjectForm, AnswerForm
 from gliocas_app.forms import UserForm
 from django.contrib.auth.models import User
 from gliocas_app.search import search_query
-from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply, Subject
+from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply, Subject, Answer
 
 
 def index(request):
@@ -62,12 +62,15 @@ def show_question(request, subject_slug, course_slug, question_slug):
     context_dict = {}
     try:
         question = Question.objects.get(slug=question_slug)
+        answers = Answer.objects.filter(question=question)
         parent_course = Course.objects.get(slug=course_slug)
         parent_subject = Subject.objects.get(slug=subject_slug)
         context_dict['question'] = question
+        context_dict['answers'] = answers
         context_dict['subject'] = parent_subject
         context_dict['course'] = parent_course
     except Question.DoesNotExist:
+        context_dict['answers'] = None
         context_dict['question'] = None
         context_dict['subject'] = None
         context_dict['course'] = None
@@ -221,6 +224,47 @@ def like_question(request, subject_slug, course_slug, question_slug, like):
         upvote = UpvoteQuestion.objects.create(question=question, user=user, positive=(like == '1'))
         upvote.save()
     return show_question(request, subject_slug, course_slug, question_slug)
+
+@login_required
+def answer_question(request, subject_slug, course_slug, question_slug):
+    form = AnswerForm()
+    try:
+        course = Course.objects.get(slug=course_slug)
+        user = request.user
+        question = Question.objects.get(slug=question_slug)
+    except (Course.DoesNotExist, User.DoesNotExist, Question.DoesNotExist):
+        course = None
+        user = None
+        question = None
+    if request.method == 'POST':
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            if course and user and question:
+                answer = form.save(commit=False)
+                answer.poster = user
+                answer.question = question
+                answer.save()
+                return show_question(request, subject_slug, course_slug, question.slug)
+        else:
+            print(form.errors)
+
+    context_dict = {}
+    context_dict['form'] = form
+    context_dict['subject'] = Subject.objects.get(slug=subject_slug)
+    context_dict['course'] = Course.objects.get(slug=course_slug)
+    context_dict['question'] = question
+    return render(request,'gliocas_app/add_question.html', context = context_dict)
+
+    # class Answer(models.Model):
+#     textLength = 32768
+#     question = models.ForeignKey(Question, on_delete=models.CASCADE)
+#     poster = models.ForeignKey(User,
+#                                on_delete=models.SET(get_sentinel_user))
+#     text = models.TextField(max_length=textLength)
+#     date = models.DateTimeField(null=True)
+    
+#     def __str__(self):
+#         return self.text
 
 @login_required
 def user_logout(request):

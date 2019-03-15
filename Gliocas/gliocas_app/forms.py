@@ -1,5 +1,5 @@
 from django import forms
-from gliocas_app.models import Question, Course, Subject
+from gliocas_app.models import Question, Course, Subject, Answer, Reply
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
@@ -17,6 +17,17 @@ class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
         fields = ('title', 'text', 'date', 'views',)
+
+class AnswerForm(forms.ModelForm):
+    textLength = 32768
+    text = forms.CharField(widget=forms.Textarea, max_length=textLength, help_text="Please enter the text of your reply.", required = True)
+    date = forms.DateTimeField(widget=forms.HiddenInput(), initial=timezone.now)
+
+    class Meta:
+        model = Answer
+        fields = ('text', 'date',)
+
+
 
 class UserForm(forms.ModelForm):
 

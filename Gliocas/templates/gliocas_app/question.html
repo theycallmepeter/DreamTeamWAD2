@@ -7,6 +7,16 @@
 {% block body_block %}
     <h3> Question about {{ question.title }} from {{ course.name}} in subject {{ subject.name }} </h3>
     <h5> {{question.text}} </h5>
+    {% if answers %}
+        <ul>
+            {% for answer in answers %}
+                <li>{{answer.poster}} - - - {{ answer.text }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <strong>There are no questions.</strong>
+        {% endif %}
+    <a href="{% url 'answer_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}"> Answer</a>
     <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='1' %}"> Like</a>
     <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='0' %}"> Dislike</a>
 
