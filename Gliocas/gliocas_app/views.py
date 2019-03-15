@@ -78,7 +78,9 @@ def search(request):
     if request.method == 'POST':
         query = request.POST['query'].strip()
         if query:
+            print(query)
             result_list = search_query(query)
+            print(query)
         return render(request,'gliocas_app/search.html', {'result_list': result_list,
                                                           "user_query" : query})
     return render(request,'gliocas_app/search.html', {'result_list': result_list})

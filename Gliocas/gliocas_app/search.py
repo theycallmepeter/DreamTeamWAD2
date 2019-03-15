@@ -43,12 +43,13 @@ def search_query(query):
     for i in range(0, last_value):
         position = 0
         a = questionsData[0]
-        value = questionsData[0]["queryOrder"]
+        value = 0
         for j in range(0, len(questionsData)):
             if questionsData[j]["queryOrder"] > value:
                 position = j
                 value = questionsData[j]["queryOrder"]
         primaryKey = questionsData[position]["pk"]
-        results.append(Question.objects.filter(pk=primaryKey)[0])
+        if value > 0:
+            results.append(Question.objects.filter(pk=primaryKey)[0])
         del questionsData[position]
     return results
