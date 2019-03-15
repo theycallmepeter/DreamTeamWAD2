@@ -1,5 +1,7 @@
 from django.conf.urls import url
 from gliocas_app import views
+from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
@@ -15,4 +17,10 @@ urlpatterns = [
     url(r'^login/$', views.user_login, name='login'),
     url(r'^logout/$', views.user_logout, name='logout'),
     url(r'^search/$', views.search, name='search'),
+    url(r'^reset-password/$',PasswordResetView.as_view(),name="reset_password"),
+    url(r'^reset-password/done/$',PasswordResetDoneView.as_view(),name="password_reset_done"),
+    url(r'^reset-password/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)$',PasswordResetConfirmView.as_view(),name="password_reset_confirm"),
+    url(r'^reset-password/complete/$',PasswordResetCompleteView.as_view(),name="password_reset_complete"),
+
+
 ]
