@@ -63,6 +63,7 @@ def show_question(request, subject_slug, course_slug, question_slug):
     try:
         question = Question.objects.get(slug=question_slug)
         answers = Answer.objects.filter(question=question)
+        #get replies somehow...
         parent_course = Course.objects.get(slug=course_slug)
         parent_subject = Subject.objects.get(slug=subject_slug)
         context_dict['question'] = question
@@ -244,7 +245,7 @@ def answer_question(request, subject_slug, course_slug, question_slug):
                 answer.poster = user
                 answer.question = question
                 answer.save()
-                return show_question(request, subject_slug, course_slug, question.slug)
+                return show_question(request, subject_slug, course_slug, question_slug)
         else:
             print(form.errors)
 
@@ -253,18 +254,40 @@ def answer_question(request, subject_slug, course_slug, question_slug):
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     context_dict['course'] = Course.objects.get(slug=course_slug)
     context_dict['question'] = question
-    return render(request,'gliocas_app/add_question.html', context = context_dict)
+    return render(request,'gliocas_app/answer_question.html', context = context_dict)
 
-    # class Answer(models.Model):
-#     textLength = 32768
-#     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-#     poster = models.ForeignKey(User,
-#                                on_delete=models.SET(get_sentinel_user))
-#     text = models.TextField(max_length=textLength)
-#     date = models.DateTimeField(null=True)
-    
-#     def __str__(self):
-#         return self.text
+
+@login_required
+def reply_answer(request, subject_slug, course_slug, question_slug):
+    form = ReplyForm()
+    try:
+        course = Course.objects.get(slug=course_slug)
+        user = request.user
+        answer = Answer.objects.get(slug=question_slug)
+    except (Course.DoesNotExist, User.DoesNotExist, Reply.DoesNotExist):
+        course = None
+        user = None
+        reply = None
+    if request.method == 'POST':
+        form = ReplyForm(request.POST)
+        if form.is_valid():
+            if course and user and reply:
+                answer = form.save(commit=False)
+                answer.poster = user
+                answer.reply = reply
+                answer.save()
+                return show_question(request, subject_slug, course_slug, question_slug)
+        else:
+            print(form.errors)
+
+    context_dict = {}
+    context_dict['form'] = form
+    context_dict['subject'] = Subject.objects.get(slug=subject_slug)
+    context_dict['course'] = Course.objects.get(slug=course_slug)
+    context_dict['question'] = Question.objects.get(slug=question_slug)
+    context_dict['answer'] = answer
+    return render(request,'gliocas_app/reply_answer.html', context = context_dict)
+
 
 @login_required
 def user_logout(request):

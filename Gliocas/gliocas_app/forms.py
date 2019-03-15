@@ -27,6 +27,14 @@ class AnswerForm(forms.ModelForm):
         model = Answer
         fields = ('text', 'date',)
 
+class ReplyForm(forms.ModelForm):
+    textLength = 32768
+    text = forms.CharField(widget=forms.Textarea, max_length=textLength, help_text="Please enter the text of your reply.", required = True)
+    date = forms.DateTimeField(widget=forms.HiddenInput(), initial=timezone.now)
+
+    class Meta:
+        model = Reply
+        fields = ('text', 'date',)
 
 
 class UserForm(forms.ModelForm):

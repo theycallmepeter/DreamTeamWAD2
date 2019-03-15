@@ -11,6 +11,9 @@
         <ul>
             {% for answer in answers %}
                 <li>{{answer.poster}} - - - {{ answer.text }}</li>
+                {% for reply in replies %}
+                	<li>{{reply.poster}} - - - {{ reply.text }}</li>
+                {% endfor %}
             {% endfor %}
         </ul>
         {% else %}
