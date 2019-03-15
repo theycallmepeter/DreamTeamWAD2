@@ -5,7 +5,7 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import RedirectView
-from gliocas_app.forms import QuestionForm
+from gliocas_app.forms import QuestionForm, CourseForm
 from gliocas_app.forms import UserForm
 from django.contrib.auth.models import User
 from gliocas_app.search import search_query
@@ -114,7 +114,40 @@ def add_question(request, subject_slug, course_slug):
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     context_dict['course'] = Course.objects.get(slug=course_slug)
     return render(request,'gliocas_app/add_question.html', context = context_dict)
+# class Course(models.Model):
+#     maxLength = 64
+#     name = models.CharField(max_length=maxLength, unique=True)
+#     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+#     slug = models.SlugField(unique=True)
 
+#     def save(self, *args, **kwargs):
+#         self.slug = slugify(self.name)
+#         super(Course, self).save(*args, **kwargs)
+    
+#     def __str__(self):
+#         return self.name
+@login_required
+def add_course(request, subject_slug):
+    form = CourseForm()
+    try:
+        subject = Subject.objects.get(slug=subject_slug)
+    except (Subject.DoesNotExist):
+        subject = None
+    if request.method == 'POST':
+        form = CourseForm(request.POST)
+        if form.is_valid():
+            if subject:
+                course = form.save(commit=False)
+                course.subject = subject
+                course.save()
+                return show_course(request, subject_slug, course.slug)
+        else:
+            print(form.errors)
+    context_dict = {}
+    context_dict['form'] = form
+    context_dict['subject'] = Subject.objects.get(slug=subject_slug)
+    return render(request,'gliocas_app/add_course.html', context = context_dict)
+    
 def register(request):
     registered = False
 
