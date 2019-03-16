@@ -1,13 +1,12 @@
 from gliocas_app.models import Subject, Course, Question, UpvoteQuestion
 
 def search_query(query):
-    invalidCharacters = [".", ",", ":", ";", "?", "'", "!"]
+    invalidCharacters = [".", ",", ":", ";", "?", "'", "!", "-", "_"]
     query_words = query.split()
     for i in range(0, len(query_words)):
         query_words[i] = query_words[i].lower()
         for character in invalidCharacters:
             query_words[i] = query_words[i].replace(character, '')
-    
     questions = Question.objects.all()
     questionsData = []
     for question in questions:
@@ -30,6 +29,10 @@ def search_query(query):
         for question in questionsData:
             if word in question["title"]:
                 question["titleWords"] += 1
+            elif len(word) > 3:
+                for titleWord in question["title"]:
+                    if len(titleWord) > 3 and (titleWord in word or word in titleWord):
+                       question["titleWords"] += 0.5 
             if word in question["text"]:
                 question["textWords"] += 1
 
@@ -42,7 +45,6 @@ def search_query(query):
         last_value = len(questionsData)
     for i in range(0, last_value):
         position = 0
-        a = questionsData[0]
         value = 0
         for j in range(0, len(questionsData)):
             if questionsData[j]["queryOrder"] > value:

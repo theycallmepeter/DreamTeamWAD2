@@ -24,8 +24,14 @@ def populate():
          "poster" : users["random_boy"],
          "views" : 10,
          "upvotes" : [],
-         "downvotes" : [],
-         "answers" : {}},
+         "downvotes" : [users["proudScottish"], users["rango"]],
+         "answers" : [
+             {"text" : ("My God, thats like the easiest thing in the course."
+                        " If you can't understand this you should drop man"),
+              "poster" : users["proudScottish"],
+              "upvotes" : [users["rango"], users["proudScottish"]],
+              "downvotes" : [],},
+             ]},
         {"title" : "On the subject of acceleration",
          "text" : "Should I try spinning? I've heard it's a good trick",
          "poster" : users["space_pilot"],
@@ -41,6 +47,12 @@ def populate():
                            users["space_pilot"], users["boromir"],
                            users["helpful_student"], users["proudScottish"]],
               "downvotes" : [],},
+             {"text" : "My lord, is that legal?",
+              "poster" : users["boromir"],
+              "upvotes" : [users["the_senate"], users["random_boy"],
+                           users["space_pilot"], users["the_senate"],
+                           users["helpful_student"], users["proudScottish"]],
+              "downvotes" : [],},
              ]},
         ]
     maths1r_questions = [
@@ -52,7 +64,7 @@ def populate():
          "upvotes" : [users["fresher671"], users["random_boy"]],
          "downvotes" : [users["the_senate"], users["space_pilot"],
                         users["boromir"]],
-         "answers" : {}},
+         "answers" : []},
         {"title" : "Can anyone explain me differentiation?",
          "text" : "It's hard, I don't get it",
          "poster" : users["fresher671"],
@@ -94,7 +106,7 @@ def populate():
     wad_questions = [
         {"title" : "I have to create a webpage how do I do it?",
          "text" : ("I'm in a group project and we need to create a website"
-                   " for tomorrow and we don't know what to do. Any ideas"),
+                   " for tomorrow and we don't know what to do. Any ideas?"),
          "poster" : users["rango"],
          "views" : 123,
          "upvotes" : [users["rango"]],
@@ -108,6 +120,32 @@ def populate():
                            users["space_pilot"], users["boromir"],
                            users["proudScottish"]],
               "downvotes" : [users["rango"]],},
+             ]},
+        {"title" : "How do I implement user login in my webpage?",
+         "text" : ("I have almost completed the assignment for next Friday,"
+                   " but I am totally clueless about letting users create"
+                   " accounts and login in"),
+         "poster" : users["boromir"],
+         "views" : 420,
+         "upvotes" : [users["the_senate"], users["random_boy"],
+                      users["space_pilot"], users["boromir"],
+                      users["proudScottish"]],
+         "downvotes" : [users["rango"]],
+         "answers" : [
+             {"text" : ("One doesn't create a login or whatever you"
+                        " answered to my question"),
+              "poster" : users["rango"],
+              "upvotes" : [],
+              "downvotes" : [users["boromir"]],},
+             {"text" : ("TangoWithDjango has a sept-by-step solution for that"
+                        " problem. If you are still struggling, you can always"
+                        " use the django-registration-redux package to take"
+                        " care of all the user login stuff. Hope that you"
+                        " find this useful!"),
+              "poster" : users["helpful_student"],
+              "upvotes" : [users["boromir"], users["the_senate"],
+                           users["proudScottish"],users["space_pilot"]],
+              "downvotes" : [],},
              ]},
         ]
     cs1p_questions = []

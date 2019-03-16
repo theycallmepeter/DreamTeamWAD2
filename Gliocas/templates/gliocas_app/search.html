@@ -14,7 +14,7 @@
 			<div class="form-group">
 				{% if user_query %}
 				<input class="form-control" type="text" size="50"
-					name="query" value={{ user_query }} id="query"/>
+					name="query" value="{{ user_query }}" id="query"/>
 				{% else %}
 				<input class="form-control" type="text" size="50"
 					name="query" value="" id="query"/>
@@ -38,7 +38,9 @@
 					{% endfor %}
 				</div>
 			{% else %}
-				<div>No results</div>
+				{% if user_query %}
+					<div>No results</div>
+				{% endif %}
 			{% endif %}
 		</div>
 	</div>
