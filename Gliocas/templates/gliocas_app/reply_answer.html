@@ -7,7 +7,18 @@
 {% block body_block %}
     <h3> Replying to: {{ question.poster }} - - - {{ question.title }} </h3>
     <h4> {{question.text}}</h4>
-
+    {% if answers %}
+        <ul>
+            {% for answer in answers %}
+                <li>{{answer.poster}} - - - {{ answer.text }}</li>
+                {% for reply in replies %}
+                	<li>{{reply.poster}} - - - {{ reply.text }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+        {% else %}
+            <strong>There are no questions.</strong>
+    {% endif %}
 	<div>
 		 <form id="question_form" method="post" action=  ".">
 		 	{% csrf_token %}

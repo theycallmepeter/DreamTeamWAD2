@@ -63,6 +63,9 @@ def show_question(request, subject_slug, course_slug, question_slug):
     try:
         question = Question.objects.get(slug=question_slug)
         answers = Answer.objects.filter(question=question)
+        replies = {}
+        for answer in answers:
+            replies[answer]=Reply.objects.filter(answer=answer)
         #get replies somehow...
         parent_course = Course.objects.get(slug=course_slug)
         parent_subject = Subject.objects.get(slug=subject_slug)
@@ -258,13 +261,14 @@ def answer_question(request, subject_slug, course_slug, question_slug):
 
 
 @login_required
-def reply_answer(request, subject_slug, course_slug, question_slug):
+def reply_answer(request, subject_slug, course_slug, question_slug, answer_slug):
     form = ReplyForm()
     try:
         course = Course.objects.get(slug=course_slug)
         user = request.user
-        answer = Answer.objects.get(slug=question_slug)
-    except (Course.DoesNotExist, User.DoesNotExist, Reply.DoesNotExist):
+        question = Question.objects.get(slug=question_slug)
+        answer = Answer.objects.get(slug=answer_slug)
+    except (Course.DoesNotExist, User.DoesNotExist, Answer.DoesNotExist):
         course = None
         user = None
         reply = None
@@ -272,10 +276,10 @@ def reply_answer(request, subject_slug, course_slug, question_slug):
         form = ReplyForm(request.POST)
         if form.is_valid():
             if course and user and reply:
-                answer = form.save(commit=False)
-                answer.poster = user
-                answer.reply = reply
-                answer.save()
+                reply = form.save(commit=False)
+                reply.poster = user
+                reply.answer = answer
+                reply.save()
                 return show_question(request, subject_slug, course_slug, question_slug)
         else:
             print(form.errors)
@@ -285,7 +289,9 @@ def reply_answer(request, subject_slug, course_slug, question_slug):
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     context_dict['course'] = Course.objects.get(slug=course_slug)
     context_dict['question'] = Question.objects.get(slug=question_slug)
+    context_dict['answers'] = Answer.objects.get(question=context_dict['question'])
     context_dict['answer'] = answer
+    context_dict['replies'] = Reply.objects.filter(answer=answer)
     return render(request,'gliocas_app/reply_answer.html', context = context_dict)
 
 
