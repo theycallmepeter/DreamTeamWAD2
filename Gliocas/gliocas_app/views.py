@@ -9,7 +9,7 @@ from gliocas_app.forms import QuestionForm
 from gliocas_app.forms import UserForm
 from django.contrib.auth.models import User
 from gliocas_app.search import search_query
-from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply
+from gliocas_app.models import Subject, Course, Question, Answer, UpvoteQuestion, UpvoteAnswer, UpvoteReply
 
 
 def index(request):
@@ -198,6 +198,7 @@ def user(request, username):
         context_dict['exists'] = True
         context_dict['searched_user'] = user
         context_dict['numquestions'] = len(Question.objects.filter(poster = user))
+        context_dict['numanswers'] = len(Answer.objects.filter(poster = user))
     except User.DoesNotExist:
         context_dict['exists'] = False
 
@@ -205,13 +206,24 @@ def user(request, username):
 
 
 def user_questions(request, username):
-    context_dict = {'username' : username}
+    context_dict = {'username' : username, 'objectname' : 'questions'}
     try:
         user = User.objects.get(username = username)
         context_dict['exists'] = True
         context_dict['searched_user'] = user
         context_dict['questions'] = Question.objects.filter(poster = user)
-        context_dict['numquestions'] = len(context_dict['questions'])
+    except User.DoesNotExist:
+        context_dict['exists'] = False
+    
+    return render(request, 'gliocas_app/user_questions.html', context_dict)
+
+def user_answers(request, username):
+    context_dict = {'username' : username, 'objectname' : 'answers'}
+    try:
+        user = User.objects.get(username = username)
+        context_dict['exists'] = True
+        context_dict['searched_user'] = user
+        context_dict['questions'] = [ answer.question for answer in  Answer.objects.filter(poster = user) ]
     except User.DoesNotExist:
         context_dict['exists'] = False
     

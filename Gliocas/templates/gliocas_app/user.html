@@ -10,7 +10,8 @@
     {% if exists %}
         <h3> {{username}}'s page </h3>
         Contact {{username}} at {{ searched_user.email }}. </br>
-        {{username}} has asked {{numquestions}} <a href="{% url 'user_questions' username %}">question(s)</a>.
+        {{username}} has asked {{numquestions}} <a href="{% url 'user_questions' username %}">question(s)</a>.</br>
+        {{username}} has answered {{numanswers}} <a href="{% url 'user_answers' username %}">questions(s)</a>.</br>
     {% else %}
         <h3> User '{{ username }}' does not exist. </h3>
     {% endif %}
