@@ -23,6 +23,7 @@
                 <li><a href="{% url 'contact' %}">Contact</a></li>
 				<li><a href="{% url 'search' %}">Search</a></li>
                 {% if user.is_authenticated %}
+                <li><a href="{% url 'user' user.username %}">My account</a></li>
                 <li><a href="{% url 'logout' %}">Logout</a></li>
                 {%else%}
                 <li><a href="{% url 'login' %}">Login</a></li>
