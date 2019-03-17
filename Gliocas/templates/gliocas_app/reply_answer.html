@@ -7,14 +7,14 @@
 {% block body_block %}
     <h3> Replying to: {{ question.poster }} - - - {{ question.title }} </h3>
     <h4> {{question.text}}</h4>
-    {% if answers %}
+    {% if answer %}
         <ul>
-            {% for answer in answers %}
-                <li>{{answer.poster}} - - - {{ answer.text }}</li>
+            <li>{{answer.poster}} - - - {{ answer.text }}</li>
                 {% for reply in replies %}
-                	<li>{{reply.poster}} - - - {{ reply.text }}</li>
+                	{% if reply.answer.pk == answer.pk %}
+                		<li style="padding-left: 50px;">{{reply.poster}} - - - {{ reply.text }}</li>
+               		{% endif %}
                 {% endfor %}
-            {% endfor %}
         </ul>
         {% else %}
             <strong>There are no questions.</strong>

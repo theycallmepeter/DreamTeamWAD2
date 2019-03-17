@@ -5,11 +5,11 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import RedirectView
-from gliocas_app.forms import QuestionForm, CourseForm, SubjectForm, AnswerForm
+from gliocas_app.forms import QuestionForm, CourseForm, SubjectForm, AnswerForm, ReplyForm
 from gliocas_app.forms import UserForm
 from django.contrib.auth.models import User
 from gliocas_app.search import search_query
-from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply, Subject, Answer
+from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply, Subject, Answer, Reply
 
 
 def index(request):
@@ -63,14 +63,14 @@ def show_question(request, subject_slug, course_slug, question_slug):
     try:
         question = Question.objects.get(slug=question_slug)
         answers = Answer.objects.filter(question=question)
-        replies = {}
+        replies = []
         for answer in answers:
-            replies[answer]=Reply.objects.filter(answer=answer)
-        #get replies somehow...
+            replies += Reply.objects.filter(answer=answer)
         parent_course = Course.objects.get(slug=course_slug)
         parent_subject = Subject.objects.get(slug=subject_slug)
         context_dict['question'] = question
         context_dict['answers'] = answers
+        context_dict['replies'] = replies
         context_dict['subject'] = parent_subject
         context_dict['course'] = parent_course
     except Question.DoesNotExist:
@@ -261,21 +261,21 @@ def answer_question(request, subject_slug, course_slug, question_slug):
 
 
 @login_required
-def reply_answer(request, subject_slug, course_slug, question_slug, answer_slug):
+def reply_answer(request, subject_slug, course_slug, question_slug, answer_key):
     form = ReplyForm()
     try:
         course = Course.objects.get(slug=course_slug)
         user = request.user
         question = Question.objects.get(slug=question_slug)
-        answer = Answer.objects.get(slug=answer_slug)
-    except (Course.DoesNotExist, User.DoesNotExist, Answer.DoesNotExist):
+        answer = Answer.objects.get(pk=answer_key)
+    except (Course.DoesNotExist, User.DoesNotExist, Question.DoesNotExist, Answer.DoesNotExist):
         course = None
         user = None
-        reply = None
+        answer = None
     if request.method == 'POST':
         form = ReplyForm(request.POST)
         if form.is_valid():
-            if course and user and reply:
+            if course and user and answer:
                 reply = form.save(commit=False)
                 reply.poster = user
                 reply.answer = answer
@@ -289,8 +289,7 @@ def reply_answer(request, subject_slug, course_slug, question_slug, answer_slug)
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     context_dict['course'] = Course.objects.get(slug=course_slug)
     context_dict['question'] = Question.objects.get(slug=question_slug)
-    context_dict['answers'] = Answer.objects.get(question=context_dict['question'])
-    context_dict['answer'] = answer
+    context_dict['answer'] = Answer.objects.get(pk=answer_key)
     context_dict['replies'] = Reply.objects.filter(answer=answer)
     return render(request,'gliocas_app/reply_answer.html', context = context_dict)
 

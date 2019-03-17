@@ -12,8 +12,11 @@
             {% for answer in answers %}
                 <li>{{answer.poster}} - - - {{ answer.text }}</li>
                 {% for reply in replies %}
-                	<li>{{reply.poster}} - - - {{ reply.text }}</li>
+                	{% if reply.answer.pk == answer.pk %}
+                		<p style="padding-left: 50px;">{{reply.poster}} - - - {{ reply.text }}</p>
+               		{% endif %}
                 {% endfor %}
+                <a href="{% url 'reply_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk %}">Reply</a>
             {% endfor %}
         </ul>
         {% else %}
