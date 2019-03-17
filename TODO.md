@@ -46,20 +46,12 @@ create password restrictions is settings file (done)
 make a working login/register page(done)
 
 ### User-specific pages [Samuel | user_pages ]
-user/<username> (not done)
+user/<username> (done)
 
-user/username/questions (not done)
+user/username/questions (done)
 
-user/username/answers (not done)
+user/username/answers (done)
 
-user/username/replies (not done)
-
-### User's private pages [unassigned]
-user/settings (not done)
-
-user/following (not done)
-
-?
 ## Visuals
 
 ### CSS/generic looks [Cho | user-interface ]
