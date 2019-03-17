@@ -11,9 +11,13 @@
         <ul>
             {% for answer in answers %}
                 <li>{{answer.poster}} - - - {{ answer.text }}</li>
+			    <a href="{% url 'like_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk like='1' %}"> Like</a>
+			    <a href="{% url 'like_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk like='0' %}"> Dislike</a></br>
                 {% for reply in replies %}
                 	{% if reply.answer.pk == answer.pk %}
-                		<p style="padding-left: 50px;">{{reply.poster}} - - - {{ reply.text }}</p>
+                		<p style="padding-left: 50px;">{{reply.poster}} - - - {{ reply.text }}</br>
+                		<a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='1' %}"> Like</a>
+			   			<a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='0' %}"> Dislike</a></br></p>
                		{% endif %}
                 {% endfor %}
                 <a href="{% url 'reply_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk %}">Reply</a>

@@ -222,10 +222,62 @@ def user_login(request):
 def like_question(request, subject_slug, course_slug, question_slug, like):
     question = get_object_or_404(Question, slug = question_slug)
     user = request.user
-    if UpvoteQuestion.objects.filter(question=question, user=user).exists():
-        UpvoteQuestion.objects.get(question=question, user=user).delete()
+    try: 
+        upvote = UpvoteQuestion.objects.get(question=question, user=user)
+    except UpvoteQuestion.DoesNotExist:
+        upvote = None
+    if upvote != None:
+        if upvote.positive and (like == '1'):
+            UpvoteQuestion.objects.get(question=question, user=user).delete()
+        elif not upvote.positive and (like == '0'):
+            UpvoteQuestion.objects.get(question=question, user=user).delete()
+        else:
+            upvote.positive = not upvote.positive
+            upvote.save()
     else:
         upvote = UpvoteQuestion.objects.create(question=question, user=user, positive=(like == '1'))
+        upvote.save()
+    return show_question(request, subject_slug, course_slug, question_slug)
+
+@login_required
+def like_answer(request, subject_slug, course_slug, question_slug, answer_key, like):
+    answer = Answer.objects.get(pk=answer_key)
+    user = request.user
+    try: 
+        upvote = UpvoteAnswer.objects.get(answer=answer, user=user)
+    except UpvoteAnswer.DoesNotExist:
+        upvote = None
+    if upvote != None:
+        if upvote.positive and (like == '1'):
+            UpvoteAnswer.objects.get(answer=answer, user=user).delete()
+        elif not upvote.positive and (like == '0'):
+            UpvoteAnswer.objects.get(answer=answer, user=user).delete()
+        else:
+            upvote.positive = not upvote.positive
+            upvote.save()
+    else:
+        upvote = UpvoteAnswer.objects.create(answer=answer, user=user, positive=(like == '1'))
+        upvote.save()
+    return show_question(request, subject_slug, course_slug, question_slug)
+
+@login_required
+def like_reply(request, subject_slug, course_slug, question_slug, reply_key, like):
+    reply = Reply.objects.get(pk = reply_key)
+    user = request.user
+    try: 
+        upvote = UpvoteReply.objects.get(reply=reply, user=user)
+    except UpvoteReply.DoesNotExist:
+        upvote = None
+    if upvote != None:
+        if upvote.positive and (like == '1'):
+            UpvoteReply.objects.get(reply=reply, user=user).delete()
+        elif not upvote.positive and (like == '0'):
+            UpvoteReply.objects.get(reply=reply, user=user).delete()
+        else:
+            upvote.positive = not upvote.positive
+            upvote.save()
+    else:
+        upvote = UpvoteReply.objects.create(reply=reply, user=user, positive=(like == '1'))
         upvote.save()
     return show_question(request, subject_slug, course_slug, question_slug)
 
