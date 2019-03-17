@@ -46,20 +46,12 @@ create password restrictions is settings file (done)
 make a working login/register page(done)
 
 ### User-specific pages [Samuel | user_pages ]
-user/<username> (not done)
+user/<username> (done)
 
-user/username/questions (not done)
+user/username/questions (done)
 
-user/username/answers (not done)
+user/username/answers (done)
 
-user/username/replies (not done)
-
-### User's private pages [unassigned]
-user/settings (not done)
-
-user/following (not done)
-
-?
 ## Visuals
 
 ### CSS/generic looks [Cho | user-interface ]
@@ -100,8 +92,13 @@ Users can rate comments/replies (not done)
 
 
 ### Search functionality [Pepe | pepe ]
-Search function (not done)
+Search function (done)
 
-Search bar and search template (not done)
+Search bar and search template (done)
 
-Ordering of results (not done)
+Ordering of results (done)
+
+### Following courses [Pepe | pepe ]
+Users can follow/unfollow courses (not done)
+
+Users can see on their user page questions from followed courses (not done)
