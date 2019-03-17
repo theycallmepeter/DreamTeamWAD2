@@ -40,10 +40,7 @@ def search_query(query):
         question["queryOrder"] = 10*question["titleWords"] + question["textWords"]
 
     results = []
-    last_value = 10
-    if len(questionsData) < 10:
-        last_value = len(questionsData)
-    for i in range(0, last_value):
+    for i in range(0, len(questionsData)):
         position = 0
         value = 0
         for j in range(0, len(questionsData)):
