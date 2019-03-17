@@ -100,8 +100,15 @@ Users can rate comments/replies (not done)
 
 
 ### Search functionality [Pepe | pepe ]
-Search function (not done)
+Search function (done)
 
-Search bar and search template (not done)
+Search bar and search template (done)
+
+Ordering of results (done)
+
+### Following courses [Pepe | pepe ]
+Users can follow/unfollow courses (not done)
+
+Users can see on their user page questions fom followed courses (not done)
 
 Ordering of results (not done)
