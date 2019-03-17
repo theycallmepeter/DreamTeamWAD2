@@ -12,6 +12,7 @@ from gliocas_app.search import search_query
 from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply, Subject, Answer, Reply
 
 
+
 def index(request):
     context_dict = {}
     subject_list = Subject.objects.all()
@@ -86,9 +87,7 @@ def search(request):
     if request.method == 'POST':
         query = request.POST['query'].strip()
         if query:
-            print(query)
             result_list = search_query(query)
-            print(query)
         return render(request,'gliocas_app/search.html', {'result_list': result_list,
                                                           "user_query" : query})
     return render(request,'gliocas_app/search.html', {'result_list': result_list})
@@ -350,3 +349,41 @@ def reply_answer(request, subject_slug, course_slug, question_slug, answer_key):
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('index'))
+
+def user(request, username):
+    context_dict = {'username' : username}
+    try:
+        user = User.objects.get(username = username)
+        context_dict['exists'] = True
+        context_dict['searched_user'] = user
+        context_dict['numquestions'] = len(Question.objects.filter(poster = user))
+        context_dict['numanswers'] = len(Answer.objects.filter(poster = user))
+    except User.DoesNotExist:
+        context_dict['exists'] = False
+
+    return render(request, 'gliocas_app/user.html', context_dict)
+
+
+def user_questions(request, username):
+    context_dict = {'username' : username, 'objectname' : 'questions'}
+    try:
+        user = User.objects.get(username = username)
+        context_dict['exists'] = True
+        context_dict['searched_user'] = user
+        context_dict['questions'] = Question.objects.filter(poster = user)
+    except User.DoesNotExist:
+        context_dict['exists'] = False
+    
+    return render(request, 'gliocas_app/user_questions.html', context_dict)
+
+def user_answers(request, username):
+    context_dict = {'username' : username, 'objectname' : 'answers'}
+    try:
+        user = User.objects.get(username = username)
+        context_dict['exists'] = True
+        context_dict['searched_user'] = user
+        context_dict['questions'] = [ answer.question for answer in  Answer.objects.filter(poster = user) ]
+    except User.DoesNotExist:
+        context_dict['exists'] = False
+    
+    return render(request, 'gliocas_app/user_questions.html', context_dict)
