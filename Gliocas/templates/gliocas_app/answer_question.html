@@ -1,0 +1,29 @@
+{% extends 'gliocas_app/base.html' %}
+
+{% block title_block %}
+    Add question
+{% endblock %}
+
+{% block body_block %}
+    <h3> Replying to: {{ question.poster }} - - - {{ question.title }} </h3>
+    <h4> {{question.text}}</h4>
+
+	<div>
+		 <form id="question_form" method="post" action=  ".">
+		 	{% csrf_token %}
+		 	{% for hidden in form.hidden_fields %}
+		 		{{ hidden }}
+		 	{% endfor %}
+		 	{% for field in form.visible_fields %}
+		 		{{ field.errors }}
+		 		{{ field.help_text }}
+		 		{{ field }}
+		 	{% endfor %}
+
+			{{ form.errors }}
+			{{ form.non_field_errors }}
+
+		<input type="submit" name="submit" value="Add Reply"/>	
+	</form>
+	</div>	
+{% endblock %}
