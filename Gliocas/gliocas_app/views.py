@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.template.defaultfilters import slugify
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import RedirectView
 from gliocas_app.forms import QuestionForm, CourseForm, SubjectForm, AnswerForm, ReplyForm
 from gliocas_app.forms import UserForm
