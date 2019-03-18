@@ -323,6 +323,7 @@ def reply_answer(request, subject_slug, course_slug, question_slug, answer_key):
         course = None
         user = None
         answer = None
+        question = None
     if request.method == 'POST':
         form = ReplyForm(request.POST)
         if form.is_valid():
