@@ -121,7 +121,7 @@ def add_question(request, subject_slug, course_slug):
     context_dict['course'] = Course.objects.get(slug=course_slug)
     return render(request,'gliocas_app/add_question.html', context = context_dict)
 
-@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def add_course(request, subject_slug):
     form = CourseForm()
     try:
@@ -143,7 +143,7 @@ def add_course(request, subject_slug):
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     return render(request,'gliocas_app/add_course.html', context = context_dict)
 
-@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def add_subject(request):
     form = SubjectForm()
     if request.method == 'POST':
