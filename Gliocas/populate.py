@@ -438,6 +438,13 @@ def populate():
     defaultUser.save()
 
 
+    admin = User.objects.get_or_create(username='admin',is_staff=True,is_superuser=True)[0]
+    admin.email = 'admin@admin.com'
+    admin.password = 'admin'
+    admin.set_password(admin.password)
+    admin.save()
+
+
 
 def add_user(name):
     user = User.objects.get_or_create(username=name)[0]

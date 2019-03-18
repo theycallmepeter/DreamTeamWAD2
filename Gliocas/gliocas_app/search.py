@@ -7,6 +7,7 @@ def search_query(query):
         query_words[i] = query_words[i].lower()
         for character in invalidCharacters:
             query_words[i] = query_words[i].replace(character, '')
+
     questions = Question.objects.all()
     questionsData = []
     for question in questions:
