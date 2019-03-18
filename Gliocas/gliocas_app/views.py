@@ -9,7 +9,7 @@ from gliocas_app.forms import QuestionForm
 from gliocas_app.forms import UserForm
 from django.contrib.auth.models import User
 from gliocas_app.search import search_query
-from gliocas_app.models import Subject, Course, Question, Answer, UpvoteQuestion, UpvoteAnswer, UpvoteReply
+from gliocas_app.models import Subject, Course, Question, Answer, UpvoteQuestion, UpvoteAnswer, UpvoteReply, Followed
 
 
 def index(request):
@@ -52,10 +52,21 @@ def show_course(request, subject_slug, course_slug):
         context_dict['questions'] = questions
         context_dict['course'] = course
         context_dict['subject'] = parent_subject
+        if request.user.is_authenticated:
+            course = get_object_or_404(Course, slug = course_slug)
+            user = request.user
+            if Followed.objects.filter(course=course, poster=user).exists():
+                context_dict['followed'] = True
+            else:
+                context_dict['followed'] = False
+        else:
+            context_dict['followed'] = False
+            
     except Subject.DoesNotExist:
         context_dict['subject'] = None
         context_dict['questions'] = None
         context_dict['course'] = None
+        context_dict['followed'] = False
     return render(request, 'gliocas_app/course.html', context = context_dict)
 
 def show_question(request, subject_slug, course_slug, question_slug):
@@ -183,6 +194,17 @@ def like_question(request, subject_slug, course_slug, question_slug, like):
         upvote = UpvoteQuestion.objects.create(question=question, user=user, positive=(like == '1'))
         upvote.save()
     return show_question(request, subject_slug, course_slug, question_slug)
+
+@login_required
+def follow(request, subject_slug, course_slug):
+    course = get_object_or_404(Course, slug = course_slug)
+    user = request.user
+    if Followed.objects.filter(course=course, poster=user).exists():
+        Followed.objects.get(course=course, poster=user).delete()
+    else:
+        followed = Followed.objects.create(course=course, poster=user)
+        followed.save()
+    return show_course(request, subject_slug, course_slug)
 
 @login_required
 def user_logout(request):
