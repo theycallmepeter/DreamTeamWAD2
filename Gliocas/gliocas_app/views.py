@@ -370,7 +370,7 @@ def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('index'))
 
-def user(request, username):
+def user(request, username):       
     context_dict = {'username' : username}
     try:
         user = User.objects.get(username = username)
@@ -378,6 +378,26 @@ def user(request, username):
         context_dict['searched_user'] = user
         context_dict['numquestions'] = len(Question.objects.filter(poster = user))
         context_dict['numanswers'] = len(Answer.objects.filter(poster = user))
+        if request.user.is_authenticated:
+            followingUser = User.objects.get(username = username)
+            if (request.user == user):
+                context_dict['sameUser'] = True
+                questions = []
+                followedCourses = []
+                for followed in Followed.objects.filter(poster = user):
+                    followedCourses.append(followed.course)
+                    for question in Question.objects.filter(course = followed.course):
+                        questions.append(question)
+                questions.sort(key=lambda q: q.date, reverse=True)
+                if len(questions) > 5:
+                    questions = questions[0:5]
+                context_dict['followed'] = followedCourses
+                context_dict['questions'] = questions
+            else:
+                context_dict['sameUser'] = False
+        else:
+                context_dict['sameUser'] = False
+        
     except User.DoesNotExist:
         context_dict['exists'] = False
 
