@@ -15,8 +15,6 @@
                 <li>{{answer.poster}} - - - {{ answer.text }}</li>
 				<button id="likea" data-answerkey="{{answer.pk}}" data-like="1" class="btn btn-primary btn-sm" type="button">Like</button>
 				<button id="likea" data-answerkey="{{answer.pk}}" data-like="0" class="btn btn-primary btn-sm" type="button">Disike</button>
-			    <!-- <a href="{% url 'like_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk like='1' %}"> Like</a>
-			    <a href="{% url 'like_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk like='0' %}"> Dislike</a> -->
 			    {% if user == answer.poster %}
 					<a href="{% url 'delete_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk  %}"> Delete</a>
 				{% endif %}
@@ -24,8 +22,10 @@
                 {% for reply in replies %}
                 	{% if reply.answer.pk == answer.pk %}
                 		<p style="padding-left: 50px;">{{reply.poster}} - - - {{ reply.text }}</br>
-                		<a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='1' %}"> Like</a>
-			   			<a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='0' %}"> Dislike</a>
+						<button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="btn btn-primary btn-sm" type="button">Like</button>
+						<button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="btn btn-primary btn-sm" type="button">Disike</button>
+                		<!-- <a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='1' %}"> Like</a>
+			   			<a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='0' %}"> Dislike</a> -->
 			   			{% if user == reply.poster %}
 			   			<a href="{% url 'delete_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk  %}"> Delete</a>
 			   			{% endif %}
@@ -41,7 +41,5 @@
     <a href="{% url 'answer_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}"> Answer</a>
 	<button id="likeq" data-questionslug="{{question.slug}}" data-like="1" class="btn btn-primary btn-sm" type="button">Like</button>
 	<button id="likeq" data-questionslug="{{question.slug}}" data-like="0" class="btn btn-primary btn-sm" type="button">Disike</button>
-    <!-- <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='1' %}"> Like</a> -->
-    <!-- <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='0' %}"> Dislike</a> -->
 
 {% endblock %}

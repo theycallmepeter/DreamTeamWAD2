@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^subject/(?P<subject_slug>[\w\-]+)/(?P<course_slug>[\w\-]+)/(?P<question_slug>[\w\-]+)/(?P<answer_key>[\d]+)/reply/$', views.reply_answer, name='reply_answer'),
     url(r'^likequestion/$', views.like_question_new, name='like_question_new'),
     url(r'^likeanswer/$', views.like_answer_new, name='like_answer_new'),
+    url(r'^likereply/$', views.like_reply_new, name='like_reply_new'),
     url(r'^subject/(?P<subject_slug>[\w\-]+)/(?P<course_slug>[\w\-]+)/(?P<question_slug>[\w\-]+)/like/(?P<like>[\d])/$', views.like_question, name='like_question'),
     url(r'^subject/(?P<subject_slug>[\w\-]+)/(?P<course_slug>[\w\-]+)/(?P<question_slug>[\w\-]+)/delete/$', views.delete_question, name='delete_question'),
     url(r'^subject/(?P<subject_slug>[\w\-]+)/(?P<course_slug>[\w\-]+)/(?P<question_slug>[\w\-]+)/(?P<answer_key>[\d]+)/deleteanswer/$', views.delete_answer, name='delete_answer'),

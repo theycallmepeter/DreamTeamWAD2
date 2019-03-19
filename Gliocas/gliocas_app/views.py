@@ -343,6 +343,37 @@ def like_reply(request, subject_slug, course_slug, question_slug, reply_key, lik
     return show_question(request, subject_slug, course_slug, question_slug)
 
 @login_required
+def like_reply_new(request):
+    like = request.GET['like']
+    reply_key = request.GET['reply_key']
+    reply = Reply.objects.get(pk = reply_key)
+    user = request.user
+    try: 
+        upvote = UpvoteReply.objects.get(reply=reply, user=user)
+    except UpvoteReply.DoesNotExist:
+        upvote = None
+    if upvote != None:
+        if upvote.positive and (like == '1'):
+            UpvoteReply.objects.get(reply=reply, user=user).delete()
+        elif not upvote.positive and (like == '0'):
+            UpvoteReply.objects.get(reply=reply, user=user).delete()
+        else:
+            upvote.positive = not upvote.positive
+            upvote.save()
+    else:
+        upvote = UpvoteReply.objects.create(reply=reply, user=user, positive=(like == '1'))
+        upvote.save()
+
+    likes = 0
+    for upvote in UpvoteReply.objects.filter(reply=reply):
+        if upvote.positive:
+            likes += 1
+        else:
+            likes -= 1
+
+    return HttpResponse(likes)
+
+@login_required
 def delete_reply(request, subject_slug, course_slug, question_slug, reply_key):
     reply = Reply.objects.get(pk = reply_key)
     user = request.user

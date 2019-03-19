@@ -21,3 +21,14 @@ $(document).on('click','#likea', function(){
 		//put code to change style of likebutton here
 	});
 });
+
+$(document).on('click','#liker', function(){
+	var replykey;
+	var like;
+	replykey = $(this).attr("data-replykey");
+	like = $(this).attr("data-like")
+	$.get('/gliocas_app/likereply/', {reply_key: replykey, like: like}, function(data){
+		$('#like_count').html(data);
+		//put code to change style of likebutton here
+	});
+});
