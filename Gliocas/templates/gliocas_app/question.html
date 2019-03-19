@@ -35,7 +35,9 @@
             <strong>There are no questions.</strong>
         {% endif %}
     <a href="{% url 'answer_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}"> Answer</a>
-    <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='1' %}"> Like</a>
+	<button id="likeq" data-questionslug="{{question.slug}}" data-like="True" class="btn btn-primary btn-sm" type="button">Like</button>
+
+    <!-- <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='1' %}"> Like</a> -->
     <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='0' %}"> Dislike</a>
 
 {% endblock %}

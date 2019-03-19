@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^subject/(?P<subject_slug>[\w\-]+)/(?P<course_slug>[\w\-]+)/(?P<question_slug>[\w\-]+)/$', views.show_question, name='show_question'),
     url(r'^subject/(?P<subject_slug>[\w\-]+)/(?P<course_slug>[\w\-]+)/(?P<question_slug>[\w\-]+)/answer/$', views.answer_question, name='answer_question'),
     url(r'^subject/(?P<subject_slug>[\w\-]+)/(?P<course_slug>[\w\-]+)/(?P<question_slug>[\w\-]+)/(?P<answer_key>[\d]+)/reply/$', views.reply_answer, name='reply_answer'),
+    url(r'^likequestion/(?P<like>[\d])/$', views.like_question_new, name='like_question_new'),
     url(r'^subject/(?P<subject_slug>[\w\-]+)/(?P<course_slug>[\w\-]+)/(?P<question_slug>[\w\-]+)/like/(?P<like>[\d])/$', views.like_question, name='like_question'),
     url(r'^subject/(?P<subject_slug>[\w\-]+)/(?P<course_slug>[\w\-]+)/(?P<question_slug>[\w\-]+)/delete/$', views.delete_question, name='delete_question'),
     url(r'^subject/(?P<subject_slug>[\w\-]+)/(?P<course_slug>[\w\-]+)/(?P<question_slug>[\w\-]+)/(?P<answer_key>[\d]+)/deleteanswer/$', views.delete_answer, name='delete_answer'),
