@@ -13,19 +13,21 @@ class QuestionForm(forms.ModelForm):
     text = forms.CharField(widget=forms.Textarea, max_length=textLength, help_text="Please enter the text of your question.", required = True)
     date = forms.DateTimeField(widget=forms.HiddenInput(), initial=timezone.now)
     views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
+    picture = forms.ImageField(required = False)
 
     class Meta:
         model = Question
-        fields = ('title', 'text', 'date', 'views',)
+        fields = ('title', 'text', 'date', 'views', 'picture')
 
 class AnswerForm(forms.ModelForm):
     textLength = 32768
     text = forms.CharField(widget=forms.Textarea, max_length=textLength, help_text="Please enter the text of your reply.", required = True)
     date = forms.DateTimeField(widget=forms.HiddenInput(), initial=timezone.now)
+    picture = forms.ImageField(required = False)
 
     class Meta:
         model = Answer
-        fields = ('text', 'date',)
+        fields = ('text', 'date', 'picture')
 
 class ReplyForm(forms.ModelForm):
     textLength = 32768

@@ -113,13 +113,15 @@ def add_question(request, subject_slug, course_slug):
         course = None
         user = None
     if request.method == 'POST':
-        form = QuestionForm(request.POST)
+        form = QuestionForm(request.POST, request.FILES)
         if form.is_valid():
             if course and user:
                 question = form.save(commit=False)
                 question.course = course
                 question.poster = user
                 question.views = 0
+                if 'picture' in request.FILES:
+                    question.picture = request.FILES['picture']
                 question.save()
                 return show_question(request, subject_slug, course_slug, question.slug)
         else:
@@ -259,6 +261,7 @@ def follow(request, subject_slug, course_slug):
         followed.save()
     return show_course(request, subject_slug, course_slug)
 
+@login_required
 def like_answer(request, subject_slug, course_slug, question_slug, answer_key, like):
     answer = Answer.objects.get(pk=answer_key)
     user = request.user
@@ -312,12 +315,14 @@ def answer_question(request, subject_slug, course_slug, question_slug):
         user = None
         question = None
     if request.method == 'POST':
-        form = AnswerForm(request.POST)
+        form = AnswerForm(request.POST, request.FILES)
         if form.is_valid():
             if course and user and question:
                 answer = form.save(commit=False)
                 answer.poster = user
                 answer.question = question
+                if 'picture' in request.FILES:
+                    answer.picture = request.FILES['picture']
                 answer.save()
                 return show_question(request, subject_slug, course_slug, question_slug)
         else:
