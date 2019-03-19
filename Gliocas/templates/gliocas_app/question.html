@@ -7,6 +7,8 @@
 {% block body_block %}
     <h3> Question about {{ question.title }} from {{ course.name}} in subject {{ subject.name }} </h3>
     <h5> {{question.text}} </h5>
+    Likes: <div id="like_count">{{ likes }} </div>
+
     {% if answers %}
         <ul>
             {% for answer in answers %}
@@ -35,9 +37,9 @@
             <strong>There are no questions.</strong>
         {% endif %}
     <a href="{% url 'answer_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}"> Answer</a>
-	<button id="likeq" data-questionslug="{{question.slug}}" data-like="True" class="btn btn-primary btn-sm" type="button">Like</button>
-
+	<button id="likeq" data-questionslug="{{question.slug}}" data-like="1" class="btn btn-primary btn-sm" type="button">Like</button>
+	<button id="likeq" data-questionslug="{{question.slug}}" data-like="0" class="btn btn-primary btn-sm" type="button">Disike</button>
     <!-- <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='1' %}"> Like</a> -->
-    <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='0' %}"> Dislike</a>
+    <!-- <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='0' %}"> Dislike</a> -->
 
 {% endblock %}

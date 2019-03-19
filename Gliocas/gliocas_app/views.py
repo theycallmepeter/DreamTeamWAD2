@@ -239,7 +239,9 @@ def like_question(request, subject_slug, course_slug, question_slug, like):
     return show_question(request, subject_slug, course_slug, question_slug)
 
 @login_required
-def like_question_new(request, like):
+def like_question_new(request):
+    like = request.GET['like']
+    question_slug = request.GET['question_slug']
     question = get_object_or_404(Question, slug = question_slug)
     user = request.user
     try: 
@@ -257,6 +259,14 @@ def like_question_new(request, like):
     else:
         upvote = UpvoteQuestion.objects.create(question=question, user=user, positive=(like == '1'))
         upvote.save()
+
+    likes = 0
+    for upvote in UpvoteQuestion.objects.filter(question=question):
+        if upvote.positive:
+            likes += 1
+        else:
+            likes -= 1
+
     return HttpResponse(likes)
 
 @login_required
