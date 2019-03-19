@@ -7,6 +7,8 @@
 {% block body_block %}
     <h3> Question about {{ question.title }} from {{ course.name}} in subject {{ subject.name }} </h3>
     <h5> {{question.text}} </h5>
+	<h5> Upvotes : {{upvotes}} </h5>
+	<h5> Views : {{question.views}} </h5>
 	{% if question.picture %}
 		<img src="{{ MEDIA_URL }}{{ question.picture }}" width="300"
 			height="300" alt="Picture"/>
