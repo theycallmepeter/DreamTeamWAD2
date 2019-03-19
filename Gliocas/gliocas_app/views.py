@@ -9,8 +9,7 @@ from gliocas_app.forms import QuestionForm, CourseForm, SubjectForm, AnswerForm,
 from gliocas_app.forms import UserForm
 from django.contrib.auth.models import User
 from gliocas_app.search import search_query
-from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply, Subject, Answer, Reply
-
+from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply, Subject, Answer, Reply, Followed
 
 
 def index(request):
@@ -53,10 +52,21 @@ def show_course(request, subject_slug, course_slug):
         context_dict['questions'] = questions
         context_dict['course'] = course
         context_dict['subject'] = parent_subject
+        if request.user.is_authenticated:
+            course = get_object_or_404(Course, slug = course_slug)
+            user = request.user
+            if Followed.objects.filter(course=course, poster=user).exists():
+                context_dict['followed'] = True
+            else:
+                context_dict['followed'] = False
+        else:
+            context_dict['followed'] = False
+            
     except Subject.DoesNotExist:
         context_dict['subject'] = None
         context_dict['questions'] = None
         context_dict['course'] = None
+        context_dict['followed'] = False
     return render(request, 'gliocas_app/course.html', context = context_dict)
 
 def show_question(request, subject_slug, course_slug, question_slug):
@@ -239,6 +249,16 @@ def like_question(request, subject_slug, course_slug, question_slug, like):
     return show_question(request, subject_slug, course_slug, question_slug)
 
 @login_required
+def follow(request, subject_slug, course_slug):
+    course = get_object_or_404(Course, slug = course_slug)
+    user = request.user
+    if Followed.objects.filter(course=course, poster=user).exists():
+        Followed.objects.get(course=course, poster=user).delete()
+    else:
+        followed = Followed.objects.create(course=course, poster=user)
+        followed.save()
+    return show_course(request, subject_slug, course_slug)
+
 def like_answer(request, subject_slug, course_slug, question_slug, answer_key, like):
     answer = Answer.objects.get(pk=answer_key)
     user = request.user
@@ -345,13 +365,12 @@ def reply_answer(request, subject_slug, course_slug, question_slug, answer_key):
     context_dict['replies'] = Reply.objects.filter(answer=answer)
     return render(request,'gliocas_app/reply_answer.html', context = context_dict)
 
-
 @login_required
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('index'))
 
-def user(request, username):
+def user(request, username):       
     context_dict = {'username' : username}
     try:
         user = User.objects.get(username = username)
@@ -359,6 +378,26 @@ def user(request, username):
         context_dict['searched_user'] = user
         context_dict['numquestions'] = len(Question.objects.filter(poster = user))
         context_dict['numanswers'] = len(Answer.objects.filter(poster = user))
+        if request.user.is_authenticated:
+            followingUser = User.objects.get(username = username)
+            if (request.user == user):
+                context_dict['sameUser'] = True
+                questions = []
+                followedCourses = []
+                for followed in Followed.objects.filter(poster = user):
+                    followedCourses.append(followed.course)
+                    for question in Question.objects.filter(course = followed.course):
+                        questions.append(question)
+                questions.sort(key=lambda q: q.date, reverse=True)
+                if len(questions) > 5:
+                    questions = questions[0:5]
+                context_dict['followed'] = followedCourses
+                context_dict['questions'] = questions
+            else:
+                context_dict['sameUser'] = False
+        else:
+                context_dict['sameUser'] = False
+        
     except User.DoesNotExist:
         context_dict['exists'] = False
 
