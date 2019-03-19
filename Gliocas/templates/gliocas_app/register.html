@@ -26,7 +26,7 @@
     </form>
     {% if registered %}
     <strong>Thank you for registering!</strong>
-    <a href="{% url 'index' %}">return home</a>
+    <a href="{% url 'home' %}">return home</a>
 
     {% elif user.is_authenticated %}
     <strong>Logout to register a different account</strong>
