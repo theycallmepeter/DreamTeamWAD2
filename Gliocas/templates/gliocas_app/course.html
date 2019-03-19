@@ -6,6 +6,11 @@
 
 {% block body_block %}
     <h1>{{ course }}: {{ subject }} </h1>
+	{% if followed %}
+		<a href="{% url 'follow' subject.slug course.slug %}"> Unfollow this course </a>
+	{% else %}
+		<a href="{% url 'follow' subject.slug course.slug %}"> Follow this course </a>
+	{% endif %}
 
     <div>
         {% if questions %}

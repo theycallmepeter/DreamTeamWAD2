@@ -8,6 +8,7 @@ def get_sentinel_user():
     user = User.objects.get_or_create(username='Deleted')[0]
     user.email = 'obiwan@kenobi.com'
     user.password = 'High ground'
+    user.set_password(user.password)
     return user
 
 '''
@@ -53,6 +54,7 @@ class Question(models.Model):
     text = models.TextField(max_length=textLength)
     date = models.DateTimeField(null=True)
     views = models.IntegerField(default=0)
+    picture = models.ImageField(upload_to='question_images', blank=True)
     slug = models.SlugField(max_length=8, default=get_random_string, unique=True)
     
     def __str__(self):
@@ -65,6 +67,7 @@ class Answer(models.Model):
                                on_delete=models.SET(get_sentinel_user))
     text = models.TextField(max_length=textLength)
     date = models.DateTimeField(null=True)
+    picture = models.ImageField(upload_to='question_images', blank=True)
     
     def __str__(self):
         return self.text

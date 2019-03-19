@@ -17,6 +17,8 @@
         {% else %}
             <strong>There are no courses.</strong>
         {% endif %}
+            <a href="{% url 'add_course' subject.slug %}"> Add course </a>
+
     </div>
 
 {% endblock %}

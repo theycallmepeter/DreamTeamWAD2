@@ -1,14 +1,14 @@
 {% extends 'gliocas_app/base.html' %}
 
 {% block title_block %}
-    Add question
+    Add course
 {% endblock %}
 
 {% block body_block %}
-    <h3> This is where you can add a question to {{ subject }}'s {{ course }} </h3>
+    <h3> This is where you can add a course to {{ subject }} </h3>
 
 	<div>
-		 <form id="question_form" method="post" action=  "." enctype="multipart/form-data">
+		 <form id="course_form" method="post" action=  ".">
 		 	{% csrf_token %}
 		 	{% for hidden in form.hidden_fields %}
 		 		{{ hidden }}
@@ -22,7 +22,7 @@
 			{{ form.errors }}
 			{{ form.non_field_errors }}
 
-		<input type="submit" name="submit" value="Ask Question"/>	
+		<input type="submit" name="submit" value="Add Course"/>	
 	</form>
 	</div>	
 {% endblock %}

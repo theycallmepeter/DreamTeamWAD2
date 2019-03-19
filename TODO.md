@@ -46,20 +46,12 @@ create password restrictions is settings file (done)
 make a working login/register page(done)
 
 ### User-specific pages [Samuel | user_pages ]
-user/<username> (not done)
+user/<username> (done)
 
-user/username/questions (not done)
+user/username/questions (done)
 
-user/username/answers (not done)
+user/username/answers (done)
 
-user/username/replies (not done)
-
-### User's private pages [unassigned]
-user/settings (not done)
-
-user/following (not done)
-
-?
 ## Visuals
 
 ### CSS/generic looks [Cho | user-interface ]
@@ -74,7 +66,7 @@ User can create question (DONE)
 
 User can edit/delete question (not done)
 
-Users can rate question (WIP)
+Users can rate question (done)
 
 User notified when question is answered/reply made (not done)
 
@@ -82,7 +74,7 @@ User can pick final answer (not done)
 
 
 ### Answering questions [Peter]
-User can supply answer to question (not done)
+User can supply answer to question (done)
 
 User can edit/delete answer (not done)
 
@@ -92,7 +84,7 @@ User notified when answer receives reply/comment (not done)
 
 
 ### Commenting/replying to answers [Peter]
-Users can make comments/replies to answers (not done)
+Users can make comments/replies to answers (done)
 
 User can edit/delete comment (not done)
 
@@ -100,8 +92,13 @@ Users can rate comments/replies (not done)
 
 
 ### Search functionality [Pepe | pepe ]
-Search function (not done)
+Search function (done)
 
-Search bar and search template (not done)
+Search bar and search template (done)
 
-Ordering of results (not done)
+Ordering of results (done)
+
+### Following courses [Pepe | pepe ]
+Users can follow/unfollow courses (done)
+
+Users can see on their user page questions from followed courses (done)

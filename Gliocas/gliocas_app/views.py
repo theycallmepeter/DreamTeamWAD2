@@ -3,13 +3,29 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.template.defaultfilters import slugify
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import RedirectView
-from gliocas_app.forms import QuestionForm
+from gliocas_app.forms import QuestionForm, CourseForm, SubjectForm, AnswerForm, ReplyForm
 from gliocas_app.forms import UserForm
 from django.contrib.auth.models import User
 from gliocas_app.search import search_query
-from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply
+from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply, Subject, Answer, Reply, Followed
+
+
+
+# Method for handling if a user has visited a question page in the last day
+def visitor_cookie_handler(request, response, questionKey):
+    # Gets the value of the cookie with key the question pk
+    # If no cookie create cookie with value 'False'
+    visited = request.COOKIES.get(questionKey, 'False')
+
+    # If cookie value is 'False' set cookie value to be 'True' and
+    # returns False, otherwise returns True
+    if visited == 'False':
+        response.set_cookie(questionKey, 'True')
+        return False
+    else:
+        return True
 
 def home(request):
     context_dict = {}
@@ -51,36 +67,65 @@ def show_course(request, subject_slug, course_slug):
         context_dict['questions'] = questions
         context_dict['course'] = course
         context_dict['subject'] = parent_subject
+        if request.user.is_authenticated:
+            course = get_object_or_404(Course, slug = course_slug)
+            user = request.user
+            if Followed.objects.filter(course=course, poster=user).exists():
+                context_dict['followed'] = True
+            else:
+                context_dict['followed'] = False
+        else:
+            context_dict['followed'] = False
+            
     except Subject.DoesNotExist:
         context_dict['subject'] = None
         context_dict['questions'] = None
         context_dict['course'] = None
+        context_dict['followed'] = False
     return render(request, 'gliocas_app/course.html', context = context_dict)
 
 def show_question(request, subject_slug, course_slug, question_slug):
     context_dict = {}
     try:
         question = Question.objects.get(slug=question_slug)
+        answers = Answer.objects.filter(question=question)
+        replies = []
+        for answer in answers:
+            replies += Reply.objects.filter(answer=answer)
+        context_dict['upvotes'] = 0
+        for upvote in UpvoteQuestion.objects.filter(question=question):
+            if upvote.positive:
+              context_dict['upvotes'] += 1
+            else:
+                context_dict['upvotes'] -= 1
         parent_course = Course.objects.get(slug=course_slug)
         parent_subject = Subject.objects.get(slug=subject_slug)
         context_dict['question'] = question
+        context_dict['answers'] = answers
+        context_dict['replies'] = replies
         context_dict['subject'] = parent_subject
         context_dict['course'] = parent_course
+        response = render(request,'gliocas_app/question.html', context = context_dict)
+        visited = visitor_cookie_handler(request, response, str(question.pk))
+        if not visited:
+            question.views = question.views + 1
+            question.save()
+    
     except Question.DoesNotExist:
+        context_dict['answers'] = None
         context_dict['question'] = None
         context_dict['subject'] = None
         context_dict['course'] = None
+        response = render(request,'gliocas_app/question.html', context = context_dict)
 
-    return render(request,'gliocas_app/question.html', context = context_dict)
+    return response
 
 def search(request):
     result_list=[]
     if request.method == 'POST':
         query = request.POST['query'].strip()
         if query:
-            print(query)
             result_list = search_query(query)
-            print(query)
         return render(request,'gliocas_app/search.html', {'result_list': result_list,
                                                           "user_query" : query})
     return render(request,'gliocas_app/search.html', {'result_list': result_list})
@@ -96,13 +141,15 @@ def add_question(request, subject_slug, course_slug):
         course = None
         user = None
     if request.method == 'POST':
-        form = QuestionForm(request.POST)
+        form = QuestionForm(request.POST, request.FILES)
         if form.is_valid():
             if course and user:
                 question = form.save(commit=False)
                 question.course = course
                 question.poster = user
                 question.views = 0
+                if 'picture' in request.FILES:
+                    question.picture = request.FILES['picture']
                 question.save()
                 return show_question(request, subject_slug, course_slug, question.slug)
         else:
@@ -113,6 +160,42 @@ def add_question(request, subject_slug, course_slug):
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     context_dict['course'] = Course.objects.get(slug=course_slug)
     return render(request,'gliocas_app/add_question.html', context = context_dict)
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_course(request, subject_slug):
+    form = CourseForm()
+    try:
+        subject = Subject.objects.get(slug=subject_slug)
+    except (Subject.DoesNotExist):
+        subject = None
+    if request.method == 'POST':
+        form = CourseForm(request.POST)
+        if form.is_valid():
+            if subject:
+                course = form.save(commit=False)
+                course.subject = subject
+                course.save()
+                return show_course(request, subject_slug, course.slug)
+        else:
+            print(form.errors)
+    context_dict = {}
+    context_dict['form'] = form
+    context_dict['subject'] = Subject.objects.get(slug=subject_slug)
+    return render(request,'gliocas_app/add_course.html', context = context_dict)
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_subject(request):
+    form = SubjectForm()
+    if request.method == 'POST':
+        form = SubjectForm(request.POST)
+        if form.is_valid():
+            subject = form.save()
+            return show_subject(request, subject.slug)
+        else:
+            print(form.errors)
+    context_dict = {}
+    context_dict['form'] = form
+    return render(request,'gliocas_app/add_subject.html', context = context_dict)
 
 def register(request):
     registered = False
@@ -178,14 +261,203 @@ def user_login(request):
 def like_question(request, subject_slug, course_slug, question_slug, like):
     question = get_object_or_404(Question, slug = question_slug)
     user = request.user
-    if UpvoteQuestion.objects.filter(question=question, user=user).exists():
-        UpvoteQuestion.objects.get(question=question, user=user).delete()
+    try: 
+        upvote = UpvoteQuestion.objects.get(question=question, user=user)
+    except UpvoteQuestion.DoesNotExist:
+        upvote = None
+    if upvote != None:
+        if upvote.positive and (like == '1'):
+            UpvoteQuestion.objects.get(question=question, user=user).delete()
+        elif not upvote.positive and (like == '0'):
+            UpvoteQuestion.objects.get(question=question, user=user).delete()
+        else:
+            upvote.positive = not upvote.positive
+            upvote.save()
     else:
         upvote = UpvoteQuestion.objects.create(question=question, user=user, positive=(like == '1'))
         upvote.save()
     return show_question(request, subject_slug, course_slug, question_slug)
 
 @login_required
+def follow(request, subject_slug, course_slug):
+    course = get_object_or_404(Course, slug = course_slug)
+    user = request.user
+    if Followed.objects.filter(course=course, poster=user).exists():
+        Followed.objects.get(course=course, poster=user).delete()
+    else:
+        followed = Followed.objects.create(course=course, poster=user)
+        followed.save()
+    return show_course(request, subject_slug, course_slug)
+
+@login_required
+def like_answer(request, subject_slug, course_slug, question_slug, answer_key, like):
+    answer = Answer.objects.get(pk=answer_key)
+    user = request.user
+    try: 
+        upvote = UpvoteAnswer.objects.get(answer=answer, user=user)
+    except UpvoteAnswer.DoesNotExist:
+        upvote = None
+    if upvote != None:
+        if upvote.positive and (like == '1'):
+            UpvoteAnswer.objects.get(answer=answer, user=user).delete()
+        elif not upvote.positive and (like == '0'):
+            UpvoteAnswer.objects.get(answer=answer, user=user).delete()
+        else:
+            upvote.positive = not upvote.positive
+            upvote.save()
+    else:
+        upvote = UpvoteAnswer.objects.create(answer=answer, user=user, positive=(like == '1'))
+        upvote.save()
+    return show_question(request, subject_slug, course_slug, question_slug)
+
+@login_required
+def like_reply(request, subject_slug, course_slug, question_slug, reply_key, like):
+    reply = Reply.objects.get(pk = reply_key)
+    user = request.user
+    try: 
+        upvote = UpvoteReply.objects.get(reply=reply, user=user)
+    except UpvoteReply.DoesNotExist:
+        upvote = None
+    if upvote != None:
+        if upvote.positive and (like == '1'):
+            UpvoteReply.objects.get(reply=reply, user=user).delete()
+        elif not upvote.positive and (like == '0'):
+            UpvoteReply.objects.get(reply=reply, user=user).delete()
+        else:
+            upvote.positive = not upvote.positive
+            upvote.save()
+    else:
+        upvote = UpvoteReply.objects.create(reply=reply, user=user, positive=(like == '1'))
+        upvote.save()
+    return show_question(request, subject_slug, course_slug, question_slug)
+
+@login_required
+def answer_question(request, subject_slug, course_slug, question_slug):
+    form = AnswerForm()
+    try:
+        course = Course.objects.get(slug=course_slug)
+        user = request.user
+        question = Question.objects.get(slug=question_slug)
+    except (Course.DoesNotExist, User.DoesNotExist, Question.DoesNotExist):
+        course = None
+        user = None
+        question = None
+    if request.method == 'POST':
+        form = AnswerForm(request.POST, request.FILES)
+        if form.is_valid():
+            if course and user and question:
+                answer = form.save(commit=False)
+                answer.poster = user
+                answer.question = question
+                if 'picture' in request.FILES:
+                    answer.picture = request.FILES['picture']
+                answer.save()
+                return show_question(request, subject_slug, course_slug, question_slug)
+        else:
+            print(form.errors)
+
+    context_dict = {}
+    context_dict['form'] = form
+    context_dict['subject'] = Subject.objects.get(slug=subject_slug)
+    context_dict['course'] = Course.objects.get(slug=course_slug)
+    context_dict['question'] = question
+    return render(request,'gliocas_app/answer_question.html', context = context_dict)
+
+
+@login_required
+def reply_answer(request, subject_slug, course_slug, question_slug, answer_key):
+    form = ReplyForm()
+    try:
+        course = Course.objects.get(slug=course_slug)
+        user = request.user
+        question = Question.objects.get(slug=question_slug)
+        answer = Answer.objects.get(pk=answer_key)
+    except (Course.DoesNotExist, User.DoesNotExist, Question.DoesNotExist, Answer.DoesNotExist):
+        course = None
+        user = None
+        answer = None
+        question = None
+    if request.method == 'POST':
+        form = ReplyForm(request.POST)
+        if form.is_valid():
+            if course and user and answer:
+                reply = form.save(commit=False)
+                reply.poster = user
+                reply.answer = answer
+                reply.save()
+                return show_question(request, subject_slug, course_slug, question_slug)
+        else:
+            print(form.errors)
+
+    context_dict = {}
+    context_dict['form'] = form
+    context_dict['subject'] = Subject.objects.get(slug=subject_slug)
+    context_dict['course'] = Course.objects.get(slug=course_slug)
+    context_dict['question'] = Question.objects.get(slug=question_slug)
+    context_dict['answer'] = Answer.objects.get(pk=answer_key)
+    context_dict['replies'] = Reply.objects.filter(answer=answer)
+    return render(request,'gliocas_app/reply_answer.html', context = context_dict)
+
+@login_required
 def user_logout(request):
     logout(request)
+
     return HttpResponseRedirect(reverse('home'))
+
+def user(request, username):       
+    context_dict = {'username' : username}
+    try:
+        user = User.objects.get(username = username)
+        context_dict['exists'] = True
+        context_dict['searched_user'] = user
+        context_dict['numquestions'] = len(Question.objects.filter(poster = user))
+        context_dict['numanswers'] = len(Answer.objects.filter(poster = user))
+        if request.user.is_authenticated:
+            followingUser = User.objects.get(username = username)
+            if (request.user == user):
+                context_dict['sameUser'] = True
+                questions = []
+                followedCourses = []
+                for followed in Followed.objects.filter(poster = user):
+                    followedCourses.append(followed.course)
+                    for question in Question.objects.filter(course = followed.course):
+                        questions.append(question)
+                questions.sort(key=lambda q: q.date, reverse=True)
+                if len(questions) > 5:
+                    questions = questions[0:5]
+                context_dict['followed'] = followedCourses
+                context_dict['questions'] = questions
+            else:
+                context_dict['sameUser'] = False
+        else:
+                context_dict['sameUser'] = False
+        
+    except User.DoesNotExist:
+        context_dict['exists'] = False
+
+    return render(request, 'gliocas_app/user.html', context_dict)
+
+
+def user_questions(request, username):
+    context_dict = {'username' : username, 'objectname' : 'questions'}
+    try:
+        user = User.objects.get(username = username)
+        context_dict['exists'] = True
+        context_dict['searched_user'] = user
+        context_dict['questions'] = Question.objects.filter(poster = user)
+    except User.DoesNotExist:
+        context_dict['exists'] = False
+    
+    return render(request, 'gliocas_app/user_questions.html', context_dict)
+
+def user_answers(request, username):
+    context_dict = {'username' : username, 'objectname' : 'answers'}
+    try:
+        user = User.objects.get(username = username)
+        context_dict['exists'] = True
+        context_dict['searched_user'] = user
+        context_dict['questions'] = [ answer.question for answer in  Answer.objects.filter(poster = user) ]
+    except User.DoesNotExist:
+        context_dict['exists'] = False
+    
+    return render(request, 'gliocas_app/user_questions.html', context_dict)
