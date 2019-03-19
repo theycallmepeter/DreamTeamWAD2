@@ -11,7 +11,11 @@
         {% if questions %}
         <ul>
             {% for question in questions %}
-                <li><a href="{% url 'show_question' subject.slug course.slug question.slug %}"> {{ question.title }}</a></li>
+                <li><a href="{% url 'show_question' subject.slug course.slug question.slug %}"> {{ question.title }}</a>
+                {% if user == question.poster %}
+                    <a href="{% url 'delete_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}"> Delete</a>
+                {% endif %}
+                </li>
             {% endfor %}
         </ul>
         {% else %}

@@ -297,6 +297,14 @@ def delete_answer(request, subject_slug, course_slug, question_slug, answer_key)
     return show_question(request, subject_slug, course_slug, question_slug)
 
 @login_required
+def delete_question(request, subject_slug, course_slug, question_slug):
+    question = Question.objects.get(slug = question_slug)
+    user = request.user
+    if user == question.poster:
+        question.delete()
+    return show_course(request, subject_slug, course_slug)
+
+@login_required
 def answer_question(request, subject_slug, course_slug, question_slug):
     form = AnswerForm()
     try:
