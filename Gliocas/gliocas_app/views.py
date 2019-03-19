@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.template.defaultfilters import slugify
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import RedirectView
 from gliocas_app.forms import QuestionForm, CourseForm, SubjectForm, AnswerForm, ReplyForm
 from gliocas_app.forms import UserForm
@@ -278,6 +278,22 @@ def like_reply(request, subject_slug, course_slug, question_slug, reply_key, lik
     else:
         upvote = UpvoteReply.objects.create(reply=reply, user=user, positive=(like == '1'))
         upvote.save()
+    return show_question(request, subject_slug, course_slug, question_slug)
+
+@login_required
+def delete_reply(request, subject_slug, course_slug, question_slug, reply_key):
+    reply = Reply.objects.get(pk = reply_key)
+    user = request.user
+    if user == reply.poster:
+        reply.delete()
+    return show_question(request, subject_slug, course_slug, question_slug)
+
+@login_required
+def delete_answer(request, subject_slug, course_slug, question_slug, answer_key):
+    answer = Answer.objects.get(pk = answer_key)
+    user = request.user
+    if user == answer.poster:
+        answer.delete()
     return show_question(request, subject_slug, course_slug, question_slug)
 
 @login_required
