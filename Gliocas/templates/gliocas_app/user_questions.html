@@ -1,0 +1,25 @@
+{% extends 'gliocas_app/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    user {{ username }}'s questions
+{% endblock %}
+
+{% block body_block %}
+
+    {% if exists %}
+
+        <h3> {{username}}'s {{objectname}} </h3>
+       
+        {% if questions %}
+            {% for question in questions %}
+                <a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug %}">{{question.title}} </br>
+            {% endfor %}
+        {% else %}
+            No {{objectname}} found.
+        {% endif %}
+
+    {% else %}
+        <h3> User '{{ username }}' does not exist. </h3>
+    {% endif %}
+{% endblock %}
