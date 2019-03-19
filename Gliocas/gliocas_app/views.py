@@ -291,6 +291,37 @@ def like_answer(request, subject_slug, course_slug, question_slug, answer_key, l
     return show_question(request, subject_slug, course_slug, question_slug)
 
 @login_required
+def like_answer_new(request):
+    like = request.GET['like']
+    answer_key = request.GET['answer_key']
+    answer = Answer.objects.get(pk=answer_key)
+    user = request.user
+    try: 
+        upvote = UpvoteAnswer.objects.get(answer=answer, user=user)
+    except UpvoteAnswer.DoesNotExist:
+        upvote = None
+    if upvote != None:
+        if upvote.positive and (like == '1'):
+            UpvoteAnswer.objects.get(answer=answer, user=user).delete()
+        elif not upvote.positive and (like == '0'):
+            UpvoteAnswer.objects.get(answer=answer, user=user).delete()
+        else:
+            upvote.positive = not upvote.positive
+            upvote.save()
+    else:
+        upvote = UpvoteAnswer.objects.create(answer=answer, user=user, positive=(like == '1'))
+        upvote.save()
+
+    likes = 0
+    for upvote in UpvoteAnswer.objects.filter(answer=answer):
+        if upvote.positive:
+            likes += 1
+        else:
+            likes -= 1
+
+    return HttpResponse(likes)
+
+@login_required
 def like_reply(request, subject_slug, course_slug, question_slug, reply_key, like):
     reply = Reply.objects.get(pk = reply_key)
     user = request.user
