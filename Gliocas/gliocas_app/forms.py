@@ -40,7 +40,8 @@ class ReplyForm(forms.ModelForm):
 
 
 class UserForm(forms.ModelForm):
-
+    username = forms.CharField(widget=forms.TextInput, required = True)
+    email = forms.CharField(widget=forms.TextInput, required = True)
     password = forms.CharField(widget=forms.PasswordInput())
     confirm_password=forms.CharField(widget=forms.PasswordInput())
     class Meta:
