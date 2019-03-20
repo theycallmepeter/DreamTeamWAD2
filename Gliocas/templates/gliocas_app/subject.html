@@ -7,15 +7,16 @@
 {% block body_block %}
 <h1 class="mt-1">{{ subject }}</h1>
 
-{% if courses %}
 <div class="row">
-    <div class="card my-3 rounded shadow col-3 mx-3">
+	<div class="card my-3 rounded shadow col-3 mx-3">
         <a href="{% url 'add_course' subject.slug %}">
             <div class="card-body text-center mt-3">
                 <h2 style="color:dodgerblue">Add course</h2>
             </div>
         </a>
     </div>
+
+{% if courses %}
     {% for course in courses %}
 
     <div class="card my-3 rounded shadow col-3 mx-3">
@@ -27,7 +28,6 @@
     </div>
 
     {% endfor %}
-</div>
 {% else %}
 <div class="card-body">
 
@@ -35,7 +35,6 @@
 </div>
 
 {% endif %}
-
-
+</div>
 
 {% endblock %}

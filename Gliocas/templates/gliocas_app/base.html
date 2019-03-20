@@ -51,9 +51,23 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'contact' %}">Contact</a>
                     </li>
+					{% if user.is_authenticated %}
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'user' user.username %}">My account</a>
+						</li>
+					{%endif%}
                 </ul>
-                <form class="form-inline col-6 my-0 my-lg-0 search-bar">
-                    <input class="form-control w-100 rounded-pill search" type="search" placeholder="What are you looking for?">
+                <form class="form-inline col-6 my-0 my-lg-0 search-bar" id="user_form" method="post" action="{% url 'search' %}">
+					{% csrf_token %}
+					<div class="form-group">
+						{% if user_query %}
+							<input class="form-control w-100 rounded-pill search" type="search" placeholder="What are you looking for?"
+								name="query" value="{{ user_query }}" id="query">
+						{% else %}
+							<input class="form-control w-100 rounded-pill search" type="search" placeholder="What are you looking for?"
+								name="query" value="" id="query">
+						{% endif %}
+					</div>
                 </form>
                 <div class="col-sm"></div>
             </div>

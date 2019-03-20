@@ -220,6 +220,7 @@ def register(request):
             user = authenticate(username=username, password=password)
 
             login(request,user)
+            return HttpResponseRedirect(reverse('home'))
 
         else:
             print(user_form.errors)
@@ -248,11 +249,12 @@ def user_login(request):
                 login(request, user)
                 return HttpResponseRedirect(reverse('home'))
             else:
+                response = "Your Gliocas account is disabled."
 
-                return HttpResponse("Your Gliocas account is disabled.")
         else:
+            response = "Invalid login details supplied."
 
-            return HttpResponse("Invalid login details supplied.")
+        return render(request, 'gliocas_app/login.html', {'response' : response})
 
     else:
         return render(request, 'gliocas_app/login.html', {})

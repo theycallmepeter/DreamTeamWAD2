@@ -5,7 +5,9 @@
 {% endblock %}
 
 {% block body_block %}
-<h1 class="mt-1"> {{ subject.name }} {{ course.name}} </h1>
+<h1 class="mt-1"> <a href="{% url 'show_subject' subject.slug %}"> {{ subject.name }}</a> </h1>
+<h1 class="mt-1"> <a href="{% url 'show_course' subject.slug course.slug %}"> {{ course.name}}</a> </h1>
+
 
 
 <div class="card my-3 rounded shadow">
@@ -13,7 +15,7 @@
         <div class="mb-5">
             <h2 class="card-title"> {{ question.title }} </h2>
             <p class="card-subtitle text-muted">
-                by {{ question.poster }} TODO SOME TIME AGO
+                by <a href="{% url 'user' question.poster.username %}">{{ question.poster }}</a> at {{ question.date }}
                 <br/>
                 {{upvotes}} upvotes {{question.views}} views
             </p>
@@ -36,7 +38,7 @@
         {% if answers %}
         <ul>
             {% for answer in answers %}
-            <li>{{answer.poster}} - - - {{ answer.text }}</li>
+            <li><a href="{% url 'user' answer.poster.username %}">{{answer.poster}}</a> - - - {{ answer.text }}</li>
             {% if answer.picture %}
             <img src="{{ MEDIA_URL }}{{ answer.picture }}" width="auto" height="300" alt="Picture" />
             {% endif %}
@@ -46,7 +48,7 @@
                 Dislike</a></br>
             {% for reply in replies %}
             {% if reply.answer.pk == answer.pk %}
-            <p style="padding-left: 50px;">{{reply.poster}} - - - {{ reply.text }}</br>
+            <p style="padding-left: 50px;"><a href="{% url 'user' reply.poster.username %}">{{reply.poster}}</a> - - - {{ reply.text }}</br>
                 <a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='1' %}">
                     Like</a>
                 <a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='0' %}">

@@ -11,7 +11,7 @@ Home
     <div class="col-md-12 col-lg-3">
         <div class="card justify-content-start rounded shadow mt-3">
             <div class="card-body">
-                <h4 class="card-title display-4 mb-1">Hello</h2>
+                <h4 class="card-title display-4 mb-1">Hello there</h2>
                 {% if user.is_authenticated %}
                 <h3 class="mb-5"><a href="{% url 'user' user.username %}">{{ user.username }}</a></h3>
                 <a href="{% url 'logout' %}" class="btn btn-lg btn-block btn-danger rounded-pill" style="color:white;">Logout</a>
