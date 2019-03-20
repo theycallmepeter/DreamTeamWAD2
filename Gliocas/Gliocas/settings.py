@@ -28,8 +28,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 1025
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER= '2333065n'
+EMAIL_HOST_PASSWORD='6QxJtdc6JeTuSgs'
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
 
 
 # Application definition
