@@ -7,9 +7,11 @@
 {% block body_block %}
     <h3> This is the list of questions for {{ course }} in subject {{ subject }} </h3>
 	{% if followed %}
-		<a href="{% url 'follow' subject.slug course.slug %}"> Unfollow this course </a>
+        <button id="follow" data-courseslug="{{course.slug}}" data-subjectslug="{{subject.slug}}" class="btn btn-primary btn-sm" type="button">Unfollow this course</button>
+		<!-- <a href="{% url 'follow' subject.slug course.slug %}"> Unfollow this course </a> -->
 	{% else %}
-		<a href="{% url 'follow' subject.slug course.slug %}"> Follow this course </a>
+        <button id="follow" data-courseslug="{{course.slug}}" data-subjectslug="{{subject.slug}}" class="btn btn-primary btn-sm" type="button">Follow this course</button>
+		<!-- <a href="{% url 'follow' subject.slug course.slug %}"> Follow this course </a> -->
 	{% endif %}
 
     <div>
