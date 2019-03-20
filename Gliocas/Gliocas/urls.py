@@ -26,4 +26,4 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^gliocas_app/', include('gliocas_app.urls')),
     url(r'^admin/', admin.site.urls),
-]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

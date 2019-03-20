@@ -12,6 +12,20 @@ from gliocas_app.search import search_query
 from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply, Subject, Answer, Reply, Followed
 
 
+# Method for handling if a user has visited a question page in the last day
+def visitor_cookie_handler(request, response, questionKey):
+    # Gets the value of the cookie with key the question pk
+    # If no cookie create cookie with value 'False'
+    visited = request.COOKIES.get(questionKey, 'False')
+
+    # If cookie value is 'False' set cookie value to be 'True' and
+    # returns False, otherwise returns True
+    if visited == 'False':
+        response.set_cookie(questionKey, 'True')
+        return False
+    else:
+        return True
+
 def index(request):
     context_dict = {}
     subject_list = Subject.objects.all()
@@ -77,6 +91,12 @@ def show_question(request, subject_slug, course_slug, question_slug):
         replies = []
         for answer in answers:
             replies += Reply.objects.filter(answer=answer)
+        context_dict['upvotes'] = 0
+        for upvote in UpvoteQuestion.objects.filter(question=question):
+            if upvote.positive:
+              context_dict['upvotes'] += 1
+            else:
+                context_dict['upvotes'] -= 1
         parent_course = Course.objects.get(slug=course_slug)
         parent_subject = Subject.objects.get(slug=subject_slug)
         context_dict['question'] = question
@@ -84,13 +104,20 @@ def show_question(request, subject_slug, course_slug, question_slug):
         context_dict['replies'] = replies
         context_dict['subject'] = parent_subject
         context_dict['course'] = parent_course
+        response = render(request,'gliocas_app/question.html', context = context_dict)
+        visited = visitor_cookie_handler(request, response, str(question.pk))
+        if not visited:
+            question.views = question.views + 1
+            question.save()
+    
     except Question.DoesNotExist:
         context_dict['answers'] = None
         context_dict['question'] = None
         context_dict['subject'] = None
         context_dict['course'] = None
+        response = render(request,'gliocas_app/question.html', context = context_dict)
 
-    return render(request,'gliocas_app/question.html', context = context_dict)
+    return response
 
 def search(request):
     result_list=[]
@@ -113,13 +140,15 @@ def add_question(request, subject_slug, course_slug):
         course = None
         user = None
     if request.method == 'POST':
-        form = QuestionForm(request.POST)
+        form = QuestionForm(request.POST, request.FILES)
         if form.is_valid():
             if course and user:
                 question = form.save(commit=False)
                 question.course = course
                 question.poster = user
                 question.views = 0
+                if 'picture' in request.FILES:
+                    question.picture = request.FILES['picture']
                 question.save()
                 return show_question(request, subject_slug, course_slug, question.slug)
         else:
@@ -259,6 +288,7 @@ def follow(request, subject_slug, course_slug):
         followed.save()
     return show_course(request, subject_slug, course_slug)
 
+@login_required
 def like_answer(request, subject_slug, course_slug, question_slug, answer_key, like):
     answer = Answer.objects.get(pk=answer_key)
     user = request.user
@@ -312,12 +342,14 @@ def answer_question(request, subject_slug, course_slug, question_slug):
         user = None
         question = None
     if request.method == 'POST':
-        form = AnswerForm(request.POST)
+        form = AnswerForm(request.POST, request.FILES)
         if form.is_valid():
             if course and user and question:
                 answer = form.save(commit=False)
                 answer.poster = user
                 answer.question = question
+                if 'picture' in request.FILES:
+                    answer.picture = request.FILES['picture']
                 answer.save()
                 return show_question(request, subject_slug, course_slug, question_slug)
         else:
