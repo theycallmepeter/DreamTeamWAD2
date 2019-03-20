@@ -23,9 +23,17 @@ register
 					<form id="user_form" class="" action="{% url 'register' %}" method="post" enctype="multipart/form-data">
 
 						{%csrf_token%}
-						{{user_form.as_p}}
+						<input type="text" name="username" id="" class="form-control h-40 rounded-pill" placeholder="Username" required="" autofocus="">
+						<br />
+						<input type="email" name="email" id="" class="form-control h-40 rounded-pill" placeholder="Email address" required="" autofocus="">
+						<br />
+						<input type="password" name="password" id="inputPassword" class="form-control h-40 rounded-pill" placeholder="Password" required="">
+						<br />
+						<input type="password" name="confirm_password" id="inputPassword" class="form-control h-40 rounded-pill" placeholder="Confirm password" required="">
+						<br />
+						<button class="btn btn-lg h-40 btn-primary btn-block rounded-pill" type="submit" value="Register">Sign in</button> 
 
-						<input type="submit" name="submit" value="Register" />
+						
 
 					</form>
 					{% if registered %}
