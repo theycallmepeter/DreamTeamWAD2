@@ -1,5 +1,5 @@
 from django.test import TestCase,Client
-from gliocas_app.models import Course,Subject, Followed,Question, UpvoteQuestion,UpvoteAnswer
+from gliocas_app.models import Course,Subject, Followed,Question, UpvoteQuestion,UpvoteAnswer,Reply, Answer
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
@@ -64,6 +64,27 @@ class FollowTests(TestCase):
             exists=False
 
         self.assertFalse(exists)
+    def test_can_follow_only_once(self):
+        #create course
+        subject = Subject.objects.create(name='abcd')
+        subject.save()
+
+        course= Course.objects.create(name='ab',subject = subject)
+        course.save()
+
+        #create user
+        user = User.objects.create(username='test')
+        user.set_password('12345')
+        user.save()
+
+        c = Client()
+        c.login(username='test',password='12345')
+
+        response = c.get(reverse('follow',kwargs={'course_slug':'ab','subject_slug':'abcd'}))
+        response = c.get(reverse('follow',kwargs={'course_slug':'ab','subject_slug':'abcd'}))
+        response = c.get(reverse('follow',kwargs={'course_slug':'ab','subject_slug':'abcd'}))
+
+        self.assertEqual(len(Followed.objects.filter(poster=user,course=course)),1)
 #test login
 class loginTests(TestCase):
 
@@ -180,7 +201,7 @@ class questionTests(TestCase):
         question.text='abcd'
         question.title='abcd'
         question.date = datetime.datetime.now()
-        question.picture = SimpleUploadedFile(name='test_image.jpg', content=open('gliocas_app/test.jpeg', 'rb').read(), content_type='image/jpeg')
+        question.picture = SimpleUploadedFile(name='test_image.jpg', content=open('gliocas_app/testimage/test.jpeg', 'rb').read(), content_type='image/jpeg')
         question.save()
 
         c=Client()
@@ -189,13 +210,72 @@ class questionTests(TestCase):
 
         self.assertContains(response,'<img')
 
+    def test_can_answer_only_when_logged_in(self):
+        subject = Subject.objects.create(name='abcd')
+        subject.save()
+        course= Course.objects.create(name='ab',subject = subject)
+        course.save()
+        user = User.objects.create(username='test')
+        user.set_password('12345')
+        user.save()
+
+        question = Question.objects.create(poster=user,course=course)
+        question.text='abcd'
+        question.title='abcd'
+        question.date = datetime.datetime.now()
+        question.save()
+
+        c = Client()
+
+        response=c.get(reverse('answer_question',kwargs={'course_slug':course.slug,'subject_slug':subject.slug,'question_slug':question.slug}))
+
+        self.assertEqual(response.status_code,302)
+
+    def test_can_reply_to_answer_only_when_logged_in(self):
+        subject = Subject.objects.create(name='abcd')
+        subject.save()
+        course= Course.objects.create(name='ab',subject = subject)
+        course.save()
+        user = User.objects.create(username='test')
+        user.set_password('12345')
+        user.save()
+
+        question = Question.objects.create(poster=user,course=course)
+        question.text='abcd'
+        question.title='abcd'
+        question.date = datetime.datetime.now()
+        question.save()
+
+        answer = Answer.objects.create(poster=user,text='abcdef',question=question)
+
+        c = Client()
+
+        response=c.get(reverse('reply_answer',kwargs={'course_slug':course.slug,'subject_slug':subject.slug,'question_slug':question.slug,'answer_key':answer.pk}))
+
+        self.assertEqual(response.status_code,302)
+
 class addingTests(TestCase):
+
+    def test_cant_add_subject_when_not_superuser(self):
+        user = User.objects.create(username='test')
+        user.set_password('12345')
+        user.save()
+
+        c= Client()
+        c.login(username='test',password='12345')
+
+        response = c.get(reverse('add_subject'))
+        self.assertNotContains(response,'<form')
 
     def test_cant_add_course_when_not_superuser(self):
         user = User.objects.create(username='test')
         user.set_password('12345')
         user.save()
 
+        subject = Subject.objects.create(name='abcd')
+        subject.save()
+
         c= Client()
-        response = c.get(reverse('add_subject'))
-        self.assertNotContains(response,'<form')
+        c.login(username='test',password='12345')
+        response = c.get(reverse('add_course',kwargs={'subject_slug':subject.slug}))
+        self.assertEqual(response.status_code,302)
