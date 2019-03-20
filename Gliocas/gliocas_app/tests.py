@@ -3,10 +3,10 @@ from gliocas_app.models import Course,Subject, Followed,Question, UpvoteQuestion
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
-import datetime
+from django.utils import timezone
 import os
 from django.core.files.uploadedfile import SimpleUploadedFile
-
+from gliocas_app.forms import UserForm
 # Create your tests here.
 
 
@@ -116,6 +116,24 @@ class loginTests(TestCase):
 
         self.assertNotContains(response,'<form')
 
+    def test_duplicate_usernames(self):
+        #register user
+        data={'username':'abcd','email':'test@test.com','password':'12345','confirm_password':'12345'}
+        c = Client()
+        c.post(reverse('register'),{'username':'abcd','email':'test@test.com','password':'12345','confirm_password':'12345'})
+
+        #register user with same name
+        data={'username':'abcd','email':'test1@test.com','password':'123456','confirm_password':'123456'}
+        form = UserForm(data=data)
+        self.assertFalse(form.is_valid())
+
+    def test_not_matching_passwords_on_registration(self):
+        data={'username':'abcd','email':'test@test.com','password':'12345','confirm_password':'123456'}
+        form = UserForm(data=data)
+        self.assertFalse(form.is_valid())
+
+
+
 
 #test courses
 class questionTests(TestCase):
@@ -133,7 +151,7 @@ class questionTests(TestCase):
         question = Question.objects.create(poster=user,course=course)
         question.text='abcd'
         question.title='abcd'
-        question.date = datetime.datetime.now()
+        question.date = timezone.now()
         question.save()
 
 
@@ -167,7 +185,7 @@ class questionTests(TestCase):
         question = Question.objects.create(poster=user,course=course)
         question.text='abcd'
         question.title='abcd'
-        question.date = datetime.datetime.now()
+        question.date = timezone.now()
         question.save()
 
 
@@ -200,7 +218,7 @@ class questionTests(TestCase):
         question = Question.objects.create(poster=user,course=course)
         question.text='abcd'
         question.title='abcd'
-        question.date = datetime.datetime.now()
+        question.date = timezone.now()
         question.picture = SimpleUploadedFile(name='test_image.jpg', content=open('gliocas_app/testimage/test.jpeg', 'rb').read(), content_type='image/jpeg')
         question.save()
 
@@ -222,7 +240,7 @@ class questionTests(TestCase):
         question = Question.objects.create(poster=user,course=course)
         question.text='abcd'
         question.title='abcd'
-        question.date = datetime.datetime.now()
+        question.date = timezone.now()
         question.save()
 
         c = Client()
@@ -243,7 +261,7 @@ class questionTests(TestCase):
         question = Question.objects.create(poster=user,course=course)
         question.text='abcd'
         question.title='abcd'
-        question.date = datetime.datetime.now()
+        question.date = timezone.now()
         question.save()
 
         answer = Answer.objects.create(poster=user,text='abcdef',question=question)
