@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 import datetime
+import os
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 # Create your tests here.
 
@@ -95,7 +97,7 @@ class loginTests(TestCase):
 
 
 #test courses
-class courseTests(TestCase):
+class questionTests(TestCase):
 
     #can only like a question once
     def test_can_like_only_once(self):
@@ -164,3 +166,36 @@ class courseTests(TestCase):
                                         'question_slug':question.slug,
                                         'like':'0'}))
         self.assertEqual(len(UpvoteQuestion.objects.filter(user=user)),1)
+
+    def test_image_displayed_in_qestion(self):
+        subject = Subject.objects.create(name='abcd')
+        subject.save()
+        course= Course.objects.create(name='ab',subject = subject)
+        course.save()
+        user = User.objects.create(username='test')
+        user.set_password('12345')
+        user.save()
+
+        question = Question.objects.create(poster=user,course=course)
+        question.text='abcd'
+        question.title='abcd'
+        question.date = datetime.datetime.now()
+        question.picture = SimpleUploadedFile(name='test_image.jpg', content=open('gliocas_app/test.jpeg', 'rb').read(), content_type='image/jpeg')
+        question.save()
+
+        c=Client()
+
+        response=c.get(reverse('show_question',kwargs={'course_slug':course.slug,'subject_slug':subject.slug,'question_slug':question.slug}))
+
+        self.assertContains(response,'<img')
+
+class addingTests(TestCase):
+
+    def test_cant_add_course_when_not_superuser(self):
+        user = User.objects.create(username='test')
+        user.set_password('12345')
+        user.save()
+
+        c= Client()
+        response = c.get(reverse('add_subject'))
+        self.assertNotContains(response,'<form')
