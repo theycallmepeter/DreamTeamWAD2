@@ -10,31 +10,31 @@ register
 {% block body_block %}
 <h1 class="mt-1"> REGISTER </h1>
 <!-- <a href = "{% url 'subjects' %}"> Subjects </a> -->
-<div class="row">
-    <div class="col">
-        <div class="card my-3 rounded shadow">
-            <div class="card-body">
-                <h2 class="card-title">Welcome!</h2>
+{% if user.is_authenticated %}
+	<strong>Logout to register a different account</strong>
+{% else %}
+	<div class="row">
+		<div class="col">
+			<div class="card my-3 rounded shadow">
+				<div class="card-body">
+					<h2 class="card-title">Welcome!</h2>
 
 
-                <form id="user_form" class="" action="{% url 'register' %}" method="post" enctype="multipart/form-data">
+					<form id="user_form" class="" action="{% url 'register' %}" method="post" enctype="multipart/form-data">
 
-                    {%csrf_token%}
-                    {{user_form.as_p}}
+						{%csrf_token%}
+						{{user_form.as_p}}
 
-                    <input type="submit" name="submit" value="Register" />
+						<input type="submit" name="submit" value="Register" />
 
-                </form>
-                {% if registered %}
-                <strong>Thank you for registering!</strong>
-                <a href="{% url 'home' %}">return home</a>
-
-                {% elif user.is_authenticated %}
-                <strong>Logout to register a different account</strong>
-
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
+					</form>
+					{% if registered %}
+					<strong>Thank you for registering!</strong>
+					<a href="{% url 'home' %}">return home</a>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endif %}
 {% endblock %}
