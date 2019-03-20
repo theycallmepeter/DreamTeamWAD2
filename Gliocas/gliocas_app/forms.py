@@ -9,8 +9,8 @@ class QuestionForm(forms.ModelForm):
     titleLength = 256
     textLength = 32768
 
-    title = forms.CharField(max_length=titleLength, help_text="Please enter how you'd like to title your question.", required = True)
-    text = forms.CharField(widget=forms.Textarea, max_length=textLength, help_text="Please enter the text of your question.", required = True)
+    title = forms.CharField(max_length=titleLength, widget=forms.TextInput(attrs={'placeholder': 'Your title here...'}), required = True)
+    text = forms.CharField(max_length=textLength,  widget=forms.Textarea(attrs={'placeholder': 'Your text here...'}), required = True)
     date = forms.DateTimeField(widget=forms.HiddenInput(), initial=timezone.now)
     views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
     picture = forms.ImageField(required = False)

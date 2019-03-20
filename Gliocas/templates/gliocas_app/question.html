@@ -1,43 +1,66 @@
 {% extends 'gliocas_app/base.html' %}
 
 {% block title_block %}
-    {{ question.title }}
+{{ question.title }}
 {% endblock %}
 
 {% block body_block %}
-    <h3> Question about {{ question.title }} from {{ course.name}} in subject {{ subject.name }} </h3>
-    <h5> {{question.text}} </h5>
-	<h5> Upvotes : {{upvotes}} </h5>
-	<h5> Views : {{question.views}} </h5>
-	{% if question.picture %}
-		<img src="{{ MEDIA_URL }}{{ question.picture }}" width="300"
-			height="300" alt="Picture"/>
-	{% endif %}
-    {% if answers %}
+<h1 class="mt-1"> {{ subject.name }} {{ course.name}} </h1>
+
+
+<div class="card my-3 rounded shadow">
+    <div class="card-body">
+        <div class="mb-5">
+            <h2 class="card-title"> {{ question.title }} </h2>
+            <p class="card-subtitle text-muted">
+                by {{ question.poster }} TODO SOME TIME AGO
+                <br/>
+                {{upvotes}} upvotes {{question.views}} views
+            </p>
+            <hr />
+            <p> {{ question.text }} </p>
+            {% if question.picture %}
+            <img src="{{ MEDIA_URL }}{{ question.picture }}" class="img-thumbnail" alt="image" />
+            {% endif %}
+        </div>
+        <a href="{% url 'answer_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}">
+            Answer</a>
+        <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='1' %}">
+            Like</a>
+        <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='0' %}">
+            Dislike</a>
+        <input type="submit" name="submit" value="Add Reply" />
+        </form>
+        <h4># answers</h4>
+        <hr />
+        {% if answers %}
         <ul>
             {% for answer in answers %}
-                <li>{{answer.poster}} - - - {{ answer.text }}</li>
-				{% if answer.picture %}
-					<img src="{{ MEDIA_URL }}{{ answer.picture }}" width="300"
-						height="300" alt="Picture"/>
-				{% endif %}
-			    <a href="{% url 'like_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk like='1' %}"> Like</a>
-			    <a href="{% url 'like_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk like='0' %}"> Dislike</a></br>
-                {% for reply in replies %}
-                	{% if reply.answer.pk == answer.pk %}
-                		<p style="padding-left: 50px;">{{reply.poster}} - - - {{ reply.text }}</br>
-                		<a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='1' %}"> Like</a>
-			   			<a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='0' %}"> Dislike</a></br></p>
-               		{% endif %}
-                {% endfor %}
-                <a href="{% url 'reply_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk %}">Reply</a>
+            <li>{{answer.poster}} - - - {{ answer.text }}</li>
+            {% if answer.picture %}
+            <img src="{{ MEDIA_URL }}{{ answer.picture }}" width="auto" height="300" alt="Picture" />
+            {% endif %}
+            <a href="{% url 'like_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk like='1' %}">
+                Like</a>
+            <a href="{% url 'like_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk like='0' %}">
+                Dislike</a></br>
+            {% for reply in replies %}
+            {% if reply.answer.pk == answer.pk %}
+            <p style="padding-left: 50px;">{{reply.poster}} - - - {{ reply.text }}</br>
+                <a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='1' %}">
+                    Like</a>
+                <a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='0' %}">
+                    Dislike</a></br></p>
+            {% endif %}
+            {% endfor %}
+            <a href="{% url 'reply_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk %}">Reply</a>
             {% endfor %}
         </ul>
         {% else %}
-            <strong>There are no answers.</strong>
-        {% endif %}
-    <a href="{% url 'answer_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}"> Answer</a>
-    <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='1' %}"> Like</a>
-    <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='0' %}"> Dislike</a>
 
+        <strong>Be the first one to comment!</strong>
+        {% endif %}
+
+    </div>
+</div>
 {% endblock %}

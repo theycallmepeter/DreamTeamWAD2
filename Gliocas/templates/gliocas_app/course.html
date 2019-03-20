@@ -1,29 +1,50 @@
 {% extends 'gliocas_app/base.html' %}
 
 {% block title_block %}
-    {{ course }}
+{{ course }}
 {% endblock %}
 
 {% block body_block %}
-    <h1>{{ course }}: {{ subject }} </h1>
-	{% if followed %}
-		<a href="{% url 'follow' subject.slug course.slug %}"> Unfollow this course </a>
-	{% else %}
-		<a href="{% url 'follow' subject.slug course.slug %}"> Follow this course </a>
-	{% endif %}
-
-    <div>
-        {% if questions %}
-        <ul>
-            {% for question in questions %}
-                <li><a href="{% url 'show_question' subject.slug course.slug question.slug %}"> {{ question.title }}</a></li>
-            {% endfor %}
-        </ul>
-        {% else %}
-            <strong>There are no questions.</strong>
-        {% endif %}
+<h1 class="mt-1">{{ subject }} {{ course }} </h1>
+<div class="row">
+    <div class="col-md-12 col-lg-3">
+        <div class="card justify-content-start rounded shadow mt-3">
+            <div class="card-body">
+                {% if followed %}
+                <h4 class="card-title mb-3">You are following this course.</h4>
+                <a href="{% url 'follow' subject.slug course.slug %}" class="btn btn-lg btn-block btn-danger rounded-pill">UNFOLLOW</a>
+                {% else %}
+                <h4 class="card-title mb-3">You are not following this course.</h4>
+                <a href="{% url 'follow' subject.slug course.slug %}" class="btn btn-lg btn-block btn-primary rounded-pill">FOLLOW</a>
+                {% endif %}
+                <a href="{% url 'add_question' subject.slug course.slug %}" class="btn btn-lg btn-block btn-outline-primary rounded-pill">POST</a>
+            </div>
+        </div>
     </div>
 
-    <a href="{% url 'add_question' subject.slug course.slug %}"> Add question </a>
+    {% if questions %}
+    <div class="col-md-12 col-lg-8">
+    {% for question in questions %}
+    
+        <a href="{% url 'show_question' subject.slug course.slug question.slug %}">
+            <div class="card my-3 rounded shadow">
+                <div class="card-body">
+                    <h5 class="card-title">{{ question.title }}</h5>
+                </div>
 
+            </div>
+        </a>
+    
+    {% endfor %}
+</div>
+    {% else %}
+    <div class="card my-3 rounded shadow">
+        <div class="card-body">
+            <strong>There are no questions.</strong>
+            {% endif %}
+        </div>
+    </div>
+
+
+</div>
 {% endblock %}
