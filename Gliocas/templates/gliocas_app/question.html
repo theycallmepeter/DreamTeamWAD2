@@ -1,14 +1,19 @@
 {% extends 'gliocas_app/base.html' %}
 
 {% block title_block %}
-    Index
+    {{ question.title }}
 {% endblock %}
 
 {% block body_block %}
     <h3> Question about {{ question.title }} from {{ course.name}} in subject {{ subject.name }} </h3>
     <h5> {{question.text}} </h5>
-    Likes: <div id="like_count">{{ likes }} </div>
 
+	<h5> Upvotes : {{upvotes}} </h5>
+	<h5> Views : {{question.views}} </h5>
+	{% if question.picture %}
+		<img src="{{ MEDIA_URL }}{{ question.picture }}" width="300"
+			height="300" alt="Picture"/>
+	{% endif %}
     {% if answers %}
         <ul>
             {% for answer in answers %}
@@ -19,13 +24,15 @@
 					<a href="{% url 'delete_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk  %}"> Delete</a>
 				{% endif %}
 				</br>
+				{% if answer.picture %}
+					<img src="{{ MEDIA_URL }}{{ answer.picture }}" width="300"
+						height="300" alt="Picture"/>
+				{% endif %}
                 {% for reply in replies %}
                 	{% if reply.answer.pk == answer.pk %}
                 		<p style="padding-left: 50px;">{{reply.poster}} - - - {{ reply.text }}</br>
 						<button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="btn btn-primary btn-sm" type="button">Like</button>
 						<button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="btn btn-primary btn-sm" type="button">Disike</button>
-                		<!-- <a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='1' %}"> Like</a>
-			   			<a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='0' %}"> Dislike</a> -->
 			   			{% if user == reply.poster %}
 			   			<a href="{% url 'delete_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk  %}"> Delete</a>
 			   			{% endif %}
@@ -36,7 +43,7 @@
             {% endfor %}
         </ul>
         {% else %}
-            <strong>There are no questions.</strong>
+            <strong>There are no answers.</strong>
         {% endif %}
     <a href="{% url 'answer_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}"> Answer</a>
 	<button id="likeq" data-questionslug="{{question.slug}}" data-like="1" class="btn btn-primary btn-sm" type="button">Like</button>

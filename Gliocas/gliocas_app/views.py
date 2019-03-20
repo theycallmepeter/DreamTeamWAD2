@@ -9,9 +9,22 @@ from gliocas_app.forms import QuestionForm, CourseForm, SubjectForm, AnswerForm,
 from gliocas_app.forms import UserForm
 from django.contrib.auth.models import User
 from gliocas_app.search import search_query
-from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply, Subject, Answer, Reply
+from gliocas_app.models import Subject, Course, Question, UpvoteQuestion, UpvoteAnswer, UpvoteReply, Subject, Answer, Reply, Followed
 
 
+# Method for handling if a user has visited a question page in the last day
+def visitor_cookie_handler(request, response, questionKey):
+    # Gets the value of the cookie with key the question pk
+    # If no cookie create cookie with value 'False'
+    visited = request.COOKIES.get(questionKey, 'False')
+
+    # If cookie value is 'False' set cookie value to be 'True' and
+    # returns False, otherwise returns True
+    if visited == 'False':
+        response.set_cookie(questionKey, 'True')
+        return False
+    else:
+        return True
 
 def index(request):
     context_dict = {}
@@ -53,10 +66,21 @@ def show_course(request, subject_slug, course_slug):
         context_dict['questions'] = questions
         context_dict['course'] = course
         context_dict['subject'] = parent_subject
+        if request.user.is_authenticated:
+            course = get_object_or_404(Course, slug = course_slug)
+            user = request.user
+            if Followed.objects.filter(course=course, poster=user).exists():
+                context_dict['followed'] = True
+            else:
+                context_dict['followed'] = False
+        else:
+            context_dict['followed'] = False
+            
     except Subject.DoesNotExist:
         context_dict['subject'] = None
         context_dict['questions'] = None
         context_dict['course'] = None
+        context_dict['followed'] = False
     return render(request, 'gliocas_app/course.html', context = context_dict)
 
 def show_question(request, subject_slug, course_slug, question_slug):
@@ -67,6 +91,12 @@ def show_question(request, subject_slug, course_slug, question_slug):
         replies = []
         for answer in answers:
             replies += Reply.objects.filter(answer=answer)
+        context_dict['upvotes'] = 0
+        for upvote in UpvoteQuestion.objects.filter(question=question):
+            if upvote.positive:
+              context_dict['upvotes'] += 1
+            else:
+                context_dict['upvotes'] -= 1
         parent_course = Course.objects.get(slug=course_slug)
         parent_subject = Subject.objects.get(slug=subject_slug)
         context_dict['question'] = question
@@ -74,13 +104,20 @@ def show_question(request, subject_slug, course_slug, question_slug):
         context_dict['replies'] = replies
         context_dict['subject'] = parent_subject
         context_dict['course'] = parent_course
+        response = render(request,'gliocas_app/question.html', context = context_dict)
+        visited = visitor_cookie_handler(request, response, str(question.pk))
+        if not visited:
+            question.views = question.views + 1
+            question.save()
+    
     except Question.DoesNotExist:
         context_dict['answers'] = None
         context_dict['question'] = None
         context_dict['subject'] = None
         context_dict['course'] = None
+        response = render(request,'gliocas_app/question.html', context = context_dict)
 
-    return render(request,'gliocas_app/question.html', context = context_dict)
+    return response
 
 def search(request):
     result_list=[]
@@ -103,13 +140,15 @@ def add_question(request, subject_slug, course_slug):
         course = None
         user = None
     if request.method == 'POST':
-        form = QuestionForm(request.POST)
+        form = QuestionForm(request.POST, request.FILES)
         if form.is_valid():
             if course and user:
                 question = form.save(commit=False)
                 question.course = course
                 question.poster = user
                 question.views = 0
+                if 'picture' in request.FILES:
+                    question.picture = request.FILES['picture']
                 question.save()
                 return show_question(request, subject_slug, course_slug, question.slug)
         else:
@@ -270,6 +309,30 @@ def like_question_new(request):
     return HttpResponse(likes)
 
 @login_required
+def follow(request, subject_slug, course_slug):
+    course = get_object_or_404(Course, slug = course_slug)
+    user = request.user
+    if Followed.objects.filter(course=course, poster=user).exists():
+        Followed.objects.get(course=course, poster=user).delete()
+    else:
+        followed = Followed.objects.create(course=course, poster=user)
+        followed.save()
+    return show_course(request, subject_slug, course_slug)
+
+def follow_course_new(request):
+    course_slug = request.GET['course_slug']
+    subject_slug = request.GET['subject_slug']
+    course = get_object_or_404(Course, slug = course_slug)
+    user = request.user
+    if Followed.objects.filter(course=course, poster=user).exists():
+        Followed.objects.get(course=course, poster=user).delete()
+        return HttpResponse("Unfollowed")
+    else:
+        followed = Followed.objects.create(course=course, poster=user)
+        followed.save()
+        return HttpResponse("Followed")
+
+@login_required
 def like_answer(request, subject_slug, course_slug, question_slug, answer_key, like):
     answer = Answer.objects.get(pk=answer_key)
     user = request.user
@@ -409,12 +472,14 @@ def answer_question(request, subject_slug, course_slug, question_slug):
         user = None
         question = None
     if request.method == 'POST':
-        form = AnswerForm(request.POST)
+        form = AnswerForm(request.POST, request.FILES)
         if form.is_valid():
             if course and user and question:
                 answer = form.save(commit=False)
                 answer.poster = user
                 answer.question = question
+                if 'picture' in request.FILES:
+                    answer.picture = request.FILES['picture']
                 answer.save()
                 return show_question(request, subject_slug, course_slug, question_slug)
         else:
@@ -462,13 +527,12 @@ def reply_answer(request, subject_slug, course_slug, question_slug, answer_key):
     context_dict['replies'] = Reply.objects.filter(answer=answer)
     return render(request,'gliocas_app/reply_answer.html', context = context_dict)
 
-
 @login_required
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('index'))
 
-def user(request, username):
+def user(request, username):       
     context_dict = {'username' : username}
     try:
         user = User.objects.get(username = username)
@@ -476,6 +540,26 @@ def user(request, username):
         context_dict['searched_user'] = user
         context_dict['numquestions'] = len(Question.objects.filter(poster = user))
         context_dict['numanswers'] = len(Answer.objects.filter(poster = user))
+        if request.user.is_authenticated:
+            followingUser = User.objects.get(username = username)
+            if (request.user == user):
+                context_dict['sameUser'] = True
+                questions = []
+                followedCourses = []
+                for followed in Followed.objects.filter(poster = user):
+                    followedCourses.append(followed.course)
+                    for question in Question.objects.filter(course = followed.course):
+                        questions.append(question)
+                questions.sort(key=lambda q: q.date, reverse=True)
+                if len(questions) > 5:
+                    questions = questions[0:5]
+                context_dict['followed'] = followedCourses
+                context_dict['questions'] = questions
+            else:
+                context_dict['sameUser'] = False
+        else:
+                context_dict['sameUser'] = False
+        
     except User.DoesNotExist:
         context_dict['exists'] = False
 

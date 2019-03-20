@@ -99,6 +99,6 @@ Search bar and search template (done)
 Ordering of results (done)
 
 ### Following courses [Pepe | pepe ]
-Users can follow/unfollow courses (not done)
+Users can follow/unfollow courses (done)
 
-Users can see on their user page questions from followed courses (not done)
+Users can see on their user page questions from followed courses (done)
