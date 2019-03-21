@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.template.defaultfilters import slugify
@@ -77,16 +77,21 @@ def show_course(request, subject_slug, course_slug):
                 context_dict['followed'] = False
         else:
             context_dict['followed'] = False
-            
     except Subject.DoesNotExist:
         context_dict['subject'] = None
         context_dict['questions'] = None
         context_dict['course'] = None
         context_dict['followed'] = False
+    form = QuestionForm()
+    context_dict['form'] = form
     return render(request, 'gliocas_app/course.html', context = context_dict)
 
 def show_question(request, subject_slug, course_slug, question_slug):
     context_dict = {}
+    answerform = AnswerForm()
+    replyform = ReplyForm()
+    context_dict['answerform'] = answerform
+    context_dict['replyform'] = replyform
     try:
         question = Question.objects.get(slug=question_slug)
         answers = Answer.objects.filter(question=question)
@@ -105,14 +110,12 @@ def show_question(request, subject_slug, course_slug, question_slug):
         if not visited:
             question.views = question.views + 1
             question.save()
-    
     except Question.DoesNotExist:
         context_dict['answers'] = None
         context_dict['question'] = None
         context_dict['subject'] = None
         context_dict['course'] = None
         response = render(request,'gliocas_app/question.html', context = context_dict)
-
     return response
 
 def search(request):
@@ -127,7 +130,6 @@ def search(request):
 
 @login_required
 def add_question(request, subject_slug, course_slug):
-    
     form = QuestionForm()
     try:
         course = Course.objects.get(slug=course_slug)
@@ -155,6 +157,34 @@ def add_question(request, subject_slug, course_slug):
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     context_dict['course'] = Course.objects.get(slug=course_slug)
     return render(request,'gliocas_app/add_question.html', context = context_dict)
+
+@login_required
+def add_question_new(request, subject_slug, course_slug):
+    try:
+        course = Course.objects.get(slug=course_slug)
+        user = request.user
+    except (Course.DoesNotExist, User.DoesNotExist):
+        course = None
+        user = None
+    if request.method == 'POST':
+        form = QuestionForm(request.POST, request.FILES)
+        if form.is_valid():
+            if course and user:
+                question = form.save(commit=False)
+                question.course = course
+                question.poster = user
+                question.views = 0
+                if 'picture' in request.FILES:
+                    question.picture = request.FILES['picture']
+                question.save()
+                print(subject_slug, course_slug, question.slug)
+                return redirect('show_question', subject_slug=subject_slug, course_slug=course_slug, question_slug=question.slug)
+        else:
+            return HttpResponse("Something went wrong...")
+            print(form.errors)
+
+    else:
+        return HttpResponse("Unexpected...")
 
 #Not used anymore
 @user_passes_test(lambda u: u.is_superuser)
@@ -279,6 +309,46 @@ def like_question(request, subject_slug, course_slug, question_slug, like):
     return show_question(request, subject_slug, course_slug, question_slug)
 
 @login_required
+def like_question_new(request):
+    like = request.GET['like']
+    question_slug = request.GET['question_slug']
+    question = get_object_or_404(Question, slug = question_slug)
+    user = request.user
+    try: 
+        upvote = UpvoteQuestion.objects.get(question=question, user=user)
+    except UpvoteQuestion.DoesNotExist:
+        upvote = None
+    if upvote != None:
+        if upvote.positive and (like == '1'):
+            UpvoteQuestion.objects.get(question=question, user=user).delete()
+            return HttpResponse('Unliked')
+        elif not upvote.positive and (like == '0'):
+            UpvoteQuestion.objects.get(question=question, user=user).delete()
+            return HttpResponse('Undisliked')
+        else:
+            upvote.positive = not upvote.positive
+            upvote.save()
+            if (like == '1'):
+                return HttpResponse('Liked')
+            else:
+                return HttpResponse('Disliked')
+
+    else:
+        upvote = UpvoteQuestion.objects.create(question=question, user=user, positive=(like == '1'))
+        upvote.save()
+        if (like == '1'):
+            return HttpResponse('Liked')
+        else:
+            return HttpResponse('Disliked')
+
+    # likes = 0
+    # for upvote in UpvoteQuestion.objects.filter(question=question):
+    #     if upvote.positive:
+    #         likes += 1
+    #     else:
+    #         likes -= 1
+
+@login_required
 def follow(request, subject_slug, course_slug):
     course = get_object_or_404(Course, slug = course_slug)
     user = request.user
@@ -288,6 +358,19 @@ def follow(request, subject_slug, course_slug):
         followed = Followed.objects.create(course=course, poster=user)
         followed.save()
     return show_course(request, subject_slug, course_slug)
+
+def follow_course_new(request):
+    course_slug = request.GET['course_slug']
+    subject_slug = request.GET['subject_slug']
+    course = get_object_or_404(Course, slug = course_slug)
+    user = request.user
+    if Followed.objects.filter(course=course, poster=user).exists():
+        Followed.objects.get(course=course, poster=user).delete()
+        return HttpResponse("Unfollowed")
+    else:
+        followed = Followed.objects.create(course=course, poster=user)
+        followed.save()
+        return HttpResponse("Followed")
 
 @login_required
 def like_answer(request, subject_slug, course_slug, question_slug, answer_key, like):
@@ -311,6 +394,41 @@ def like_answer(request, subject_slug, course_slug, question_slug, answer_key, l
     return show_question(request, subject_slug, course_slug, question_slug)
 
 @login_required
+def like_answer_new(request):
+    like = request.GET['like']
+    answer_key = request.GET['answer_key']
+    answer = Answer.objects.get(pk=answer_key)
+    user = request.user
+    try: 
+        upvote = UpvoteAnswer.objects.get(answer=answer, user=user)
+    except UpvoteAnswer.DoesNotExist:
+        upvote = None
+    if upvote != None:
+        if upvote.positive and (like == '1'):
+            UpvoteAnswer.objects.get(answer=answer, user=user).delete()
+            return HttpResponse('Unliked')
+        elif not upvote.positive and (like == '0'):
+            UpvoteAnswer.objects.get(answer=answer, user=user).delete()
+            return HttpResponse('Undisliked')
+
+        else:
+            upvote.positive = not upvote.positive
+            upvote.save()
+            if (like == '1'):
+                return HttpResponse('Liked')
+            else:
+                return HttpResponse('Disliked')
+    else:
+        upvote = UpvoteAnswer.objects.create(answer=answer, user=user, positive=(like == '1'))
+        upvote.save()
+        if (like == '1'):
+            return HttpResponse('Liked')
+        else:
+            return HttpResponse('Disliked')
+
+
+
+@login_required
 def like_reply(request, subject_slug, course_slug, question_slug, reply_key, like):
     reply = Reply.objects.get(pk = reply_key)
     user = request.user
@@ -330,6 +448,71 @@ def like_reply(request, subject_slug, course_slug, question_slug, reply_key, lik
         upvote = UpvoteReply.objects.create(reply=reply, user=user, positive=(like == '1'))
         upvote.save()
     return show_question(request, subject_slug, course_slug, question_slug)
+
+@login_required
+def like_reply_new(request):
+    like = request.GET['like']
+    reply_key = request.GET['reply_key']
+    reply = Reply.objects.get(pk = reply_key)
+    user = request.user
+    try: 
+        upvote = UpvoteReply.objects.get(reply=reply, user=user)
+    except UpvoteReply.DoesNotExist:
+        upvote = None
+    if upvote != None:
+        if upvote.positive and (like == '1'):
+            UpvoteReply.objects.get(reply=reply, user=user).delete()
+            return HttpResponse('Unliked')
+        elif not upvote.positive and (like == '0'):
+            UpvoteReply.objects.get(reply=reply, user=user).delete()
+            return HttpResponse('Undisliked')
+        else:
+            upvote.positive = not upvote.positive
+            upvote.save()
+            if (like == '1'):
+                return HttpResponse('Liked')
+            else:
+                return HttpResponse('Disliked')
+    else:
+        upvote = UpvoteReply.objects.create(reply=reply, user=user, positive=(like == '1'))
+        upvote.save()
+        if (like == '1'):
+            return HttpResponse('Liked')
+        else:
+            return HttpResponse('Disliked')
+
+
+
+    # likes = 0
+    # for upvote in UpvoteReply.objects.filter(reply=reply):
+    #     if upvote.positive:
+    #         likes += 1
+    #     else:
+    #         likes -= 1
+
+@login_required
+def delete_reply(request, subject_slug, course_slug, question_slug, reply_key):
+    reply = Reply.objects.get(pk = reply_key)
+    user = request.user
+    if user == reply.poster:
+        reply.delete()
+    return show_question(request, subject_slug, course_slug, question_slug)
+
+@login_required
+def delete_answer(request, subject_slug, course_slug, question_slug, answer_key):
+    answer = Answer.objects.get(pk = answer_key)
+    user = request.user
+    if user == answer.poster:
+        answer.delete()
+    return show_question(request, subject_slug, course_slug, question_slug)
+
+@login_required
+def delete_question(request, subject_slug, course_slug, question_slug):
+    question = Question.objects.get(slug = question_slug)
+    user = request.user
+    if user == question.poster:
+        question.delete()
+    return show_course(request, subject_slug, course_slug)
 
 @login_required
 def answer_question(request, subject_slug, course_slug, question_slug):
@@ -363,6 +546,31 @@ def answer_question(request, subject_slug, course_slug, question_slug):
     context_dict['question'] = question
     return render(request,'gliocas_app/answer_question.html', context = context_dict)
 
+@login_required
+def answer_question_new(request, subject_slug, course_slug, question_slug):
+    try:
+        course = Course.objects.get(slug=course_slug)
+        user = request.user
+        question = Question.objects.get(slug=question_slug)
+    except (Course.DoesNotExist, User.DoesNotExist, Question.DoesNotExist):
+        course = None
+        user = None
+        question = None
+    if request.method == 'POST':
+        form = AnswerForm(request.POST, request.FILES)
+        if form.is_valid():
+            if course and user and question:
+                answer = form.save(commit=False)
+                answer.poster = user
+                answer.question = question
+                if 'picture' in request.FILES:
+                    answer.picture = request.FILES['picture']
+                answer.save()
+                return show_question(request, subject_slug, course_slug, question_slug)
+        else:
+            print(form.errors)
+            return show_question(request, subject_slug, course_slug, question_slug)
+
 
 @login_required
 def reply_answer(request, subject_slug, course_slug, question_slug, answer_key):
@@ -390,13 +598,38 @@ def reply_answer(request, subject_slug, course_slug, question_slug, answer_key):
             print(form.errors)
 
     context_dict = {}
-    context_dict['form'] = form
+    context_dict['replyform'] = form
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     context_dict['course'] = Course.objects.get(slug=course_slug)
     context_dict['question'] = Question.objects.get(slug=question_slug)
     context_dict['answer'] = Answer.objects.get(pk=answer_key)
     context_dict['replies'] = Reply.objects.filter(answer=answer)
     return render(request,'gliocas_app/reply_answer.html', context = context_dict)
+
+@login_required
+def reply_answer_new(request, subject_slug, course_slug, question_slug, answer_key):
+    form = ReplyForm()
+    try:
+        course = Course.objects.get(slug=course_slug)
+        user = request.user
+        question = Question.objects.get(slug=question_slug)
+        answer = Answer.objects.get(pk=answer_key)
+    except (Course.DoesNotExist, User.DoesNotExist, Question.DoesNotExist, Answer.DoesNotExist):
+        course = None
+        user = None
+        answer = None
+        question = None
+    if request.method == 'POST':
+        form = ReplyForm(request.POST)
+        if form.is_valid():
+            if course and user and answer:
+                reply = form.save(commit=False)
+                reply.poster = user
+                reply.answer = answer
+                reply.save()
+        else:
+            print(form.errors)
+    return show_question(request, subject_slug, course_slug, question_slug)
 
 @login_required
 def user_logout(request):
