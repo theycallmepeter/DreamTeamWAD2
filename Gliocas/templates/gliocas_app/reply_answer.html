@@ -22,19 +22,19 @@
 	<div>
 		 <form id="question_form" method="post" action=  ".">
 		 	{% csrf_token %}
-		 	{% for hidden in form.hidden_fields %}
+		 	{% for hidden in replyform.hidden_fields %}
 		 		{{ hidden }}
 		 	{% endfor %}
-		 	{% for field in form.visible_fields %}
+		 	{% for field in replyform.visible_fields %}
 		 		{{ field.errors }}
 		 		{{ field.help_text }}
 		 		{{ field }}
 		 	{% endfor %}
 
-			{{ form.errors }}
-			{{ form.non_field_errors }}
+			{{ replyform.errors }}
+			{{ replyform.non_field_errors }}
 
 		<input type="submit" name="submit" value="Add Reply"/>	
-	</form>
+		</form>
 	</div>	
 {% endblock %}

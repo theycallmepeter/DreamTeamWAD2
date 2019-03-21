@@ -86,6 +86,10 @@ def show_course(request, subject_slug, course_slug):
 
 def show_question(request, subject_slug, course_slug, question_slug):
     context_dict = {}
+    answerform = AnswerForm()
+    replyform = ReplyForm()
+    context_dict['answerform'] = answerform
+    context_dict['replyform'] = replyform
     try:
         question = Question.objects.get(slug=question_slug)
         answers = Answer.objects.filter(question=question)
@@ -116,7 +120,6 @@ def show_question(request, subject_slug, course_slug, question_slug):
         context_dict['subject'] = None
         context_dict['course'] = None
         response = render(request,'gliocas_app/question.html', context = context_dict)
-
     return response
 
 def search(request):
@@ -542,6 +545,31 @@ def answer_question(request, subject_slug, course_slug, question_slug):
     context_dict['question'] = question
     return render(request,'gliocas_app/answer_question.html', context = context_dict)
 
+@login_required
+def answer_question_new(request, subject_slug, course_slug, question_slug):
+    try:
+        course = Course.objects.get(slug=course_slug)
+        user = request.user
+        question = Question.objects.get(slug=question_slug)
+    except (Course.DoesNotExist, User.DoesNotExist, Question.DoesNotExist):
+        course = None
+        user = None
+        question = None
+    if request.method == 'POST':
+        form = AnswerForm(request.POST, request.FILES)
+        if form.is_valid():
+            if course and user and question:
+                answer = form.save(commit=False)
+                answer.poster = user
+                answer.question = question
+                if 'picture' in request.FILES:
+                    answer.picture = request.FILES['picture']
+                answer.save()
+                return show_question(request, subject_slug, course_slug, question_slug)
+        else:
+            print(form.errors)
+            return show_question(request, subject_slug, course_slug, question_slug)
+
 
 @login_required
 def reply_answer(request, subject_slug, course_slug, question_slug, answer_key):
@@ -569,13 +597,38 @@ def reply_answer(request, subject_slug, course_slug, question_slug, answer_key):
             print(form.errors)
 
     context_dict = {}
-    context_dict['form'] = form
+    context_dict['replyform'] = form
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     context_dict['course'] = Course.objects.get(slug=course_slug)
     context_dict['question'] = Question.objects.get(slug=question_slug)
     context_dict['answer'] = Answer.objects.get(pk=answer_key)
     context_dict['replies'] = Reply.objects.filter(answer=answer)
     return render(request,'gliocas_app/reply_answer.html', context = context_dict)
+
+@login_required
+def reply_answer_new(request, subject_slug, course_slug, question_slug, answer_key):
+    form = ReplyForm()
+    try:
+        course = Course.objects.get(slug=course_slug)
+        user = request.user
+        question = Question.objects.get(slug=question_slug)
+        answer = Answer.objects.get(pk=answer_key)
+    except (Course.DoesNotExist, User.DoesNotExist, Question.DoesNotExist, Answer.DoesNotExist):
+        course = None
+        user = None
+        answer = None
+        question = None
+    if request.method == 'POST':
+        form = ReplyForm(request.POST)
+        if form.is_valid():
+            if course and user and answer:
+                reply = form.save(commit=False)
+                reply.poster = user
+                reply.answer = answer
+                reply.save()
+        else:
+            print(form.errors)
+    return show_question(request, subject_slug, course_slug, question_slug)
 
 @login_required
 def user_logout(request):

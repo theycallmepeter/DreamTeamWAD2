@@ -92,6 +92,8 @@ $(document).on('click','#follow', function(){
 
 $(document).ready(function(){
 	$('#form-div').hide()
+	$('#answer_form').hide()
+	$('#cancel').hide()
 });
 
 $(document).on('click','#ask-question', function(){
@@ -104,24 +106,20 @@ $(document).on('click','#cancel', function(){
 	$('#ask-question').show()
 });
 
-// var form = $('#question_form');
-//     form.submit(function (event) {
-//     	event.preventDefault();
-// 	    console.log("form submitted!");  // sanity check
-// 	    return false;
-//     //     $.ajax({
-//     //         type: "POST",
-//     //         url: form.attr('action'),
-//     //         data: form.serialize(),
-//     //         success: function (data) {
-//     //             $('#form-div').hide()
-// 				// $('#ask-question').show()
-//     //         },
-//     //         error: function(data) {
-//     //         	$('#form-div').hide()
-// 				// $('#ask-question').show()
-//     //             console.log("Didn't submit correctly.")
-//     //         }
-//     //     });
-//     //     return false;
-//     });
+$(document).on('click','#cancelreply', function(){
+	var answerkey
+	answerkey = $(this).attr("data-answerkey");
+	$('.reply_form'+answerkey).hide()
+	$('.reply'+answerkey).show()
+});
+
+$(document).on('click','#reply', function(){
+	var answerkey
+	answerkey = $(this).attr("data-answerkey");
+	$('.reply_form'+answerkey).show()
+	$('.cancel'+answerkey).show()
+});
+
+$(document).on('click','#answer', function(){
+	$('#answer_form').show()
+});
