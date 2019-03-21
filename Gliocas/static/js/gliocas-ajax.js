@@ -94,6 +94,37 @@ $(document).ready(function(){
 	$('#form-div').hide()
 	$('#answer_form').hide()
 	$('#cancel').hide()
+	$('.reply-body').each(function(){
+		var replykey = $(this).attr("data-replykey")
+		var upvotedclass = $(".voted"+replykey)
+		var upvoted = upvotedclass.text()
+		if(upvoted === "upvoted"){
+			$('#liker.liker'+replykey).addClass("btn-success");
+		} else if (upvoted === "downvoted"){
+			$('#liker.disliker'+replykey).addClass("btn-danger");
+		}
+	})
+	$('.answer-body').each(function(){
+		var answerkey = $(this).attr("data-answerkey")
+		var upvotedclass = $(".voteda"+answerkey)
+		var upvoted = upvotedclass.text()
+		console.log(answerkey)
+		console.log(upvoted)
+		if(upvoted === "upvoted"){
+			$('#likea.likea'+answerkey).addClass("btn-success");
+		} else if (upvoted === "downvoted"){
+			$('#likea.dislikea'+answerkey).addClass("btn-danger");
+		}
+	})
+	$('.card-body').each(function(){
+		var upvotedclass = $(".votedq")
+		var upvoted = upvotedclass.text()
+		if(upvoted === "True"){
+			$('#likeq.likeq').addClass("btn-success");
+		} else if (upvoted === "False"){
+			$('#likeq.dislikeq').addClass("btn-danger");
+		}
+	})
 });
 
 $(document).on('click','#ask-question', function(){

@@ -29,7 +29,7 @@
         <button id="likeq" data-questionslug="{{question.slug}}" data-like="1" class="likeq btn btn-primary btn-sm" type="button">Like</button>
 		<button id="likeq" data-questionslug="{{question.slug}}" data-like="0" class="dislikeq btn btn-primary btn-sm" type="button">Dislike</button>
 		{% if user.is_authenticated %}
-			You have {% questionVoted question user %} this
+			<div class="votedq" style="display:none">{% questionVoted question user %}</div>
 		{% endif %}
 		<hr />
         <h4>Answers</h4>
@@ -37,6 +37,10 @@
         {% if answers %}
         <ul>
             {% for answer in answers %}
+            <div class="answer-body" data-answerkey={{answer.pk}}>
+            	{% if user.is_authenticated %}
+					<div class="voteda{{answer.pk}}" style="display:none">{% answerVoted answer user %}</div>
+				{% endif %}
             <li>{{ answer.text }}</li>
 			By <strong><a href="{% url 'user' answer.poster.username %}">{{answer.poster}}</a></strong> at {{ answer.date }}
             {% if answer.picture %}
@@ -54,16 +58,18 @@
             {% for reply in replies %}
 			<ul>
             {% if reply.answer.pk == answer.pk %}
-            <p style="padding-left: 50px;"><li>{{ reply.text }}</li>
+            <p class="reply-body" data-replykey="{{reply.pk}}" style="padding-left: 50px;"><li>{{ reply.text }}</li>
 			By <strong><a href="{% url 'user' reply.poster.username %}">{{reply.poster}}</a></strong> at {{ reply.date }}
-                <button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="liker{{reply.pk}} btn btn-primary btn-sm" type="button">Like</button>
-				<button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="disliker{{reply.pk}} btn btn-primary btn-sm" type="button">Dislike</button>
+                <!-- <button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="liker{{reply.pk}} btn btn-primary btn-sm" type="button">Like</button>
+				<button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="disliker{{reply.pk}} btn btn-primary btn-sm" type="button">Dislike</button> -->
+				{% if user.is_authenticated %}
+					<div class="voted{{reply.pk}}" style="display:none">{% replyVoted reply user %}</div>
+				{% endif %}
+				<button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="liker{{reply.pk}} btn btn-primary btn-sm" type="button">Like</button>
+				<button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="disliker{{reply.pk}} btn btn-primary btn-sm" type="button">Dislike</button> 
 				{% if user == reply.poster %}
 				<a href="{% url 'delete_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk  %}" class="btn btn-primary btn-sm"> Delete</a>
 				{% endif %}</br>
-				{% if user.is_authenticated %}
-					You have {% replyVoted reply user %} this
-				{% endif %}
 			</p>
             {% endif %}
 			</ul>
@@ -86,6 +92,7 @@
 						</form>
 		    <button id="reply" data-answerkey="{{answer.pk}}" class="reply{{answer.pk}} btn btn-primary btn-sm" type="button">Reply</button>
 		    <button id="cancelreply" data-answerkey="{{answer.pk}}" class="cancel{{answer.pk}} btn btn-primary btn-sm" type="button">Cancel</button>
+			</div>
             {% endfor %}
         </ul>
         {% else %}
