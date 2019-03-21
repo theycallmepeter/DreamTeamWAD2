@@ -75,21 +75,21 @@
 			</ul>
             {% endfor %}
 			<form id="reply_form" class="reply_form{{answer.pk}}" method="post" action="{% url 'reply_answer_new' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk %}" enctype="multipart/form-data" style="display:none">
-							 	{% csrf_token %}
-							 	{% for hidden in replyform.hidden_fields %}
-							 		{{ hidden }}
-							 	{% endfor %}
-							 	{% for field in replyform.visible_fields %}
-							 		{{ field.errors }}
-							 		{{ field.help_text }}
-							 		{{ field }}
-							 	{% endfor %}
+				{% csrf_token %}
+				{% for hidden in replyform.hidden_fields %}
+					{{ hidden }}
+				{% endfor %}
+				{% for field in replyform.visible_fields %}
+					{{ field.errors }}
+					{{ field.help_text }}
+					{{ field }}
+				{% endfor %}
 
-								{{ replyform.errors }}
-								{{ replyform.non_field_errors }}
+				{{ replyform.errors }}
+				{{ replyform.non_field_errors }}
 
-							<input type="submit" name="submit" value="Add Reply"/>	
-						</form>
+				<input type="submit" name="submit" value="Add Reply"/>	
+			</form>
 		    <button id="reply" data-answerkey="{{answer.pk}}" class="reply{{answer.pk}} btn btn-primary btn-sm" type="button">Reply</button>
 		    <button id="cancelreply" data-answerkey="{{answer.pk}}" class="cancel{{answer.pk}} btn btn-primary btn-sm" type="button">Cancel</button>
 			</div>
@@ -101,14 +101,14 @@
         {% endif %}
         <form id="answer_form" method="post" action="{% url 'answer_question_new' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}" style="display:none">
 		 	{% csrf_token %}
-		 	{% for hidden in answerform.hidden_fields %}
-		 		{{ hidden }}
-		 	{% endfor %}
-		 	{% for field in answerform.visible_fields %}
-		 		{{ field.errors }}
-		 		{{ field.help_text }}
-		 		{{ field }}
-		 	{% endfor %}
+		 	{% for hidden in replyform.hidden_fields %}
+					{{ hidden }}
+				{% endfor %}
+				{% for field in replyform.visible_fields %}
+					{{ field.errors }}
+					{{ field.help_text }}
+					{{ field }}
+				{% endfor %}
 
 			{{ answerform.errors }}
 			{{ answerform.non_field_errors }}

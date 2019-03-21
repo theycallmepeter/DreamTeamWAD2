@@ -359,6 +359,7 @@ def follow(request, subject_slug, course_slug):
         followed.save()
     return show_course(request, subject_slug, course_slug)
 
+@login_required
 def follow_course_new(request):
     course_slug = request.GET['course_slug']
     subject_slug = request.GET['subject_slug']
@@ -496,7 +497,7 @@ def delete_reply(request, subject_slug, course_slug, question_slug, reply_key):
     user = request.user
     if user == reply.poster:
         reply.delete()
-    return show_question(request, subject_slug, course_slug, question_slug)
+    return HttpResponseRedirect(reverse('show_question', args=(subject_slug, course_slug, question_slug)))
 
 @login_required
 def delete_answer(request, subject_slug, course_slug, question_slug, answer_key):
@@ -504,7 +505,7 @@ def delete_answer(request, subject_slug, course_slug, question_slug, answer_key)
     user = request.user
     if user == answer.poster:
         answer.delete()
-    return show_question(request, subject_slug, course_slug, question_slug)
+    return HttpResponseRedirect(reverse('show_question', args=(subject_slug, course_slug, question_slug)))
 
 @login_required
 def delete_question(request, subject_slug, course_slug, question_slug):
@@ -512,7 +513,7 @@ def delete_question(request, subject_slug, course_slug, question_slug):
     user = request.user
     if user == question.poster:
         question.delete()
-    return show_course(request, subject_slug, course_slug)
+    return HttpResponseRedirect(reverse('show_course', args=(subject_slug, course_slug)))
 
 @login_required
 def answer_question(request, subject_slug, course_slug, question_slug):
@@ -563,7 +564,9 @@ def answer_question_new(request, subject_slug, course_slug, question_slug):
                 answer = form.save(commit=False)
                 answer.poster = user
                 answer.question = question
+                print('aaaaaaaa')
                 if 'picture' in request.FILES:
+                    print('picture')
                     answer.picture = request.FILES['picture']
                 answer.save()
                 return show_question(request, subject_slug, course_slug, question_slug)

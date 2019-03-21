@@ -29,8 +29,7 @@ Home
         {% for question in questions %}
         <div class="card my-3 rounded shadow">
             <div class="card-body">
-                <h2 class="card-title"><a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug%}">{{
-                        question.title }}</a></h2>
+                <h2 class="card-title"><a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug%}">{{question.title }}</a></h2>
                 <p>{{question.text}}</p>
                 {% if question.picture %}
                 <li>{{question.picture}}</li>
