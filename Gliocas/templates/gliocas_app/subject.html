@@ -1,24 +1,33 @@
 {% extends 'gliocas_app/base.html' %}
 
 {% block title_block %}
-    {{ subject }}
+{{ subject }}
 {% endblock %}
 
 {% block body_block %}
-    <h3> This is the list of courses for {{ subject }} </h3>
+<h1 class="mt-1">{{ subject }}</h1>
 
-    <div>
-        {% if courses %}
-        <ul>
-            {% for course in courses %}
-                <li><a href="{% url 'show_course' subject.slug course.slug %}"> {{ course.name }}</a></li>
-            {% endfor %}
-        </ul>
-        {% else %}
-            <strong>There are no courses.</strong>
-        {% endif %}
-            <a href="{% url 'add_course' subject.slug %}"> Add course </a>
+<div class="row">
 
+{% if courses %}
+    {% for course in courses %}
+
+    <div class="card my-3 rounded shadow col-3 mx-3">
+        <a href="{% url 'show_course' subject.slug course.slug %}">
+            <div class="card-body text-center">
+                <h2>{{ subject }} {{ course.name }}</h2>
+            </div>
+        </a>
     </div>
+
+    {% endfor %}
+{% else %}
+<div class="card-body">
+
+    <strong>There are no courses.</strong>
+</div>
+
+{% endif %}
+</div>
 
 {% endblock %}

@@ -1,33 +1,58 @@
 {% extends 'gliocas_app/base.html' %}
 
 {% block title_block %}
-    {{ course }}
+{{ course }}
 {% endblock %}
 
 {% block body_block %}
-    <h3> This is the list of questions for {{ course }} in subject {{ subject }} </h3>
-	{% if followed %}
-        <button id="follow" data-courseslug="{{course.slug}}" data-subjectslug="{{subject.slug}}" class="btn btn-primary btn-sm" type="button">Unfollow this course</button>
-		<!-- <a href="{% url 'follow' subject.slug course.slug %}"> Unfollow this course </a> -->
-	{% else %}
-        <button id="follow" data-courseslug="{{course.slug}}" data-subjectslug="{{subject.slug}}" class="btn btn-primary btn-sm" type="button">Follow this course</button>
-		<!-- <a href="{% url 'follow' subject.slug course.slug %}"> Follow this course </a> -->
-	{% endif %}
 
-    <div>
-        {% if questions %}
-        <ul>
-            {% for question in questions %}
-                <li><a href="{% url 'show_question' subject.slug course.slug question.slug %}"> {{ question.title }}</a>
-                {% if user == question.poster %}
-                    <a href="{% url 'delete_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}"> Delete</a>
+<h1 class="mt-1"><a href="{% url 'show_subject' subject.slug %}">{{ subject }}</a> {{ course }} </h1>
+<div class="row">
+    <div class="col-md-12 col-lg-3">
+        <div class="card justify-content-start rounded shadow mt-3">
+            <div class="card-body">
+                {% if followed %}
+                <h4 class="card-title mb-3">You are following this course.</h4>
+                <button id="follow" data-courseslug="{{course.slug}}" data-subjectslug="{{subject.slug}}" class="btn btn-lg btn-block btn-outline-primary rounded-pill" type="button">UNFOLLOW</button>
+                {% else %}
+                <h4 class="card-title mb-3">You are not following this course.</h4>
+                <button id="follow" data-courseslug="{{course.slug}}" data-subjectslug="{{subject.slug}}" class="btn btn-lg btn-block btn-outline-primary rounded-pill" type="button">FOLLOW</button>
                 {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-            <strong>There are no questions.</strong>
+                <a href="{% url 'add_question' subject.slug course.slug %}" class="btn btn-lg btn-block btn-outline-primary rounded-pill">POST</a>
+            </div>
+        </div>
+    </div>
+
+    {% if questions %}
+    <div class="col-md-12 col-lg-8">
+    {% for question in questions %}
+    
+        <a href="{% url 'show_question' subject.slug course.slug question.slug %}">
+            <div class="card my-3 rounded shadow">
+                <div class="card-body">
+                    <h5 class="card-title">{{ question.title }}</h5>
+                </div>
+
+            </div>
+        </a>
+        {% if user == question.poster %}
+            <a href="{% url 'delete_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}">
+                <div class="card my-3 rounded shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Delete</h5>
+                    </div>
+                </div>
+            </a>
         {% endif %}
+    
+    {% endfor %}
+</div>
+    {% else %}
+    <div class="card my-3 rounded shadow">
+        <div class="card-body">
+            <strong>There are no questions.</strong>
+            {% endif %}
+        </div>
     </div>
     <button id="ask-question" class="btn btn-primary btn-sm" type="button">Add question</button>
     <!-- <a href="{% url 'add_question' subject.slug course.slug %}"> Add question </a> --></br>
@@ -42,7 +67,6 @@
                     {{ field.help_text }}
                     {{ field }}
                 {% endfor %}
-
                 {{ form.errors }}
                 {{ form.non_field_errors }}
 
@@ -50,5 +74,5 @@
         </form>
         <button id="cancel" class="btn btn-primary btn-sm" type="button">Cancel</button>
     </div>
-
+</div>
 {% endblock %}

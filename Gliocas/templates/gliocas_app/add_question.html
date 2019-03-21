@@ -1,28 +1,31 @@
 {% extends 'gliocas_app/base.html' %}
+{% load crispy_forms_tags %}
 
 {% block title_block %}
-    Add question
+Add question
 {% endblock %}
 
 {% block body_block %}
-    <h3> This is where you can add a question to {{ subject }}'s {{ course }} </h3>
+<h1 class="mt-1"> {{ subject }} {{ course }} </h1>
 
-	<div>
-		 <form id="question_form" method="post" action=  "." enctype="multipart/form-data">
-		 	{% csrf_token %}
-		 	{% for hidden in form.hidden_fields %}
-		 		{{ hidden }}
-		 	{% endfor %}
-		 	{% for field in form.visible_fields %}
-		 		{{ field.errors }}
-		 		{{ field.help_text }}
-		 		{{ field }}
-		 	{% endfor %}
+<div class="card rounded shadow">
+
+	<div class="card-body">
+		<h2 class="card-title">Ask a new question</h2>
+		<form id="question_form" method="post" action="." enctype="multipart/form-data">
+			{% csrf_token %}
+			{% for hidden in form.hidden_fields %}
+			{{ hidden }}
+			{% endfor %}
+			
+			{{ field.errors }}
+			{{ field.help_text }}
+			{{ form|crispy }}
 
 			{{ form.errors }}
 			{{ form.non_field_errors }}
-
-		<input type="submit" name="submit" value="Ask Question"/>	
-	</form>
-	</div>	
+			<input type="submit" name="submit" value="POST" class="btn btn-lg btn-block float-right btn-primary rounded-pill mb-3" />
+		</form>
+	</div>
+</div>
 {% endblock %}

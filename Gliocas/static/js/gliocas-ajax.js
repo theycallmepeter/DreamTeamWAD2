@@ -55,7 +55,7 @@ $(document).on('click','#liker', function(){
 	var like;
 	replykey = $(this).attr("data-replykey");
 	like = $(this).attr("data-like")
-	$.get('/gliocas_app/likereply/', {reply_key: replykey, like: like}, function(data){
+	jQuery.get('/gliocas_app/likereply/', {reply_key: replykey, like: like}, function(data){
 		switch (data){
 			case "Unliked":
 				$('#liker.liker'+replykey).removeClass("btn-success");
@@ -79,12 +79,12 @@ $(document).on('click','#follow', function(){
 	var courseslug;
 	courseslug = $(this).attr("data-courseslug");
 	subjectslug = $(this).attr("data-subjectslug");
-	$.get('/gliocas_app/followcourse/', {course_slug: courseslug, subject_slug:subjectslug}, function(data){
+	jQuery.get('/gliocas_app/followcourse/', {course_slug: courseslug, subject_slug:subjectslug}, function(data){
 		if (data==="Followed"){
 			//thing to do if followed
-			$('#follow').text('Unfollow this course');
+			$('#follow').text('UNFOLLOW');
 		} else {
-			$('#follow').text('Follow this course');
+			$('#follow').text('FOLLOW');
 			//thing to do if unfollowed
 		}
 	});

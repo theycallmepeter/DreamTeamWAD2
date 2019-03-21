@@ -1,31 +1,47 @@
 {% extends 'gliocas_app/base.html' %}
 {% load staticfiles %}
+{% load crispy_forms_tags %}
+
 
 {% block title_block %}
-    register
+register
 {% endblock %}
 
 {% block body_block %}
-    <h3> register </h3>
+<h1 class="mt-1"> REGISTER </h1>
+<!-- <a href = "{% url 'subjects' %}"> Subjects </a> -->
+{% if user.is_authenticated %}
+	<strong>Logout to register a different account</strong>
+{% else %}
+	<div class="row">
+		<div class="col">
+			<div class="card my-3 rounded shadow">
+				<div class="card-body">
+					<h2 class="card-title">Welcome!</h2>
 
-    {% if registered %}
-    <strong>Thank you for registering!</strong>
-    <a href="{% url 'index' %}">return home</a>
 
-    {% elif user.is_authenticated %}
-    <strong>Logout to register a different account</strong>
+					<form id="user_form" class="" action="{% url 'register' %}" method="post" enctype="multipart/form-data">
 
-    {%else%}
+						{%csrf_token%}
+						<input type="text" name="username" id="" class="form-control h-40 rounded-pill" placeholder="Username" required="" autofocus="">
+						<br />
+						<input type="email" name="email" id="" class="form-control h-40 rounded-pill" placeholder="Email address" required="" autofocus="">
+						<br />
+						<input type="password" name="password" id="inputPassword" class="form-control h-40 rounded-pill" placeholder="Password" required="">
+						<br />
+						<input type="password" name="confirm_password" id="inputPassword" class="form-control h-40 rounded-pill" placeholder="Confirm password" required="">
+						<br />
+						<button class="btn btn-lg h-40 btn-primary btn-block rounded-pill" type="submit" value="Register">Sign in</button> 
 
-    <form id = "user_form" class="" action="{% url 'register' %}" method="post"
-    enctype="multipart/form-data">
+						
 
-    {%csrf_token%}
-    {{user_form.as_p}}
-
-    <input type="submit" name="submit" value="Register" />
-
-    </form>
-    {% endif %}
-
+					</form>
+					{% if errors %}
+					<strong>{{errors}}</strong>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endif %}
 {% endblock %}
