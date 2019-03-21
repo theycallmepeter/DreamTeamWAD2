@@ -8,6 +8,10 @@ def score(votes):
     return score
 
 @register.simple_tag
+def questionscore(question):
+    return score(UpvoteQuestion.objects.filter(question = question))
+
+@register.simple_tag
 def answerscore(answer):
     return score(UpvoteAnswer.objects.filter(answer = answer))
 
