@@ -100,7 +100,7 @@
 
         <strong>Be the first one to comment!</strong>
         {% endif %}
-        <form id="answer_form" method="post" action="{% url 'answer_question_new' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}" style="display:none">
+        <form id="answer_form" method="post" action="{% url 'answer_question_new' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}" style="display:none" enctype="multipart/form-data">
 		 	{% csrf_token %}
 		 	{% for hidden in answerform.hidden_fields %}
 		 		{{ hidden }}
