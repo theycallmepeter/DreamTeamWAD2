@@ -26,6 +26,7 @@
             {% endif %}
         </div>
         <button id="answer" class="answer btn btn-primary btn-sm" type="button">Answer</button>
+        <button id="cancelanswer" class="cancel btn btn-primary btn-sm" type="button">Cancel</button>
         <button id="likeq" data-questionslug="{{question.slug}}" data-like="1" class="likeq btn btn-primary btn-sm" type="button">Like</button>
 		<button id="likeq" data-questionslug="{{question.slug}}" data-like="0" class="dislikeq btn btn-primary btn-sm" type="button">Dislike</button>
 		{% if user.is_authenticated %}
