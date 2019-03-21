@@ -1,4 +1,5 @@
 {% extends 'gliocas_app/base.html' %}
+{% load upvotescore %}
 
 {% block title_block %}
 {{ question.title }}
@@ -38,7 +39,7 @@
         {% if answers %}
         <ul>
             {% for answer in answers %}
-            <li><a href="{% url 'user' answer.poster.username %}">{{answer.poster}}</a> - - - {{ answer.text }}</li>
+            <li><a href="{% url 'user' answer.poster.username %}">{{answer.poster}}</a> - {% answerscore answer %} - {{ answer.text }}</li>
             {% if answer.picture %}
             <img src="{{ MEDIA_URL }}{{ answer.picture }}" width="auto" height="300" alt="Picture" />
             {% endif %}
@@ -48,7 +49,7 @@
                 Dislike</a></br>
             {% for reply in replies %}
             {% if reply.answer.pk == answer.pk %}
-            <p style="padding-left: 50px;"><a href="{% url 'user' reply.poster.username %}">{{reply.poster}}</a> - - - {{ reply.text }}</br>
+            <p style="padding-left: 50px;"><a href="{% url 'user' reply.poster.username %}">{{reply.poster}}</a> - {% replyscore reply %} - {{ reply.text }}</br>
                 <a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='1' %}">
                     Like</a>
                 <a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='0' %}">
