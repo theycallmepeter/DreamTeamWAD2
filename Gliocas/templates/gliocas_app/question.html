@@ -26,6 +26,7 @@
             {% endif %}
         </div>
         <button id="answer" class="answer btn btn-primary btn-sm" type="button">Answer</button>
+        <button id="cancelanswer" class="cancel btn btn-primary btn-sm" type="button">Cancel</button>
         <button id="likeq" data-questionslug="{{question.slug}}" data-like="1" class="likeq btn btn-primary btn-sm" type="button">Like</button>
 		<button id="likeq" data-questionslug="{{question.slug}}" data-like="0" class="dislikeq btn btn-primary btn-sm" type="button">Dislike</button>
 		{% if user.is_authenticated %}
@@ -99,7 +100,7 @@
 
         <strong>Be the first one to comment!</strong>
         {% endif %}
-        <form id="answer_form" method="post" action="{% url 'answer_question_new' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}" style="display:none">
+        <form id="answer_form" method="post" action="{% url 'answer_question_new' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}" style="display:none" enctype="multipart/form-data">
 		 	{% csrf_token %}
 		 	{% for hidden in answerform.hidden_fields %}
 					{{ hidden }}
