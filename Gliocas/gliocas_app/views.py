@@ -75,12 +75,13 @@ def show_course(request, subject_slug, course_slug):
                 context_dict['followed'] = False
         else:
             context_dict['followed'] = False
-            
     except Subject.DoesNotExist:
         context_dict['subject'] = None
         context_dict['questions'] = None
         context_dict['course'] = None
         context_dict['followed'] = False
+    form = QuestionForm()
+    context_dict['form'] = form
     return render(request, 'gliocas_app/course.html', context = context_dict)
 
 def show_question(request, subject_slug, course_slug, question_slug):
@@ -159,6 +160,35 @@ def add_question(request, subject_slug, course_slug):
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     context_dict['course'] = Course.objects.get(slug=course_slug)
     return render(request,'gliocas_app/add_question.html', context = context_dict)
+
+@login_required
+def add_question_new(request, subject_slug, course_slug):
+    print("here1wqwgwqgqwgqwgqwgqwgwqgqwgqwgqwgqwgqwgwgq")
+    try:
+        course = Course.objects.get(slug=course_slug)
+        user = request.user
+    except (Course.DoesNotExist, User.DoesNotExist):
+        course = None
+        user = None
+    if request.method == 'POST':
+        form = QuestionForm(request.POST, request.FILES)
+        if form.is_valid():
+            if course and user:
+                question = form.save(commit=False)
+                question.course = course
+                question.poster = user
+                question.views = 0
+                if 'picture' in request.FILES:
+                    question.picture = request.FILES['picture']
+                question.save()
+                print("here1")
+                return show_question(request, subject_slug, course_slug, question.slug)
+        else:
+            return HttpResponse("Something went wrong...")
+            print(form.errors)
+
+    else:
+        return HttpResponse("Unexpected...")
 
 @user_passes_test(lambda u: u.is_superuser)
 def add_course(request, subject_slug):

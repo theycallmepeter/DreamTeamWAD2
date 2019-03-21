@@ -47,3 +47,39 @@ $(document).on('click','#follow', function(){
 		}
 	});
 });
+
+$(document).ready(function(){
+	$('#form-div').hide()
+});
+
+$(document).on('click','#ask-question', function(){
+	$('#form-div').show()
+	$('#ask-question').hide()
+});
+
+$(document).on('click','#cancel', function(){
+	$('#form-div').hide()
+	$('#ask-question').show()
+});
+
+// var form = $('#question_form');
+//     form.submit(function (event) {
+//     	event.preventDefault();
+// 	    console.log("form submitted!");  // sanity check
+// 	    return false;
+//     //     $.ajax({
+//     //         type: "POST",
+//     //         url: form.attr('action'),
+//     //         data: form.serialize(),
+//     //         success: function (data) {
+//     //             $('#form-div').hide()
+// 				// $('#ask-question').show()
+//     //         },
+//     //         error: function(data) {
+//     //         	$('#form-div').hide()
+// 				// $('#ask-question').show()
+//     //             console.log("Didn't submit correctly.")
+//     //         }
+//     //     });
+//     //     return false;
+//     });

@@ -29,7 +29,26 @@
             <strong>There are no questions.</strong>
         {% endif %}
     </div>
+    <button id="ask-question" class="btn btn-primary btn-sm" type="button">Add question</button>
+    <!-- <a href="{% url 'add_question' subject.slug course.slug %}"> Add question </a> --></br>
+    <div id = "form-div">
+        <form id="question_form"  method="post" action="add_question/" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
+                {% for field in form.visible_fields %}
+                    {{ field.errors }}
+                    {{ field.help_text }}
+                    {{ field }}
+                {% endfor %}
 
-    <a href="{% url 'add_question' subject.slug course.slug %}"> Add question </a>
+                {{ form.errors }}
+                {{ form.non_field_errors }}
+
+        <input type="submit" name="submit" value="Ask Question"/>   
+        </form>
+        <button id="cancel" class="btn btn-primary btn-sm" type="button">Cancel</button>
+    </div>
 
 {% endblock %}
