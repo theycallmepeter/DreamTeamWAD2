@@ -6,8 +6,22 @@ $(document).on('click','#likeq', function(){
 	questionslug = $(this).attr("data-questionslug");
 	like = $(this).attr("data-like")
 	$.get('/gliocas_app/likequestion/', {question_slug: questionslug, like: like}, function(data){
-		// $('#like_count').html(data);
-		//put code to change style of likebutton here
+		switch (data){
+			case "Unliked":
+				$('#likeq.likeq').removeClass("btn-success");
+				break;
+			case "Undisliked":
+				$('#likeq.dislikeq').removeClass("btn-danger");
+				break;
+			case "Liked":
+				$('#likeq.likeq').addClass("btn-success");
+				$('#likeq.dislikeq').removeClass("btn-danger");
+				break;
+			case "Disliked":
+				$('#likeq.dislikeq').addClass("btn-danger");
+				$('#likeq.likeq').removeClass("btn-success");
+				break;
+		};
 	});
 });
 
@@ -17,8 +31,22 @@ $(document).on('click','#likea', function(){
 	answerkey = $(this).attr("data-answerkey");
 	like = $(this).attr("data-like")
 	$.get('/gliocas_app/likeanswer/', {answer_key: answerkey, like: like}, function(data){
-		// $('#like_count').html(data);
-		//put code to change style of likebutton here
+		switch (data){
+			case "Unliked":
+				$('#likea.likea'+answerkey).removeClass("btn-success");
+				break;
+			case "Undisliked":
+				$('#likea.dislikea'+answerkey).removeClass("btn-danger");
+				break;
+			case "Liked":
+				$('#likea.likea'+answerkey).addClass("btn-success");
+				$('#likea.dislikea'+answerkey).removeClass("btn-danger");
+				break;
+			case "Disliked":
+				$('#likea.dislikea'+answerkey).addClass("btn-danger");
+				$('#likea.likea'+answerkey).removeClass("btn-success");
+				break;
+		};
 	});
 });
 
@@ -28,8 +56,22 @@ $(document).on('click','#liker', function(){
 	replykey = $(this).attr("data-replykey");
 	like = $(this).attr("data-like")
 	$.get('/gliocas_app/likereply/', {reply_key: replykey, like: like}, function(data){
-		// $('#like_count').html(data);
-		//put code to change style of likebutton here
+		switch (data){
+			case "Unliked":
+				$('#liker.liker'+replykey).removeClass("btn-success");
+				break;
+			case "Undisliked":
+				$('#liker.disliker'+replykey).removeClass("btn-danger");
+				break;
+			case "Liked":
+				$('#liker.liker'+replykey).addClass("btn-success");
+				$('#liker.disliker'+replykey).removeClass("btn-danger");
+				break;
+			case "Disliked":
+				$('#liker.disliker'+replykey).addClass("btn-danger");
+				$('#liker.liker'+replykey).removeClass("btn-success");
+				break;
+		};
 	});
 });
 

@@ -8,7 +8,7 @@
 	{% if question %}
 	    <h3> Question about {{ question.title }} from {{ course.name}} in subject {{ subject.name }} </h3>
 	    <h5> {{question.text}} </h5>
-
+	    Likes: <div id="like_count">{{ likes }} </div>
 		<h5> Upvotes : {{upvotes}} </h5>
 		<h5> Views : {{question.views}} </h5>
 		{% if question.picture %}
@@ -19,8 +19,8 @@
 	        <ul>
 	            {% for answer in answers %}
 	                <li>{{answer.poster}} - - - {{ answer.text }}</li>
-					<button id="likea" data-answerkey="{{answer.pk}}" data-like="1" class="btn btn-primary btn-sm" type="button">Like</button>
-					<button id="likea" data-answerkey="{{answer.pk}}" data-like="0" class="btn btn-primary btn-sm" type="button">Disike</button>
+					<button id="likea" data-answerkey="{{answer.pk}}" data-like="1" class="likea{{answer.pk}} btn btn-primary btn-sm" type="button">Like</button>
+					<button id="likea" data-answerkey="{{answer.pk}}" data-like="0" class="dislikea{{answer.pk}} btn btn-primary btn-sm" type="button">Dislike</button>
 				    {% if user == answer.poster %}
 						<a href="{% url 'delete_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk  %}"> Delete</a>
 					{% endif %}
@@ -32,8 +32,8 @@
 	                {% for reply in replies %}
 	                	{% if reply.answer.pk == answer.pk %}
 	                		<p style="padding-left: 50px;">{{reply.poster}} - - - {{ reply.text }}</br>
-							<button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="btn btn-primary btn-sm" type="button">Like</button>
-							<button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="btn btn-primary btn-sm" type="button">Disike</button>
+							<button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="liker{{reply.pk}} btn btn-primary btn-sm" type="button">Like</button>
+							<button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="disliker{{reply.pk}} btn btn-primary btn-sm" type="button">Dislike</button>
 				   			{% if user == reply.poster %}
 				   			<a href="{% url 'delete_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk  %}"> Delete</a>
 				   			{% endif %}
@@ -47,8 +47,8 @@
 	            <strong>There are no answers.</strong>
 	        {% endif %}
 	    <a href="{% url 'answer_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}"> Answer</a>
-		<button id="likeq" data-questionslug="{{question.slug}}" data-like="1" class="btn btn-primary btn-sm" type="button">Like</button>
-		<button id="likeq" data-questionslug="{{question.slug}}" data-like="0" class="btn btn-primary btn-sm" type="button">Disike</button>
+		<button id="likeq" data-questionslug="{{question.slug}}" data-like="1" class="likeq btn btn-primary btn-sm" type="button">Like</button>
+		<button id="likeq" data-questionslug="{{question.slug}}" data-like="0" class="dislikeq btn btn-primary btn-sm" type="button">Dislike</button>
 	{% else %}
 		Question does not exist.
 	{% endif %}

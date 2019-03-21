@@ -317,23 +317,32 @@ def like_question_new(request):
     if upvote != None:
         if upvote.positive and (like == '1'):
             UpvoteQuestion.objects.get(question=question, user=user).delete()
+            return HttpResponse('Unliked')
         elif not upvote.positive and (like == '0'):
             UpvoteQuestion.objects.get(question=question, user=user).delete()
+            return HttpResponse('Undisliked')
         else:
             upvote.positive = not upvote.positive
             upvote.save()
+            if (like == '1'):
+                return HttpResponse('Liked')
+            else:
+                return HttpResponse('Disliked')
+
     else:
         upvote = UpvoteQuestion.objects.create(question=question, user=user, positive=(like == '1'))
         upvote.save()
-
-    likes = 0
-    for upvote in UpvoteQuestion.objects.filter(question=question):
-        if upvote.positive:
-            likes += 1
+        if (like == '1'):
+            return HttpResponse('Liked')
         else:
-            likes -= 1
+            return HttpResponse('Disliked')
 
-    return HttpResponse(likes)
+    # likes = 0
+    # for upvote in UpvoteQuestion.objects.filter(question=question):
+    #     if upvote.positive:
+    #         likes += 1
+    #     else:
+    #         likes -= 1
 
 @login_required
 def follow(request, subject_slug, course_slug):
@@ -393,23 +402,27 @@ def like_answer_new(request):
     if upvote != None:
         if upvote.positive and (like == '1'):
             UpvoteAnswer.objects.get(answer=answer, user=user).delete()
+            return HttpResponse('Unliked')
         elif not upvote.positive and (like == '0'):
             UpvoteAnswer.objects.get(answer=answer, user=user).delete()
+            return HttpResponse('Undisliked')
+
         else:
             upvote.positive = not upvote.positive
             upvote.save()
+            if (like == '1'):
+                return HttpResponse('Liked')
+            else:
+                return HttpResponse('Disliked')
     else:
         upvote = UpvoteAnswer.objects.create(answer=answer, user=user, positive=(like == '1'))
         upvote.save()
-
-    likes = 0
-    for upvote in UpvoteAnswer.objects.filter(answer=answer):
-        if upvote.positive:
-            likes += 1
+        if (like == '1'):
+            return HttpResponse('Liked')
         else:
-            likes -= 1
+            return HttpResponse('Disliked')
 
-    return HttpResponse(likes)
+
 
 @login_required
 def like_reply(request, subject_slug, course_slug, question_slug, reply_key, like):
@@ -445,23 +458,33 @@ def like_reply_new(request):
     if upvote != None:
         if upvote.positive and (like == '1'):
             UpvoteReply.objects.get(reply=reply, user=user).delete()
+            return HttpResponse('Unliked')
         elif not upvote.positive and (like == '0'):
             UpvoteReply.objects.get(reply=reply, user=user).delete()
+            return HttpResponse('Undisliked')
         else:
             upvote.positive = not upvote.positive
             upvote.save()
+            if (like == '1'):
+                return HttpResponse('Liked')
+            else:
+                return HttpResponse('Disliked')
     else:
         upvote = UpvoteReply.objects.create(reply=reply, user=user, positive=(like == '1'))
         upvote.save()
-
-    likes = 0
-    for upvote in UpvoteReply.objects.filter(reply=reply):
-        if upvote.positive:
-            likes += 1
+        if (like == '1'):
+            return HttpResponse('Liked')
         else:
-            likes -= 1
+            return HttpResponse('Disliked')
 
-    return HttpResponse(likes)
+
+
+    # likes = 0
+    # for upvote in UpvoteReply.objects.filter(reply=reply):
+    #     if upvote.positive:
+    #         likes += 1
+    #     else:
+    #         likes -= 1
 
 @login_required
 def delete_reply(request, subject_slug, course_slug, question_slug, reply_key):
