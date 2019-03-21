@@ -29,8 +29,9 @@ def visitor_cookie_handler(request, response, questionKey):
 
 def home(request):
     context_dict = {}
-    subject_list = Subject.objects.all()
-    context_dict['subjects'] = subject_list
+    questions = Question.objects.all().order_by('-date')
+    questions = questions[0:3]
+    context_dict['questions'] = questions
     return render(request, 'gliocas_app/home.html', context = context_dict)
 
 def about(request):
@@ -92,12 +93,6 @@ def show_question(request, subject_slug, course_slug, question_slug):
         replies = []
         for answer in answers:
             replies += Reply.objects.filter(answer=answer)
-        context_dict['upvotes'] = 0
-        for upvote in UpvoteQuestion.objects.filter(question=question):
-            if upvote.positive:
-              context_dict['upvotes'] += 1
-            else:
-                context_dict['upvotes'] -= 1
         parent_course = Course.objects.get(slug=course_slug)
         parent_subject = Subject.objects.get(slug=subject_slug)
         context_dict['question'] = question
@@ -161,6 +156,7 @@ def add_question(request, subject_slug, course_slug):
     context_dict['course'] = Course.objects.get(slug=course_slug)
     return render(request,'gliocas_app/add_question.html', context = context_dict)
 
+#Not used anymore
 @user_passes_test(lambda u: u.is_superuser)
 def add_course(request, subject_slug):
     form = CourseForm()
@@ -183,6 +179,7 @@ def add_course(request, subject_slug):
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     return render(request,'gliocas_app/add_course.html', context = context_dict)
 
+#Not used anymore
 @user_passes_test(lambda u: u.is_superuser)
 def add_subject(request):
     form = SubjectForm()
@@ -198,7 +195,6 @@ def add_subject(request):
     return render(request,'gliocas_app/add_subject.html', context = context_dict)
 
 def register(request):
-    registered = False
 
     if request.method == 'POST':
 
@@ -224,13 +220,15 @@ def register(request):
 
         else:
             print(user_form.errors)
+            return render(request,'gliocas_app/register.html',
+                          {'user_form':user_form,
+                           'errors':user_form.errors})
     else:
         user_form= UserForm()
 
 
     return render(request,'gliocas_app/register.html',
-                        {'user_form':user_form,
-                        'registered':registered})
+                        {'user_form':user_form})
 
 
 def user_login(request):

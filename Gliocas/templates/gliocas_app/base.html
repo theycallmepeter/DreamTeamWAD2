@@ -55,9 +55,19 @@
 						<li class="nav-item">
 							<a class="nav-link" href="{% url 'user' user.username %}">My account</a>
 						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'logout' %}">Logout</a>
+						</li>
+					{% else %}
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'login' %}">Login</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'register' %}">Register</a>
+						</li>
 					{%endif%}
                 </ul>
-                <form class="form-inline col-6 my-0 my-lg-0 search-bar" id="user_form" method="post" action="{% url 'search' %}">
+                <form class="form-inline col-8 my-0 my-lg-0 search-bar" id="user_form" method="post" action="{% url 'search' %}">
 					{% csrf_token %}
 					<div class="form-group">
 						{% if user_query %}
@@ -77,24 +87,6 @@
             {% block body_block %}
 
             {% endblock %}
-
-            <!--
-            <div>
-            <ul>
-                <li><a href="{% url 'home' %}">Index</a></li>
-                <li><a href="{% url 'about' %}">About</a></li>
-                <li><a href="{% url 'contact' %}">Contact</a></li>
-				<li><a href="{% url 'search' %}">Search</a></li>
-                {% if user.is_authenticated %}
-                <li><a href="{% url 'user' user.username %}">My account</a></li>
-                <li><a href="{% url 'logout' %}">Logout</a></li>
-                {%else%}
-                <li><a href="{% url 'login' %}">Login</a></li>
-                <li><a href="{% url 'register' %}">Register</a></li>
-                {%endif%}
-            </ul>
-        </div>
-            -->
 
 
             <!-- Footer -->

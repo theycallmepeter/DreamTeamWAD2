@@ -58,6 +58,7 @@ class UserForm(forms.ModelForm):
                 "password and confirm_password does not match"
             )
 
+#Not used anymore
 class CourseForm(forms.ModelForm):
     maxLength = 64
     name = forms.CharField(max_length=maxLength, help_text="Please enter the short name of your course (e.g. 2A)", required = True)
@@ -66,6 +67,7 @@ class CourseForm(forms.ModelForm):
         model = Course
         fields = ('name',)
 
+#Not used anymore
 class SubjectForm(forms.ModelForm):
     maxLength = 64
     name = forms.CharField(max_length=maxLength, help_text="Please enter the subject you'd like to add.", required = True)

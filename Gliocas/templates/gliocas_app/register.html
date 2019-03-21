@@ -36,9 +36,8 @@ register
 						
 
 					</form>
-					{% if registered %}
-					<strong>Thank you for registering!</strong>
-					<a href="{% url 'home' %}">return home</a>
+					{% if errors %}
+					<strong>{{errors}}</strong>
 					{% endif %}
 				</div>
 			</div>
