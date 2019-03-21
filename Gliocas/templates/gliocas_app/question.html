@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body_block %}
-	{% if Question %}
+	{% if question %}
 	    <h3> Question about {{ question.title }} from {{ course.name}} in subject {{ subject.name }} </h3>
 	    <h5> {{question.text}} </h5>
 

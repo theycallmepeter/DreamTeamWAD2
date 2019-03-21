@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.template.defaultfilters import slugify
@@ -110,7 +110,6 @@ def show_question(request, subject_slug, course_slug, question_slug):
         if not visited:
             question.views = question.views + 1
             question.save()
-    
     except Question.DoesNotExist:
         context_dict['answers'] = None
         context_dict['question'] = None
@@ -132,7 +131,6 @@ def search(request):
 
 @login_required
 def add_question(request, subject_slug, course_slug):
-    
     form = QuestionForm()
     try:
         course = Course.objects.get(slug=course_slug)
@@ -163,7 +161,6 @@ def add_question(request, subject_slug, course_slug):
 
 @login_required
 def add_question_new(request, subject_slug, course_slug):
-    print("here1wqwgwqgqwgqwgqwgqwgwqgqwgqwgqwgqwgqwgwgq")
     try:
         course = Course.objects.get(slug=course_slug)
         user = request.user
@@ -181,8 +178,8 @@ def add_question_new(request, subject_slug, course_slug):
                 if 'picture' in request.FILES:
                     question.picture = request.FILES['picture']
                 question.save()
-                print("here1")
-                return show_question(request, subject_slug, course_slug, question.slug)
+                print(subject_slug, course_slug, question.slug)
+                return redirect('show_question', subject_slug=subject_slug, course_slug=course_slug, question_slug=question.slug)
         else:
             return HttpResponse("Something went wrong...")
             print(form.errors)
