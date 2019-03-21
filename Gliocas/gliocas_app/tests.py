@@ -100,7 +100,7 @@ class loginTests(TestCase):
 
         response = c.get(reverse('register'))
 
-        self.assertContains(response,'Logout to register a different account')
+        self.assertNotContains(response,'<form id="login_form" method="post" action="/gliocas_app/login/">')
 
     #have to logout before loging in from different account
     def test_cant_login_when_logged_in(self):
@@ -114,7 +114,7 @@ class loginTests(TestCase):
 
         response = c.get(reverse('login'))
 
-        self.assertContains(response,'you are already logged in!')
+        self.assertNotContains(response,'<form id="login_form" method="post" action="/gliocas_app/login/">')
 
     def test_duplicate_usernames(self):
         #register user
