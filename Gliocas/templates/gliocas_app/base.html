@@ -20,6 +20,10 @@
     <!-- favicon-->
     <link rel="icon" href="{% static 'gliocas_app/img/favicon.png' %}">
 
+    <!-- mathjax LaTex-->
+   <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML" async></script>
+    
+
     <title>
         Gliocas -
         {% block title_block %}
@@ -27,6 +31,9 @@
         {% endblock %}
     </title>
 </head>
+
+
+
 
 <body>
     <div class="img-fluid" style="background-image: url('{% static 'gliocas_app/img/base/background.png' %}'); background-repeat: no-repeat; background-position: top left; object-fit: none; background-size: 100%;">

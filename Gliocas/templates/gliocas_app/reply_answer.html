@@ -1,18 +1,18 @@
 {% extends 'gliocas_app/base.html' %}
-
+{% load upvotescore %}
 {% block title_block %}
-    Reply answer
+    Reply to answer
 {% endblock %}
 
 {% block body_block %}
-    <h3> Replying to: {{ question.poster }} - - - {{ question.title }} </h3>
+    <h3> Replying to: {{ question.poster }} - {% questionscore question %} - {{ question.title }} </h3>
     <h4> {{question.text}}</h4>
     {% if answer %}
         <ul>
-            <li>{{answer.poster}} - - - {{ answer.text }}</li>
+            <li>{{answer.poster}} - {% answerscore answer %} - {{ answer.text }}</li>
                 {% for reply in replies %}
                 	{% if reply.answer.pk == answer.pk %}
-                		<li style="padding-left: 50px;">{{reply.poster}} - - - {{ reply.text }}</li>
+                		<li style="padding-left: 50px;">{{reply.poster}} - {% replyscore reply %} - {{ reply.text }}</li>
                		{% endif %}
                 {% endfor %}
         </ul>

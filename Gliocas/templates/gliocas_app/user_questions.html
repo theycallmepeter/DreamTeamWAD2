@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title_block %}
-    user {{ username }}'s questions
+    user {{ username }}'s {{objectname}}
 {% endblock %}
 
 {% block body_block %}
@@ -13,7 +13,7 @@
        
         {% if questions %}
             {% for question in questions %}
-                <a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug %}">{{question.title}} </br>
+                <a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug %}"> {{question.title}} </br>
             {% endfor %}
         {% else %}
             No {{objectname}} found.
