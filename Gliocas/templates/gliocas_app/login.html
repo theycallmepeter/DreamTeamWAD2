@@ -21,7 +21,7 @@
   </head>
   <body>
 	{%if user.is_authenticated%}
-		<strong>you are already logged in!</strong>
+		<strong>You are already logged in!</strong>
 	{%else%}
 		<div class="container">
 		  <div class="row h-100 justify-content-center align-items-center">
@@ -39,7 +39,7 @@
 				{% if response %}
 				  <strong>{{response}}</strong>
 				{%endif%}
-				<a href="{% url 'reset_password' %}">forgot password?</a>
+				<a href="{% url 'reset_password' %}">Forgot password?</a>
 			  </div>
 			</div>
 		  </div>

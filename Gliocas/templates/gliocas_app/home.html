@@ -37,6 +37,8 @@ Home
 				<li>{{question.views}} views</li>
 				<li>{% questionscore question %} upvotes</li>
 				<li>{{question.date}}</li>
+				<li><a href="{% url 'show_course' question.course.subject.slug question.course.slug%}">{{question.course.name}}</a></li>
+				<li><a href="{% url 'show_subject' question.course.subject.slug%}">{{question.course.subject.name}}</a></li>
             </div>
         </div>
 		{% endfor %}
