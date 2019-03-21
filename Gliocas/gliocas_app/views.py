@@ -564,9 +564,7 @@ def answer_question_new(request, subject_slug, course_slug, question_slug):
                 answer = form.save(commit=False)
                 answer.poster = user
                 answer.question = question
-                print('aaaaaaaa')
                 if 'picture' in request.FILES:
-                    print('picture')
                     answer.picture = request.FILES['picture']
                 answer.save()
                 return show_question(request, subject_slug, course_slug, question_slug)

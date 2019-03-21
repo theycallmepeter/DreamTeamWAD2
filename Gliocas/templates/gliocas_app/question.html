@@ -101,10 +101,10 @@
         {% endif %}
         <form id="answer_form" method="post" action="{% url 'answer_question_new' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}" style="display:none">
 		 	{% csrf_token %}
-		 	{% for hidden in replyform.hidden_fields %}
+		 	{% for hidden in answerform.hidden_fields %}
 					{{ hidden }}
 				{% endfor %}
-				{% for field in replyform.visible_fields %}
+				{% for field in answerform.visible_fields %}
 					{{ field.errors }}
 					{{ field.help_text }}
 					{{ field }}
