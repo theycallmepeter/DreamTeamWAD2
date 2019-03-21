@@ -1,11 +1,11 @@
 {% extends 'gliocas_app/base.html' %}
-
+{% load upvotescore %}
 {% block title_block %}
     Add question
 {% endblock %}
 
 {% block body_block %}
-    <h3> Replying to: {{ question.poster }} - - - {{ question.title }} </h3>
+    <h3> Replying to: {{ question.poster }} - {% questionscore question %} - {{ question.title }} </h3>
     <h4> {{question.text}}</h4>
 
 	<div>
