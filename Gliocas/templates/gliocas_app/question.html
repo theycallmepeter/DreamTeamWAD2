@@ -6,8 +6,7 @@
 {% endblock %}
 
 {% block body_block %}
-<h1 class="mt-1"> <a href="{% url 'show_subject' subject.slug %}"> {{ subject.name }}</a> </h1>
-<h1 class="mt-1"> <a href="{% url 'show_course' subject.slug course.slug %}"> {{ course.name}}</a> </h1>
+<h1 class="mt-1"> <a href="{% url 'show_subject' subject.slug %}"> {{ subject.name }}</a><a href="{% url 'show_course' subject.slug course.slug %}"> {{ course.name}}</a></h1>
 
 
 
@@ -16,7 +15,7 @@
         <div class="mb-5">
             <h2 class="card-title"> {{ question.title }} </h2>
             <p class="card-subtitle text-muted">
-                by <a href="{% url 'user' question.poster.username %}">{{ question.poster }}</a> at {{ question.date }}
+                By <a href="{% url 'user' question.poster.username %}">{{ question.poster }}</a> at {{ question.date }}
                 <br/>
                 {% questionscore question %} upvotes {{question.views}} views
             </p>
@@ -32,29 +31,33 @@
 		{% if user.is_authenticated %}
 			You have {% questionVoted question user %} this
 		{% endif %}
-        <input type="submit" name="submit" value="Add Reply" />
-        </form>
-        <h4># answers</h4>
+		<hr />
+        <h4>Answers</h4>
         <hr />
         {% if answers %}
         <ul>
             {% for answer in answers %}
-            <li><a href="{% url 'user' answer.poster.username %}">{{answer.poster}}</a> - {% answerscore answer %} - {{ answer.text }}</li>
+            <li>{{ answer.text }}</li>
+			By <strong><a href="{% url 'user' answer.poster.username %}">{{answer.poster}}</a></strong> at {{ answer.date }}
             {% if answer.picture %}
-            <img src="{{ MEDIA_URL }}{{ answer.picture }}" width="auto" height="300" alt="Picture" />
+				<img src="{{ MEDIA_URL }}{{ answer.picture }}" width="auto" height="300" alt="Picture" />
             {% endif %}
             <a href="{% url 'like_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk like='1' %}">
                 Like</a>
+			{% answerscore answer %}
             <a href="{% url 'like_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk like='0' %}">
                 Dislike</a></br>
 			{% if user.is_authenticated %}
 				You have {% answerVoted answer user %} this
 			{% endif %}
             {% for reply in replies %}
+			<ul>
             {% if reply.answer.pk == answer.pk %}
-            <p style="padding-left: 50px;"><a href="{% url 'user' reply.poster.username %}">{{reply.poster}}</a> - {% replyscore reply %} - {{ reply.text }}</br>
+            <p style="padding-left: 50px;"><li>{{ reply.text }}</li>
+			By <strong><a href="{% url 'user' reply.poster.username %}">{{reply.poster}}</a></strong> at {{ reply.date }}
                 <a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='1' %}">
                     Like</a>
+				{% replyscore reply %}
                 <a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='0' %}">
                     Dislike</a></br>
 				{% if user.is_authenticated %}
@@ -62,8 +65,10 @@
 				{% endif %}
 			</p>
             {% endif %}
+			</ul>
             {% endfor %}
             <a href="{% url 'reply_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk %}">Reply</a>
+			<hr />
             {% endfor %}
         </ul>
         {% else %}
