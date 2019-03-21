@@ -53,7 +53,7 @@
                     </li>
 					{% if user.is_authenticated %}
 						<li class="nav-item">
-							<a class="nav-link" href="{% url 'user' user.username %}">My account</a>
+							<a class="nav-link" href="{% url 'user' user.username %}">Account</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="{% url 'logout' %}">Logout</a>
@@ -67,7 +67,7 @@
 						</li>
 					{%endif%}
                 </ul>
-                <form class="form-inline col-8 my-0 my-lg-0 search-bar" id="user_form" method="post" action="{% url 'search' %}">
+                <form class="form-inline col-6 my-0 my-lg-0 search-bar" id="user_form" method="post" action="{% url 'search' %}">
 					{% csrf_token %}
 					<div class="form-group">
 						{% if user_query %}

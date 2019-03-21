@@ -80,7 +80,7 @@ def populate():
              {"text" : ("I shouldn't need to explain this to a maths student but"
                         " here we go: for a quadratic equation of the form "
                         "$$ax^2 + bx + c = 0$$ the solution is "
-                        "$$x = \frac{-b\pm\sqrt{a^2-4ac}}{2a}$$ "
+                        "$$x = \\frac{-b\pm\sqrt{a^2-4ac}}{2a}$$ "
                         "In your case the solution would be x = 1 "
                         "and x = -2"),
               "poster" : users["helpful_student"],

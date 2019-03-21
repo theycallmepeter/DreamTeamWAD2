@@ -26,12 +26,12 @@
             <img src="{{ MEDIA_URL }}{{ question.picture }}" class="img-thumbnail" alt="image" />
             {% endif %}
         </div>
-        <a href="{% url 'answer_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}">
-            Answer</a>
-        <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='1' %}">
-            Like</a>
-        <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='0' %}">
-            Dislike</a>
+        <a href="{% url 'answer_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}">Answer</a>
+        <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='1' %}">Like</a>
+        <a href="{% url 'like_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug like='0' %}">Dislike</a>
+		{% if user.is_authenticated %}
+			You have {% questionVoted question user %} this
+		{% endif %}
         <input type="submit" name="submit" value="Add Reply" />
         </form>
         <h4># answers</h4>
@@ -47,13 +47,20 @@
                 Like</a>
             <a href="{% url 'like_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk like='0' %}">
                 Dislike</a></br>
+			{% if user.is_authenticated %}
+				You have {% answerVoted answer user %} this
+			{% endif %}
             {% for reply in replies %}
             {% if reply.answer.pk == answer.pk %}
             <p style="padding-left: 50px;"><a href="{% url 'user' reply.poster.username %}">{{reply.poster}}</a> - {% replyscore reply %} - {{ reply.text }}</br>
                 <a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='1' %}">
                     Like</a>
                 <a href="{% url 'like_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk like='0' %}">
-                    Dislike</a></br></p>
+                    Dislike</a></br>
+				{% if user.is_authenticated %}
+					You have {% replyVoted reply user %} this
+				{% endif %}
+			</p>
             {% endif %}
             {% endfor %}
             <a href="{% url 'reply_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk %}">Reply</a>
