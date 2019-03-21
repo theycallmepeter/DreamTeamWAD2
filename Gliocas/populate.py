@@ -69,8 +69,8 @@ def populate():
     
     maths1r_questions = [
         {"title" : "How do I solve quadratic equations?",
-         "text" : ("Basically, I have the equation x^2 + x - 2 = 0 and I"
-                   " don't know how to solve it"),
+         "text" : ("Basically, I have the equation $$x^2 + x - 2 = 0$$ and I"
+                   " don't know how to solve it."),
          "poster" : users["fresher671"],
          "views" : 7,
          "upvotes" : [users["fresher671"], users["random_boy"]],
@@ -79,8 +79,9 @@ def populate():
          "answers" : [
              {"text" : ("I shouldn't need to explain this to a maths student but"
                         " here we go: for a quadratic equation of the form "
-                        "ax^2 + bx + c = 0 the solution is x = (- b +-sqrt(b^2 -"
-                        " 4ac))/2a. In your case the solution would be x = 1 "
+                        "$$ax^2 + bx + c = 0$$ the solution is "
+                        "$$x = \frac{-b\pm\sqrt{a^2-4ac}}{2a}$$ "
+                        "In your case the solution would be x = 1 "
                         "and x = -2"),
               "poster" : users["helpful_student"],
               "upvotes" : [users["fresher671"], users["random_boy"]],
