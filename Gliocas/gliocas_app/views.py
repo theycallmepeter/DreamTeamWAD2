@@ -567,10 +567,10 @@ def answer_question_new(request, subject_slug, course_slug, question_slug):
                 if 'picture' in request.FILES:
                     answer.picture = request.FILES['picture']
                 answer.save()
-                return show_question(request, subject_slug, course_slug, question_slug)
+                return HttpResponseRedirect(reverse('show_question', args=(subject_slug, course_slug, question_slug)))
         else:
             print(form.errors)
-            return show_question(request, subject_slug, course_slug, question_slug)
+            return HttpResponseRedirect(reverse('show_question', args=(subject_slug, course_slug, question_slug)))
 
 
 @login_required
@@ -630,7 +630,7 @@ def reply_answer_new(request, subject_slug, course_slug, question_slug, answer_k
                 reply.save()
         else:
             print(form.errors)
-    return show_question(request, subject_slug, course_slug, question_slug)
+    return HttpResponseRedirect(reverse('show_question', args=(subject_slug, course_slug, question_slug)))
 
 @login_required
 def user_logout(request):
