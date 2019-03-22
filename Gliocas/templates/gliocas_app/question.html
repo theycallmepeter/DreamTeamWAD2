@@ -89,7 +89,7 @@
                         {% endif %}
                         
                         <button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="liker{{reply.pk}} btn btn-sm btn-outline-primary rounded-pill" type="button">Like</button>
-                        <button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="disliker{{reply.pk}} btn btn-sm btn-outline-primary rounded-pill" type="button">Dislike</button>
+                        <button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="disliker{{reply.pk}} btn btn-sm btn-outline-danger rounded-pill" type="button">Dislike</button>
                         {% if user == reply.poster %}
                         <a href="{% url 'delete_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk  %}"
                             class="btn btn-primary btn-sm">Delete</a>
