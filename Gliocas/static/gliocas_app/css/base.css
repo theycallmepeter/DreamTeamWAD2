@@ -23,22 +23,43 @@ a:link {
 }
 
 a:visited {
-    color: black;
+    color: purple;
     text-decoration: none;
 }
 
 a:hover {
-    color: black;
+    color: rgb(0, 110, 255);
     text-decoration: none;
 }
 
 a:active {
-    color: black;
+    color: lightseagreen;
     text-decoration: none;
+}
+
+.btn-outline-primary {
+    color:rgb(4, 102, 248) !important;
+}
+
+.btn-outline-primary:hover {
+    color:white !important;
+}
+
+.btn-primary {
+    color:white !important;
 }
 
 .rounded {
     border-radius: 20px !important;
+}
+
+.card {
+    outline: none !important;
+}
+
+.bg-dark {
+    background: rgba(0,0,0,0);
+    background-image: linear-gradient(to right, rgb(138, 4, 172) , rgb(25, 3, 148)) !important;
 }
 
 #footer {

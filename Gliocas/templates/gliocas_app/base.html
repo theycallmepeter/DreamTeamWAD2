@@ -41,9 +41,9 @@
 
 
 <body>
-    <div class="img-fluid" style="background-image: url('{% static 'gliocas_app/img/base/background.png' %}'); background-repeat: no-repeat; background-position: top left; object-fit: none; background-size: 100%;">
+    
 
-        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(0,0,0,0);">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 
             <a class="navbar-brand" href="{% url 'home' %}">
                 <img src="{% static 'gliocas_app/img/base/logo_flat_dark.png' %}" width="auto" height="30" alt="">
@@ -60,42 +60,42 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'about' %}">About</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'contact' %}">Contact</a>
-                    </li>
-					{% if user.is_authenticated %}
+                    {% if user.is_authenticated %}
 						<li class="nav-item">
-							<a class="nav-link" href="{% url 'user' user.username %}">Account</a>
+							<a class="nav-link" href="{% url 'user' user.username %}">My Account</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="{% url 'logout' %}">Logout</a>
 						</li>
 					{% else %}
-						<li class="nav-item">
-							<a class="nav-link" href="{% url 'login' %}">Login</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="{% url 'register' %}">Register</a>
-						</li>
+                    <li class="nav-item mr-2">
+                        <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                    </li>
+					
+                        <li class="nav-item">
+
+                        <form class="form-inline search-bar" id="user_form" method="post" action="{% url 'search' %}">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    {% if user_query %}
+                                        <input class="form-control  rounded-pill search" type="search" placeholder="Search"
+                                            name="query" value="{{ user_query }}" id="query">
+                                    {% else %}
+                                        <input class="form-control rounded-pill search" type="search" placeholder="Search"
+                                            name="query" value="" id="query">
+                                    {% endif %}
+                                </div>
+                            </form>
+                        </li>
 					{%endif%}
                 </ul>
-                <form class="form-inline col-6 my-0 my-lg-0 search-bar" id="user_form" method="post" action="{% url 'search' %}">
-					{% csrf_token %}
-					<div class="form-group">
-						{% if user_query %}
-							<input class="form-control w-100 rounded-pill search" type="search" placeholder="What are you looking for?"
-								name="query" value="{{ user_query }}" id="query">
-						{% else %}
-							<input class="form-control w-100 rounded-pill search" type="search" placeholder="What are you looking for?"
-								name="query" value="" id="query">
-						{% endif %}
-					</div>
-                </form>
+                
                 <div class="col-sm"></div>
             </div>
         </nav>
-
+        <div class="img-fluid" style="background-image: url('{% static 'gliocas_app/img/base/background.png' %}'); background-repeat: no-repeat; background-position: top left; object-fit: none; background-size: 100%; margin-top:-1em;">
         <div class="container">
+            <br/>
             {% block body_block %}
 
             {% endblock %}
