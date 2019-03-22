@@ -8,18 +8,23 @@ $(document).on('click','#likeq', function(){
 	$.get('/gliocas_app/likequestion/', {question_slug: questionslug, like: like}, function(data){
 		switch (data){
 			case "Unliked":
-				$('#likeq.likeq').removeClass("btn-success");
+				$('#likeq.likeq').addClass("btn-outline-primary");	
+				$('#likeq.likeq').removeClass("btn-primary");
 				break;
 			case "Undisliked":
+				$('#likeq.dislikeq').addClass("btn-outline-danger");
 				$('#likeq.dislikeq').removeClass("btn-danger");
 				break;
 			case "Liked":
-				$('#likeq.likeq').addClass("btn-success");
+				$('#likeq.likeq').addClass("btn-primary");
+				$('#likeq.dislikeq').addClass("btn-outline-danger");
 				$('#likeq.dislikeq').removeClass("btn-danger");
 				break;
 			case "Disliked":
 				$('#likeq.dislikeq').addClass("btn-danger");
-				$('#likeq.likeq').removeClass("btn-success");
+				$('#likeq.likeq').addClass("btn-outline-primary");
+				$('#likeq.dislikeq').removeClass("btn-outline-danger");
+				$('#likeq.likeq').removeClass("btn-primary");
 				break;
 		};
 	});
@@ -33,19 +38,26 @@ $(document).on('click','#likea', function(){
 	$.get('/gliocas_app/likeanswer/', {answer_key: answerkey, like: like}, function(data){
 		switch (data){
 			case "Unliked":
-				$('#likea.likea'+answerkey).removeClass("btn-success");
+				$('#likea.likea'+answerkey).addClass("btn-outline-primary");	
+				$('#likea.likea'+answerkey).removeClass("btn-primary");
 				break;
 			case "Undisliked":
+				$('#likea.dislikea'+answerkey).addClass("btn-outline-danger");
 				$('#likea.dislikea'+answerkey).removeClass("btn-danger");
 				break;
 			case "Liked":
-				$('#likea.likea'+answerkey).addClass("btn-success");
+				$('#likea.likea'+answerkey).addClass("btn-primary");
+				$('#likea.dislikea'+answerkey).addClass("btn-outline-danger");
 				$('#likea.dislikea'+answerkey).removeClass("btn-danger");
+
 				break;
 			case "Disliked":
 				$('#likea.dislikea'+answerkey).addClass("btn-danger");
-				$('#likea.likea'+answerkey).removeClass("btn-success");
-				break;
+				$('#likea.likea'+answerkey).addClass("btn-outline-primary");
+
+				$('#likea.dislikea'+answerkey).removeClass("btn-outline-danger");
+				$('#likea.likea'+answerkey).removeClass("btn-primary");
+			break;
 		};
 	});
 });
@@ -58,18 +70,24 @@ $(document).on('click','#liker', function(){
 	jQuery.get('/gliocas_app/likereply/', {reply_key: replykey, like: like}, function(data){
 		switch (data){
 			case "Unliked":
-				$('#liker.liker'+replykey).removeClass("btn-success");
+				$('#liker.liker'+replykey).addClass("btn-outline-primary");	
+				$('#liker.liker'+replykey).removeClass("btn-primary");
 				break;
 			case "Undisliked":
+				$('#liker.disliker'+replykey).addClass("btn-outline-danger");
 				$('#liker.disliker'+replykey).removeClass("btn-danger");
 				break;
 			case "Liked":
-				$('#liker.liker'+replykey).addClass("btn-success");
+				$('#liker.liker'+replykey).addClass("btn-primary");
+				$('#liker.disliker'+replykey).addClass("btn-outline-danger");
 				$('#liker.disliker'+replykey).removeClass("btn-danger");
 				break;
 			case "Disliked":
 				$('#liker.disliker'+replykey).addClass("btn-danger");
-				$('#liker.liker'+replykey).removeClass("btn-success");
+				$('#liker.liker'+replykey).addClass("btn-outline-primary");
+
+				$('#liker.disliker'+replykey).removeClass("btn-outline-danger");
+				$('#liker.liker'+replykey).removeClass("btn-primary");
 				break;
 		};
 	});
@@ -92,7 +110,6 @@ $(document).on('click','#follow', function(){
 
 $(document).ready(function(){
 	$('#form-div').hide()
-	$('#answer_form').hide()
 	$('#cancel').hide()
 	$('#cancelanswer').hide()
 	$('.reply-body').each(function(){
@@ -100,9 +117,11 @@ $(document).ready(function(){
 		var upvotedclass = $(".voted"+replykey)
 		var upvoted = upvotedclass.text()
 		if(upvoted === "upvoted"){
-			$('#liker.liker'+replykey).addClass("btn-success");
+			$('#liker.liker'+replykey).addClass("btn-primary");
+			$('#liker.liker'+replykey).removeClass("btn-outline-primary");
 		} else if (upvoted === "downvoted"){
 			$('#liker.disliker'+replykey).addClass("btn-danger");
+			$('#liker.disliker'+replykey).removeClass("btn-outline-danger");
 		}
 	})
 	$('.answer-body').each(function(){
@@ -112,17 +131,24 @@ $(document).ready(function(){
 		console.log(answerkey)
 		console.log(upvoted)
 		if(upvoted === "upvoted"){
-			$('#likea.likea'+answerkey).addClass("btn-success");
+			$('#likea.likea'+answerkey).addClass("btn-primary");
+			$('#likea.likea'+answerkey).removeClass("btn-outline-primary");
 		} else if (upvoted === "downvoted"){
 			$('#likea.dislikea'+answerkey).addClass("btn-danger");
+			$('#likea.dislikea'+answerkey).removeClass("btn-outline-danger");
+
 		}
 	})
 	$('.card-body').each(function(){
 		var upvotedclass = $(".votedq")
 		var upvoted = upvotedclass.text()
 		if(upvoted === "True"){
-			$('#likeq.likeq').addClass("btn-success");
+			$('#likeq.likeq').addClass("btn-primary");
+			$('#likeq.likeq').removeClass("btn-outline-primary");
 		} else if (upvoted === "False"){
+			$('#likeq.dislikeq').addClass("btn-danger");
+			$('#likeq.dislikeq').removeClass("btn-outline-danger");
+
 			$('#likeq.dislikeq').addClass("btn-danger");
 		}
 	})
@@ -142,6 +168,7 @@ $(document).on('click','#cancelreply', function(){
 	var answerkey
 	answerkey = $(this).attr("data-answerkey");
 	$('.reply_form'+answerkey).hide()
+	$('#cancelreply').hide()
 	$('.reply'+answerkey).show()
 });
 

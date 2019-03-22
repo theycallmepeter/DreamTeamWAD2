@@ -2,24 +2,32 @@
 {% load staticfiles %}
 
 {% block title_block %}
-    user {{ username }}'s {{objectname}}
+user {{ username }}'s {{objectname}}
 {% endblock %}
 
 {% block body_block %}
+<h1 class="mt-1"> USER PROFILE </h1>
 
-    {% if exists %}
+{% if exists %}
+<div class="card my-3 rounded shadow">
+    <div class="card-body">
+        <h2> {{username}}'s {{objectname}} </h2>
 
-        <h3> {{username}}'s {{objectname}} </h3>
-       
         {% if questions %}
-            {% for question in questions %}
-                <a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug %}"> {{question.title}} </br>
-            {% endfor %}
+        {% for question in questions %}
+        <hr/>
+        <a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug %}">
+
+            <h4>{{question.title}}</h4>
+        </a>
+        {% endfor %}
         {% else %}
-            No {{objectname}} found.
+        No {{objectname}} found.
         {% endif %}
 
-    {% else %}
+        {% else %}
         <h3> User '{{ username }}' does not exist. </h3>
-    {% endif %}
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

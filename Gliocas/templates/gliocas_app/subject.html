@@ -12,7 +12,7 @@
 {% if courses %}
     {% for course in courses %}
 
-    <div class="card my-3 rounded shadow col-3 mx-3">
+    <div class="card my-3 rounded shadow col-lg-3 col-md-5 mx-3">
         <a href="{% url 'show_course' subject.slug course.slug %}">
             <div class="card-body text-center">
                 <h2>{{ subject }} {{ course.name }}</h2>

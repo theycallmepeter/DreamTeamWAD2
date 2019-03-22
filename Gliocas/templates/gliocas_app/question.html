@@ -1,22 +1,24 @@
 {% extends 'gliocas_app/base.html' %}
 {% load upvotescore %}
+{% load crispy_forms_tags %}
 
 {% block title_block %}
 {{ question.title }}
 {% endblock %}
 
 {% block body_block %}
-<h1 class="mt-1"> <a href="{% url 'show_subject' subject.slug %}"> {{ subject.name }}</a><a href="{% url 'show_course' subject.slug course.slug %}"> {{ course.name}}</a></h1>
+<h1 class="mt-1"> {{ subject.name }} {{ course.name}}</h1>
 
 
 
 <div class="card my-3 rounded shadow">
     <div class="card-body">
+        <!-- question content -->
         <div class="mb-5">
             <h2 class="card-title"> {{ question.title }} </h2>
             <p class="card-subtitle text-muted">
-                By <a href="{% url 'user' question.poster.username %}">{{ question.poster }}</a> at {{ question.date }}
-                <br/>
+                By <a href="{% url 'user' question.poster.username %}">{{ question.poster }}</a> on {{ question.date }}
+                <br />
                 {% questionscore question %} upvotes {{question.views}} views
             </p>
             <hr />
@@ -25,92 +27,104 @@
             <img src="{{ MEDIA_URL }}{{ question.picture }}" class="img-thumbnail" alt="image" />
             {% endif %}
         </div>
-        <button id="answer" class="answer btn btn-primary btn-sm" type="button">Answer</button>
-        <button id="cancelanswer" class="cancel btn btn-primary btn-sm" type="button">Cancel</button>
-        <button id="likeq" data-questionslug="{{question.slug}}" data-like="1" class="likeq btn btn-primary btn-sm" type="button">Like</button>
-		<button id="likeq" data-questionslug="{{question.slug}}" data-like="0" class="dislikeq btn btn-primary btn-sm" type="button">Dislike</button>
-		{% if user.is_authenticated %}
-			<div class="votedq" style="display:none">{% questionVoted question user %}</div>
-		{% endif %}
-		<hr />
-		{% if errors %}
-			<div>{{errors}}</div>
-			<hr />
-		{% endif %}
+
+        <!-- answers -->
+        <button id="likeq" data-questionslug="{{question.slug}}" data-like="1" class="likeq btn btn-sm btn-outline-primary rounded-pill"
+            type="button">Like</button>
+        <button id="likeq" data-questionslug="{{question.slug}}" data-like="0" class="dislikeq btn btn-sm btn-outline-danger rounded-pill"
+            type="button">Dislike</button>
+        {% if user.is_authenticated %}
+        <div class="votedq" style="display:none">{% questionVoted question user %}</div>
+        {% endif %}
+        <hr />
+		<form id="answer_form" method="post" action="{% url 'answer_question_new' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for hidden in answerform.hidden_fields %}
+        {{ hidden }}
+        {% endfor %}
+        {{ answerform|crispy }}
+
+        {{ answerform.errors }}
+        {{ answerform.non_field_errors }}
+
+        <button type="submit" name="submit" value="Add Answer" class="likeq btn btn-lg btn-primary rounded-pill px-5 mb-5"> Post </button>
+        </form>
+
         <h4>Answers</h4>
         <hr />
         {% if answers %}
         <ul>
             {% for answer in answers %}
             <div class="answer-body" data-answerkey={{answer.pk}}>
-            	{% if user.is_authenticated %}
-					<div class="voteda{{answer.pk}}" style="display:none">{% answerVoted answer user %}</div>
-				{% endif %}
-            <li>{{ answer.text }}</li>
-			By <strong><a href="{% url 'user' answer.poster.username %}">{{answer.poster}}</a></strong> at {{ answer.date }}
-            {% if answer.picture %}
-				<img src="{{ MEDIA_URL }}{{ answer.picture }}" width="auto" height="300" alt="Picture" />
-            {% endif %}
-            <button id="likea" data-answerkey="{{answer.pk}}" data-like="1" class="likea{{answer.pk}} btn btn-primary btn-sm" type="button">Like</button>
-            {% answerscore answer %}
-			<button id="likea" data-answerkey="{{answer.pk}}" data-like="0" class="dislikea{{answer.pk}} btn btn-primary btn-sm" type="button">Dislike</button>
-			{% if user == answer.poster %}
-				<a href="{% url 'delete_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk  %}" class="btn btn-primary btn-sm"> Delete</a>
-			{% endif %}
-			</br>
-            {% for reply in replies %}
-			<ul>
-            {% if reply.answer.pk == answer.pk %}
-            <p class="reply-body" data-replykey="{{reply.pk}}" style="padding-left: 50px;"><li>{{ reply.text }}</li>
-			By <strong><a href="{% url 'user' reply.poster.username %}">{{reply.poster}}</a></strong> at {{ reply.date }}
-				{% if user.is_authenticated %}
-					<div class="voted{{reply.pk}}" style="display:none">{% replyVoted reply user %}</div>
-				{% endif %}
-				<button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="liker{{reply.pk}} btn btn-primary btn-sm" type="button">Like</button>
-				{% replyscore reply %}
-				<button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="disliker{{reply.pk}} btn btn-primary btn-sm" type="button">Dislike</button> 
-				{% if user == reply.poster %}
-				<a href="{% url 'delete_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk  %}" class="btn btn-primary btn-sm"> Delete</a>
-				{% endif %}</br>
-			</p>
-            {% endif %}
-			</ul>
-            {% endfor %}
-			<form id="reply_form" class="reply_form{{answer.pk}}" method="post" action="{% url 'reply_answer_new' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk %}" enctype="multipart/form-data" style="display:none">
-				{% csrf_token %}
-				{% for hidden in replyform.hidden_fields %}
-					{{ hidden }}
-				{% endfor %}
-				{% for field in replyform.visible_fields %}
-					{{ field.errors }}
-					{{ field.help_text }}
-					{{ field }}
-				{% endfor %}
+                {% if user.is_authenticated %}
+                <div class="voteda{{answer.pk}}" style="display:none">{% answerVoted answer user %}</div>
+                {% endif %}
+                <strong><a href="{% url 'user' answer.poster.username %}">{{answer.poster}}</a></strong> on {{ answer.date }}
+                <p>{{ answer.text }}</p>
+                {% if answer.picture %}
+                <img src="{{ MEDIA_URL }}{{ answer.picture }}" width="auto" height="300" alt="Picture" />
+                {% endif %}
+                <br/>
+                <button id="likea" data-answerkey="{{answer.pk}}" data-like="1" class="likea{{answer.pk}} btn btn-sm btn-outline-primary rounded-pill" type="button">Like</button>
+                <button id="likea" data-answerkey="{{answer.pk}}" data-like="0" class="dislikea{{answer.pk}} btn btn-sm btn-outline-danger rounded-pill" type="button">Dislike</button>
+                {% if user == answer.poster %}
+                <a href="{% url 'delete_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk  %}" class="btn btn-primary btn-sm"> Delete</a>
+                {% endif %}
+                </br>
 
-				<input type="submit" name="submit" value="Add Reply"/>	
-			</form>
-		    <button id="reply" data-answerkey="{{answer.pk}}" class="reply{{answer.pk}} btn btn-primary btn-sm" type="button">Reply</button>
-		    <button id="cancelreply" data-answerkey="{{answer.pk}}" class="cancel{{answer.pk}} btn btn-primary btn-sm" type="button">Cancel</button>
-			</div>
+                {% for reply in replies %}
+                
+                <ul>
+                    
+                    {% if reply.answer.pk == answer.pk %}
+                    <p class="reply-body" data-replykey="{{reply.pk}}" style="padding-left: 50px;">
+                        <ul>{{ reply.text }}</ul>
+                        <p>By <strong><a href="{% url 'user' reply.poster.username %}">{{reply.poster}}</a></strong> on {{ reply.date }}</p>
+                        <!-- <button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="liker{{reply.pk}} btn btn-primary btn-sm" type="button">Like</button>
+				<button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="disliker{{reply.pk}} btn btn-primary btn-sm" type="button">Dislike</button> -->
+                        {% if user.is_authenticated %}
+                        <div class="voted{{reply.pk}}" style="display:none">{% replyVoted reply user %}</div>
+                        {% endif %}
+                        
+                        <button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="liker{{reply.pk}} btn btn-sm btn-outline-primary rounded-pill" type="button">Like</button>
+                        <button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="disliker{{reply.pk}} btn btn-sm btn-outline-danger rounded-pill" type="button">Dislike</button>
+                        {% if user == reply.poster %}
+                        <a href="{% url 'delete_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk  %}"
+                            class="btn btn-primary btn-sm">Delete</a>
+                        {% endif %}</br>
+                    </p>
+                    {% endif %}
+                </ul>
+                {% endfor %}
+                <form id="reply_form" class="reply_form{{answer.pk}}" method="post" action="{% url 'reply_answer_new' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk %}"
+                    enctype="multipart/form-data" style="display:none">
+                    {% csrf_token %}
+                    {% for hidden in replyform.hidden_fields %}
+                    {{ hidden }}
+                    {% endfor %}
+                    
+                    {{ replyform|crispy }}
+
+
+                    {{ replyform.errors }}
+                    {{ replyform.non_field_errors }}
+
+                    <button type="submit" name="submit" value="Add Reply" class="likeq btn btn-lg btn-primary rounded-pill px-5 mb-5" /> reply </button>
+                </form>
+
+
+                <button id="reply" data-answerkey="{{answer.pk}}" class="reply{{answer.pk}} btn btn-sm btn-outline-primary rounded-pill"
+                    type="button">Reply</button>
+                <button id="cancelreply" data-answerkey="{{answer.pk}}" class="cancel{{answer.pk}} btn btn-primary btn-sm"
+                    type="button" style="display:none;">Cancel</button>
+            </div>
             {% endfor %}
         </ul>
         {% else %}
 
-        <strong>Be the first one to comment!</strong>
+        <p>Be the first one to comment!</p>
         {% endif %}
-        <form id="answer_form" method="post" action="{% url 'answer_question_new' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}" style="display:none" enctype="multipart/form-data">
-		 	{% csrf_token %}
-		 	{% for hidden in answerform.hidden_fields %}
-				{{ hidden }}
-			{% endfor %}
-			{% for field in answerform.visible_fields %}
-				{{ field.errors }}
-				{{ field.help_text }}
-				{{ field }}
-			{% endfor %}
 
-		<input type="submit" name="submit" value="Add Answer"/>	
-		</form>
     </div>
 </div>
 {% endblock %}

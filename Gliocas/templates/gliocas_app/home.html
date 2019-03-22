@@ -9,15 +9,17 @@ Home
 <h1 class="mt-1"> Home </h1>
 <!-- <a href = "{% url 'subjects' %}"> Subjects </a> -->
 <div class="row">
-    <div class="col-md-12 col-lg-3">
+    <div class="col-sm-12 col-lg-3">
         <div class="card justify-content-start rounded shadow mt-3">
             <div class="card-body">
-                <h4 class="card-title display-4 mb-1">Hello</h4>
 
                 {% if user.is_authenticated %}
-                <h3 class="mb-5"><a href="{% url 'user' user.username %}">{{ user.username }}</a></h3>
-                <a href="{% url 'logout' %}" class="btn btn-lg btn-block btn-danger rounded-pill" style="color:white;">Logout</a>
+                <h4 class="card-title display-4 mb-1">Hello</h4>
+                <h3 class="mb-5"><a href="{% url 'user' user.username %}"></a>{{ user.username }}</a></h3>
+                <a href="{% url 'user' user.username %}" class="btn btn-lg btn-block btn-outline-primary rounded-pill"">MY ACCOUNT</a>
+                <a href="{% url 'logout' %}" class="btn btn-lg btn-block btn-danger rounded-pill" style="color:white;">LOG OUT</a>
                 {%else%}
+                <h4 class="card-title display-4 mb-3">Hello</h4>
                 <a href="{% url 'login' %}" class="btn btn-lg btn-block btn-outline-primary rounded-pill" id="login">LOGIN</a>
                 <a href="{% url 'register' %}" class="btn btn-lg btn-block btn-primary rounded-pill" id="register">REGISTER</a>
                 {%endif%}
@@ -28,21 +30,24 @@ Home
     <div class="col-md-12 col-lg-8">
         {% for question in questions %}
         <div class="card my-3 rounded shadow">
-            <div class="card-body">
-                <h2 class="card-title"><a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug%}">{{question.title }}</a></h2>
-            <p class="card-subtitle text-muted">
-                By <a href="{% url 'user' question.poster.username %}">{{ question.poster }}</a> at {{ question.date }}
-                <br/>
-                {% questionscore question %} upvotes {{question.views}} views
-            </p>
-            <hr />
-            <p> {{ question.text }} </p>
-            {% if question.picture %}
-            <img src="{{ MEDIA_URL }}{{ question.picture }}" class="img-thumbnail" alt="image" />
-            {% endif %}
-                <li><a href="{% url 'show_course' question.course.subject.slug question.course.slug%}">{{question.course.name}}</a>
-                <a href="{% url 'show_subject' question.course.subject.slug%}">{{question.course.subject.name}}</a></li>
-            </div>
+            <a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug%}">
+                <div class="card-body">
+                    <h2 class="card-title"> {{ question.title }} </h2>
+                    <p class="card-subtitle text-muted">
+                        By <a href="{% url 'user' question.poster.username %}">{{ question.poster }}</a> on {{ question.date }}
+                    </p>
+                    <p class="card-subtitle text-muted">
+                        
+                        {% questionscore question %} upvotes | {{question.views}} views
+                    </p>
+                    <hr />
+                    <p> {{ question.text }} </p>
+                    {% if question.picture %}
+                    <img src="{{ MEDIA_URL }}{{ question.picture }}" class="img-thumbnail" alt="image" />
+                    {% endif %}
+                </div>
+            </a>
+
         </div>
         {% endfor %}
     </div>
