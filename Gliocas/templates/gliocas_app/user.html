@@ -18,7 +18,7 @@
 				{{username}} has answered {{numanswers}} <a href="{% url 'user_answers' username %}">questions(s)</a>.</br>
 				{% if sameUser %}
 					{% if followed %}
-						<h4> Your followed courses </h4>
+						<h4> Your courses </h4>
 						{% for course in followed %}
 							<li><a href="{% url 'show_course' course.subject.slug course.slug %}"> {{ course.name }}</a></li>
 							<li><a href="{% url 'follow' course.subject.slug course.slug %}"> Unfollow this course </a></li>
@@ -30,10 +30,10 @@
 								<li><a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug %}"> {{ question.title }}</a></li>
 							{% endfor %}
 						{% else %}
-							<h4> No activity in your followed courses </h4>
+							<h4> There are no activities in your courses </h4>
 						{% endif %}
 					{% else %}
-						<h4> You don't follow any course </h4>
+						<h4> You aren't following any courses </h4>
 					{% endif %}
 				{% endif %}
 			{% else %}
