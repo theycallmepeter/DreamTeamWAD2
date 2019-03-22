@@ -92,7 +92,6 @@ $(document).on('click','#follow', function(){
 
 $(document).ready(function(){
 	$('#form-div').hide()
-	$('#answer_form').hide()
 	$('#cancel').hide()
 	$('#cancelanswer').hide()
 	$('.reply-body').each(function(){
@@ -100,7 +99,7 @@ $(document).ready(function(){
 		var upvotedclass = $(".voted"+replykey)
 		var upvoted = upvotedclass.text()
 		if(upvoted === "upvoted"){
-			$('#liker.liker'+replykey).addClass("btn-success");
+			$('#liker.liker'+replykey).addClass("btn-primary");
 		} else if (upvoted === "downvoted"){
 			$('#liker.disliker'+replykey).addClass("btn-danger");
 		}
@@ -112,7 +111,7 @@ $(document).ready(function(){
 		console.log(answerkey)
 		console.log(upvoted)
 		if(upvoted === "upvoted"){
-			$('#likea.likea'+answerkey).addClass("btn-success");
+			$('#likea.likea'+answerkey).addClass("btn-primary");
 		} else if (upvoted === "downvoted"){
 			$('#likea.dislikea'+answerkey).addClass("btn-danger");
 		}
@@ -121,7 +120,7 @@ $(document).ready(function(){
 		var upvotedclass = $(".votedq")
 		var upvoted = upvotedclass.text()
 		if(upvoted === "True"){
-			$('#likeq.likeq').addClass("btn-success");
+			$('#likeq.likeq').addClass("btn-primary");
 		} else if (upvoted === "False"){
 			$('#likeq.dislikeq').addClass("btn-danger");
 		}
