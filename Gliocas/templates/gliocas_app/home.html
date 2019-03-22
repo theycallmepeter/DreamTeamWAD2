@@ -32,7 +32,7 @@ Home
                 <h2 class="card-title"><a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug%}">{{question.title }}</a></h2>
                 <p>{{question.text}}</p>
                 {% if question.picture %}
-                <li>{{question.picture}}</li>
+					<img src="{{ MEDIA_URL }}{{ question.picture }}" class="img-thumbnail" alt="image" />
                 {%endif%}
                 <li><a href="{% url 'user' question.poster.username %}">{{ question.poster }}</a></li>
                 <li>{{question.views}} views</li>

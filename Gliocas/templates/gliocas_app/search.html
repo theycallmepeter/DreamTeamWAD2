@@ -20,6 +20,9 @@
 								<a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug %}">{{ question.title }}</a>
 							</h4>
 							<p class="list-group-item-text">{{ question.text }}</p>
+							{% if question.picture %}
+								<img src="{{ MEDIA_URL }}{{ question.picture }}" class="img-thumbnail" alt="image" />
+							{%endif%}
 							<li><a href="{% url 'user' question.poster.username %}">{{ question.poster }}</a></li>
 							<li>{{question.views}} views</li>
 							<li>{% questionscore question %} upvotes</li>
