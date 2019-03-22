@@ -33,18 +33,18 @@ $(document).on('click','#likea', function(){
 	$.get('/gliocas_app/likeanswer/', {answer_key: answerkey, like: like}, function(data){
 		switch (data){
 			case "Unliked":
-				$('#likea.likea'+answerkey).removeClass("btn-success");
+				$('#likea.likea'+answerkey).removeClass("btn-primary");
 				break;
 			case "Undisliked":
 				$('#likea.dislikea'+answerkey).removeClass("btn-danger");
 				break;
 			case "Liked":
-				$('#likea.likea'+answerkey).addClass("btn-success");
+				$('#likea.likea'+answerkey).addClass("btn-primary");
 				$('#likea.dislikea'+answerkey).removeClass("btn-danger");
 				break;
 			case "Disliked":
 				$('#likea.dislikea'+answerkey).addClass("btn-danger");
-				$('#likea.likea'+answerkey).removeClass("btn-success");
+				$('#likea.likea'+answerkey).removeClass("btn-primary");
 				break;
 		};
 	});
@@ -58,13 +58,13 @@ $(document).on('click','#liker', function(){
 	jQuery.get('/gliocas_app/likereply/', {reply_key: replykey, like: like}, function(data){
 		switch (data){
 			case "Unliked":
-				$('#liker.liker'+replykey).removeClass("btn-success");
+				$('#liker.liker'+replykey).removeClass("btn-primary");
 				break;
 			case "Undisliked":
 				$('#liker.disliker'+replykey).removeClass("btn-danger");
 				break;
 			case "Liked":
-				$('#liker.liker'+replykey).addClass("btn-success");
+				$('#liker.liker'+replykey).addClass("btn-primary");
 				$('#liker.disliker'+replykey).removeClass("btn-danger");
 				break;
 			case "Disliked":
@@ -142,6 +142,7 @@ $(document).on('click','#cancelreply', function(){
 	var answerkey
 	answerkey = $(this).attr("data-answerkey");
 	$('.reply_form'+answerkey).hide()
+	$('#cancelreply').hide()
 	$('.reply'+answerkey).show()
 });
 
