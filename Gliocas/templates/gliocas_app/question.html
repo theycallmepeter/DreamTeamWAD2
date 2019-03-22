@@ -71,9 +71,6 @@
                 {% endif %}
                 </br>
 
-                {% if user.is_authenticated %}
-                You have {% answerVoted answer user %} this
-                {% endif %}
                 {% for reply in replies %}
                 
                 <ul>
@@ -104,17 +101,17 @@
                     {% for hidden in replyform.hidden_fields %}
                     {{ hidden }}
                     {% endfor %}
-                    {% for field in replyform.visible_fields %}
-                    {{ field.errors }}
-                    {{ field.help_text }}
-                    {{ field }}
-                    {% endfor %}
+                    
+                    {{ replyform|crispy }}
+
 
                     {{ replyform.errors }}
                     {{ replyform.non_field_errors }}
 
-                    <input type="submit" name="submit" value="Add Reply" />
+                    <button type="submit" name="submit" value="Add Reply" class="likeq btn btn-lg btn-primary rounded-pill px-5 mb-5" /> reply </button>
                 </form>
+
+
                 <button id="reply" data-answerkey="{{answer.pk}}" class="reply{{answer.pk}} btn btn-sm btn-outline-primary rounded-pill"
                     type="button">Reply</button>
                 <button id="cancelreply" data-answerkey="{{answer.pk}}" class="cancel{{answer.pk}} btn btn-primary btn-sm"

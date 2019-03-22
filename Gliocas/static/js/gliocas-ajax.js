@@ -22,6 +22,7 @@ $(document).on('click','#likeq', function(){
 				break;
 			case "Disliked":
 				$('#likeq.dislikeq').addClass("btn-danger");
+				$('#likeq.likeq').addClass("btn-outline-primary");
 				$('#likeq.dislikeq').removeClass("btn-outline-danger");
 				$('#likeq.likeq').removeClass("btn-primary");
 				break;
@@ -52,6 +53,8 @@ $(document).on('click','#likea', function(){
 				break;
 			case "Disliked":
 				$('#likea.dislikea'+answerkey).addClass("btn-danger");
+				$('#likea.likea'+answerkey).addClass("btn-outline-primary");
+
 				$('#likea.dislikea'+answerkey).removeClass("btn-outline-danger");
 				$('#likea.likea'+answerkey).removeClass("btn-primary");
 			break;
@@ -81,6 +84,8 @@ $(document).on('click','#liker', function(){
 				break;
 			case "Disliked":
 				$('#liker.disliker'+replykey).addClass("btn-danger");
+				$('#liker.liker'+replykey).addClass("btn-outline-primary");
+
 				$('#liker.disliker'+replykey).removeClass("btn-outline-danger");
 				$('#liker.liker'+replykey).removeClass("btn-primary");
 				break;
