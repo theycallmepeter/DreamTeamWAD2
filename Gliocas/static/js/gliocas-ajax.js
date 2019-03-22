@@ -94,6 +94,7 @@ $(document).ready(function(){
 	$('#form-div').hide()
 	$('#answer_form').hide()
 	$('#cancel').hide()
+	$('#cancelanswer').hide()
 	$('.reply-body').each(function(){
 		var replykey = $(this).attr("data-replykey")
 		var upvotedclass = $(".voted"+replykey)
@@ -152,5 +153,13 @@ $(document).on('click','#reply', function(){
 });
 
 $(document).on('click','#answer', function(){
+	$('#cancelanswer').show()
 	$('#answer_form').show()
+	$('#answer').hide()
+});
+
+$(document).on('click','#cancelanswer', function(){
+	$('#answer_form').hide()
+	$('#answer').show()
+	$('#cancelanswer').hide()
 });

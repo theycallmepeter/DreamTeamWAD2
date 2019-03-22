@@ -26,12 +26,17 @@
             {% endif %}
         </div>
         <button id="answer" class="answer btn btn-primary btn-sm" type="button">Answer</button>
+        <button id="cancelanswer" class="cancel btn btn-primary btn-sm" type="button">Cancel</button>
         <button id="likeq" data-questionslug="{{question.slug}}" data-like="1" class="likeq btn btn-primary btn-sm" type="button">Like</button>
 		<button id="likeq" data-questionslug="{{question.slug}}" data-like="0" class="dislikeq btn btn-primary btn-sm" type="button">Dislike</button>
 		{% if user.is_authenticated %}
 			<div class="votedq" style="display:none">{% questionVoted question user %}</div>
 		{% endif %}
 		<hr />
+		{% if errors %}
+			<div>{{errors}}</div>
+			<hr />
+		{% endif %}
         <h4>Answers</h4>
         <hr />
         {% if answers %}
@@ -47,25 +52,22 @@
 				<img src="{{ MEDIA_URL }}{{ answer.picture }}" width="auto" height="300" alt="Picture" />
             {% endif %}
             <button id="likea" data-answerkey="{{answer.pk}}" data-like="1" class="likea{{answer.pk}} btn btn-primary btn-sm" type="button">Like</button>
+            {% answerscore answer %}
 			<button id="likea" data-answerkey="{{answer.pk}}" data-like="0" class="dislikea{{answer.pk}} btn btn-primary btn-sm" type="button">Dislike</button>
 			{% if user == answer.poster %}
 				<a href="{% url 'delete_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk  %}" class="btn btn-primary btn-sm"> Delete</a>
 			{% endif %}
 			</br>
-			{% if user.is_authenticated %}
-				You have {% answerVoted answer user %} this
-			{% endif %}
             {% for reply in replies %}
 			<ul>
             {% if reply.answer.pk == answer.pk %}
             <p class="reply-body" data-replykey="{{reply.pk}}" style="padding-left: 50px;"><li>{{ reply.text }}</li>
 			By <strong><a href="{% url 'user' reply.poster.username %}">{{reply.poster}}</a></strong> at {{ reply.date }}
-                <!-- <button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="liker{{reply.pk}} btn btn-primary btn-sm" type="button">Like</button>
-				<button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="disliker{{reply.pk}} btn btn-primary btn-sm" type="button">Dislike</button> -->
 				{% if user.is_authenticated %}
 					<div class="voted{{reply.pk}}" style="display:none">{% replyVoted reply user %}</div>
 				{% endif %}
 				<button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="liker{{reply.pk}} btn btn-primary btn-sm" type="button">Like</button>
+				{% replyscore reply %}
 				<button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="disliker{{reply.pk}} btn btn-primary btn-sm" type="button">Dislike</button> 
 				{% if user == reply.poster %}
 				<a href="{% url 'delete_reply' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug reply_key=reply.pk  %}" class="btn btn-primary btn-sm"> Delete</a>
@@ -75,21 +77,18 @@
 			</ul>
             {% endfor %}
 			<form id="reply_form" class="reply_form{{answer.pk}}" method="post" action="{% url 'reply_answer_new' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk %}" enctype="multipart/form-data" style="display:none">
-							 	{% csrf_token %}
-							 	{% for hidden in replyform.hidden_fields %}
-							 		{{ hidden }}
-							 	{% endfor %}
-							 	{% for field in replyform.visible_fields %}
-							 		{{ field.errors }}
-							 		{{ field.help_text }}
-							 		{{ field }}
-							 	{% endfor %}
+				{% csrf_token %}
+				{% for hidden in replyform.hidden_fields %}
+					{{ hidden }}
+				{% endfor %}
+				{% for field in replyform.visible_fields %}
+					{{ field.errors }}
+					{{ field.help_text }}
+					{{ field }}
+				{% endfor %}
 
-								{{ replyform.errors }}
-								{{ replyform.non_field_errors }}
-
-							<input type="submit" name="submit" value="Add Reply"/>	
-						</form>
+				<input type="submit" name="submit" value="Add Reply"/>	
+			</form>
 		    <button id="reply" data-answerkey="{{answer.pk}}" class="reply{{answer.pk}} btn btn-primary btn-sm" type="button">Reply</button>
 		    <button id="cancelreply" data-answerkey="{{answer.pk}}" class="cancel{{answer.pk}} btn btn-primary btn-sm" type="button">Cancel</button>
 			</div>
@@ -99,19 +98,16 @@
 
         <strong>Be the first one to comment!</strong>
         {% endif %}
-        <form id="answer_form" method="post" action="{% url 'answer_question_new' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}" style="display:none">
+        <form id="answer_form" method="post" action="{% url 'answer_question_new' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}" style="display:none" enctype="multipart/form-data">
 		 	{% csrf_token %}
 		 	{% for hidden in answerform.hidden_fields %}
-		 		{{ hidden }}
-		 	{% endfor %}
-		 	{% for field in answerform.visible_fields %}
-		 		{{ field.errors }}
-		 		{{ field.help_text }}
-		 		{{ field }}
-		 	{% endfor %}
-
-			{{ answerform.errors }}
-			{{ answerform.non_field_errors }}
+				{{ hidden }}
+			{% endfor %}
+			{% for field in answerform.visible_fields %}
+				{{ field.errors }}
+				{{ field.help_text }}
+				{{ field }}
+			{% endfor %}
 
 		<input type="submit" name="submit" value="Add Answer"/>	
 		</form>

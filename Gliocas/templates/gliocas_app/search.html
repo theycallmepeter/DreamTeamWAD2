@@ -20,12 +20,14 @@
 								<a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug %}">{{ question.title }}</a>
 							</h4>
 							<p class="list-group-item-text">{{ question.text }}</p>
-							<li><a href="{% url 'user' question.poster.username %}">{{ question.poster }}</a></li>
-							<li>{{question.views}} views</li>
-							<li>{% questionscore question %} upvotes</li>
-							<li>{{question.date}}</li>
-							<li><a href="{% url 'show_course' question.course.subject.slug question.course.slug%}">{{question.course.name}}</a></li>
-							<li><a href="{% url 'show_subject' question.course.subject.slug%}">{{question.course.subject.name}}</a></li>
+							{% if question.picture %}
+								<img src="{{ MEDIA_URL }}{{ question.picture }}" class="img-thumbnail" alt="image" />
+							{%endif%}
+							By <a href="{% url 'user' question.poster.username %}">{{ question.poster }}</a> at {{ question.date }}
+							<br/>
+							{% questionscore question %} upvotes {{question.views}} views
+							<li><a href="{% url 'show_course' question.course.subject.slug question.course.slug%}">{{question.course.name}}</a>
+							<a href="{% url 'show_subject' question.course.subject.slug%}">{{question.course.subject.name}}</a></li>
 						</div>
 					{% endfor %}
 				</div>

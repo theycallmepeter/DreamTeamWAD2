@@ -54,8 +54,6 @@
             {% endif %}
         </div>
     </div>
-    <button id="ask-question" class="btn btn-primary btn-sm" type="button">Add question</button>
-    <!-- <a href="{% url 'add_question' subject.slug course.slug %}"> Add question </a> --></br>
     <div id = "form-div">
         <form id="question_form"  method="post" action="{% url 'add_question_new' subject_slug=subject.slug course_slug=course.slug %}" enctype="multipart/form-data">
                 {% csrf_token %}

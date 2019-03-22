@@ -20,6 +20,7 @@ def answerscore(answer):
 def replyscore(reply):
     return score(UpvoteReply.objects.filter(reply = reply))
 
+#Deprecated
 @register.simple_tag
 def questionVoted(question, user):
     is_voted = UpvoteQuestion.objects.filter(question = question, user=user).exists()
@@ -31,6 +32,7 @@ def questionVoted(question, user):
             return False
     return None
 
+#Deprecated
 @register.simple_tag
 def answerVoted(answer, user):
     is_voted = UpvoteAnswer.objects.filter(answer = answer, user=user).exists()
@@ -42,6 +44,7 @@ def answerVoted(answer, user):
             return 'downvoted'
     return None
 
+#Deprecated
 @register.simple_tag
 def replyVoted(reply, user):
     is_voted = UpvoteReply.objects.filter(reply = reply, user=user).exists()
