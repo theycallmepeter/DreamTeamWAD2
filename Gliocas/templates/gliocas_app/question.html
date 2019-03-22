@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body_block %}
-<h1 class="mt-1"> {{ subject.name }} {{ course.name}}</h1>
+<h1 class="mt-1"><a href="{% url 'show_subject' subject.slug %}" id="title">{{ subject }}</a> <a href="{% url 'show_course' subject.slug course.slug %}" id="title">{{ course.name}}</a></h1>
 
 
 
@@ -60,6 +60,7 @@
                 <div class="voteda{{answer.pk}}" style="display:none">{% answerVoted answer user %}</div>
                 {% endif %}
                 <strong><a href="{% url 'user' answer.poster.username %}">{{answer.poster}}</a></strong> on {{ answer.date }}
+				<p>{% answerscore answer %} upvotes</p>
                 <p>{{ answer.text }}</p>
                 {% if answer.picture %}
                 <img src="{{ MEDIA_URL }}{{ answer.picture }}" width="auto" height="300" alt="Picture" />
@@ -79,7 +80,8 @@
                     {% if reply.answer.pk == answer.pk %}
                     <p class="reply-body" data-replykey="{{reply.pk}}" style="padding-left: 50px;">
                         <ul>{{ reply.text }}</ul>
-                        <p>By <strong><a href="{% url 'user' reply.poster.username %}">{{reply.poster}}</a></strong> on {{ reply.date }}</p>
+                        <div>By <strong><a href="{% url 'user' reply.poster.username %}">{{reply.poster}}</a></strong> on {{ reply.date }}</div>
+						<p>{% replyscore reply %} upvotes</p>
                         <!-- <button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="liker{{reply.pk}} btn btn-primary btn-sm" type="button">Like</button>
 				<button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="disliker{{reply.pk}} btn btn-primary btn-sm" type="button">Dislike</button> -->
                         {% if user.is_authenticated %}

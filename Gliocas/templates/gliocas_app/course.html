@@ -7,18 +7,18 @@
 
 {% block body_block %}
 
-<h1 class="mt-1">{{ subject }} {{ course }} </h1>
+<h1 class="mt-1"><a href="{% url 'show_subject' subject.slug %}" id="title">{{ subject }} {{ course }} </a></h1>
 <div class="row">
     <div class="col-md-12 col-lg-3">
         <div class="card justify-content-start rounded shadow mt-3">
             <div class="card-body">
                 {% if followed %}
                 <h4 class="card-title mb-3">You are following this course.</h4>
-                <button id="follow" data-courseslug="{{course.slug}}" data-subjectslug="{{subject.slug}}" class="btn btn-lg btn-block btn-outline-danger rounded-pill"
+                <button id="follow" data-courseslug="{{course.slug}}" data-subjectslug="{{subject.slug}}" class="follow{{course.slug}} btn btn-lg btn-block btn-outline-danger rounded-pill"
                     type="button">UNFOLLOW</button>
                 {% else %}
                 <h4 class="card-title mb-3">You are not following this course.</h4>
-                <button id="follow" data-courseslug="{{course.slug}}" data-subjectslug="{{subject.slug}}" class="btn btn-lg btn-block btn-outline-primary rounded-pill"
+                <button id="follow" data-courseslug="{{course.slug}}" data-subjectslug="{{subject.slug}}" class="follow{{course.slug}} btn btn-lg btn-block btn-outline-primary rounded-pill"
                     type="button">FOLLOW</button>
                 {% endif %}
                 <a href="{% url 'add_question' subject.slug course.slug %}" class="btn btn-lg btn-block btn-primary rounded-pill">POST</a>

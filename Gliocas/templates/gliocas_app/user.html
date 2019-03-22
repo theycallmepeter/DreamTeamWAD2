@@ -13,22 +13,33 @@
 			{% if exists %}
 			
 							<h2 class="card-title"> {{username}} </h2>
+							<hr/>
 				Contact {{username}} at {{ searched_user.email }}. </br>
 				{{username}} has asked {{numquestions}} <a href="{% url 'user_questions' username %}">question(s)</a>.</br>
 				{{username}} has answered {{numanswers}} <a href="{% url 'user_answers' username %}">questions(s)</a>.</br>
 				{% if sameUser %}
 					{% if followed %}
-						<h4> Your courses </h4>
+						<br/>
+						<h2> Your courses </h4>
+						<hr/>
+						<ul>
 						{% for course in followed %}
-							<li><a href="{% url 'show_course' course.subject.slug course.slug %}"> {{ course.name }}</a></li>
-							<li><a href="{% url 'follow' course.subject.slug course.slug %}"> Unfollow this course </a></li>
-							<br>
+							<div class="row my-3">
+								<button id="follow" data-courseslug="{{course.slug}}" data-subjectslug="{{subject.slug}}" class="follow{{course.slug}} btn btn-sm btn-primary mr-2 rounded-pill" type="button">UNFOLLOW</button>
+								<h4><a href="{% url 'show_course' course.subject.slug course.slug %}"> {{ course.name }}</a></h4>
+							</div>
 						{% endfor %}
+						</ul>
 						{% if questions %}
-							<h4> Recent questions from your followed courses </h4>
+						<br/>
+							<h2> Recent questions from your followed courses </h2>
+							<hr/>
+							<ul>
 							{% for question in questions %}
-								<li><a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug %}"> {{ question.title }}</a></li>
+								<h4><a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug %}"> {{ question.title }}</a></h4>
+								<br/>
 							{% endfor %}
+							</ul>
 						{% else %}
 							<h4> There are no activities in your courses </h4>
 						{% endif %}

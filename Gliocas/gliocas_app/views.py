@@ -27,6 +27,7 @@ def visitor_cookie_handler(request, response, questionKey):
     else:
         return True
 
+# Home page. Returns last three question posted
 def home(request):
     context_dict = {}
     questions = Question.objects.all().order_by('-date')
@@ -34,19 +35,24 @@ def home(request):
     context_dict['questions'] = questions
     return render(request, 'gliocas_app/home.html', context = context_dict)
 
+# About page
 def about(request):
     context_dict = {}
     return render(request, 'gliocas_app/about.html', context = context_dict)
 
+# Contact page
 def contact(request):
     context_dict = {}
     return render(request,'gliocas_app/contact.html',context = context_dict)
 
+# Page with a list of all subjects (Computer Science, Mathematics,...)
 def subjects(request):
     context_dict = {}
     context_dict['subjects'] = Subject.objects.all();
     return render(request,'gliocas_app/subjects.html',context = context_dict)
 
+# Page of an specific subject
+# Lists all courses (WAD 2, OOSE 2,...) of a subject
 def show_subject(request, subject_slug):
     context_dict = {}
     try:
@@ -59,6 +65,8 @@ def show_subject(request, subject_slug):
         context_dict['subject'] = None
     return render(request, 'gliocas_app/subject.html', context = context_dict)
 
+# Page of an specific course
+# Lists all questions of a course
 def show_course(request, subject_slug, course_slug):
     context_dict = {}
     try:
@@ -86,6 +94,8 @@ def show_course(request, subject_slug, course_slug):
     context_dict['form'] = form
     return render(request, 'gliocas_app/course.html', context = context_dict)
 
+# Page of an specific question
+# Lists the question itself, and all answers and replies
 def show_question(request, subject_slug, course_slug, question_slug, errors = None):
     context_dict = {}
     answerform = AnswerForm()
@@ -120,6 +130,8 @@ def show_question(request, subject_slug, course_slug, question_slug, errors = No
         response = render(request,'gliocas_app/question.html', context = context_dict)
     return response
 
+# Search page. Returns all questions that match at least one word from the
+# query in their title or text, in order of similarity
 def search(request):
     result_list=[]
     if request.method == 'POST':
@@ -130,6 +142,7 @@ def search(request):
                                                           "user_query" : query})
     return render(request,'gliocas_app/search.html', {'result_list': result_list})
 
+# Deprecated
 @login_required
 def add_question(request, subject_slug, course_slug):
     form = QuestionForm()
@@ -160,6 +173,7 @@ def add_question(request, subject_slug, course_slug):
     context_dict['course'] = Course.objects.get(slug=course_slug)
     return render(request,'gliocas_app/add_question.html', context = context_dict)
 
+# Page for adding a new question
 @login_required
 def add_question_new(request, subject_slug, course_slug):
     try:
@@ -188,7 +202,7 @@ def add_question_new(request, subject_slug, course_slug):
     else:
         return HttpResponse("Unexpected...")
 
-#Not used anymore
+# Feature not used anymore
 @user_passes_test(lambda u: u.is_superuser)
 def add_course(request, subject_slug):
     form = CourseForm()
@@ -211,7 +225,7 @@ def add_course(request, subject_slug):
     context_dict['subject'] = Subject.objects.get(slug=subject_slug)
     return render(request,'gliocas_app/add_course.html', context = context_dict)
 
-#Not used anymore
+# Feature not used anymore
 @user_passes_test(lambda u: u.is_superuser)
 def add_subject(request):
     form = SubjectForm()
@@ -226,6 +240,7 @@ def add_subject(request):
     context_dict['form'] = form
     return render(request,'gliocas_app/add_subject.html', context = context_dict)
 
+# Page for registering a new account
 def register(request):
 
     if request.method == 'POST':
@@ -262,7 +277,7 @@ def register(request):
     return render(request,'gliocas_app/register.html',
                         {'user_form':user_form})
 
-
+# Page for logging in
 def user_login(request):
 
     if request.method == 'POST':
@@ -289,6 +304,7 @@ def user_login(request):
     else:
         return render(request, 'gliocas_app/login.html', {})
 
+# Deprecated
 @login_required
 def like_question(request, subject_slug, course_slug, question_slug, like):
     question = get_object_or_404(Question, slug = question_slug)
@@ -310,6 +326,7 @@ def like_question(request, subject_slug, course_slug, question_slug, like):
         upvote.save()
     return show_question(request, subject_slug, course_slug, question_slug)
 
+# Page for liking/disliking a question
 @login_required
 def like_question_new(request):
     like = request.GET['like']
@@ -343,13 +360,7 @@ def like_question_new(request):
         else:
             return HttpResponse('Disliked')
 
-    # likes = 0
-    # for upvote in UpvoteQuestion.objects.filter(question=question):
-    #     if upvote.positive:
-    #         likes += 1
-    #     else:
-    #         likes -= 1
-
+# Deprecated
 @login_required
 def follow(request, subject_slug, course_slug):
     course = get_object_or_404(Course, slug = course_slug)
@@ -361,6 +372,7 @@ def follow(request, subject_slug, course_slug):
         followed.save()
     return show_course(request, subject_slug, course_slug)
 
+# Page for following a course
 @login_required
 def follow_course_new(request):
     course_slug = request.GET['course_slug']
@@ -375,6 +387,7 @@ def follow_course_new(request):
         followed.save()
         return HttpResponse("Followed")
 
+# Deprecated
 @login_required
 def like_answer(request, subject_slug, course_slug, question_slug, answer_key, like):
     answer = Answer.objects.get(pk=answer_key)
@@ -396,6 +409,7 @@ def like_answer(request, subject_slug, course_slug, question_slug, answer_key, l
         upvote.save()
     return show_question(request, subject_slug, course_slug, question_slug)
 
+# Page for liking/disliking an answer
 @login_required
 def like_answer_new(request):
     like = request.GET['like']
@@ -429,8 +443,7 @@ def like_answer_new(request):
         else:
             return HttpResponse('Disliked')
 
-
-
+# Deprecated
 @login_required
 def like_reply(request, subject_slug, course_slug, question_slug, reply_key, like):
     reply = Reply.objects.get(pk = reply_key)
@@ -452,6 +465,7 @@ def like_reply(request, subject_slug, course_slug, question_slug, reply_key, lik
         upvote.save()
     return show_question(request, subject_slug, course_slug, question_slug)
 
+# Page for liking/disliking a reply
 @login_required
 def like_reply_new(request):
     like = request.GET['like']
@@ -484,15 +498,7 @@ def like_reply_new(request):
         else:
             return HttpResponse('Disliked')
 
-
-
-    # likes = 0
-    # for upvote in UpvoteReply.objects.filter(reply=reply):
-    #     if upvote.positive:
-    #         likes += 1
-    #     else:
-    #         likes -= 1
-
+# Page for deleting a reply
 @login_required
 def delete_reply(request, subject_slug, course_slug, question_slug, reply_key):
     reply = Reply.objects.get(pk = reply_key)
@@ -501,6 +507,7 @@ def delete_reply(request, subject_slug, course_slug, question_slug, reply_key):
         reply.delete()
     return HttpResponseRedirect(reverse('show_question', args=(subject_slug, course_slug, question_slug)))
 
+# Page for deleting an answer
 @login_required
 def delete_answer(request, subject_slug, course_slug, question_slug, answer_key):
     answer = Answer.objects.get(pk = answer_key)
@@ -509,6 +516,7 @@ def delete_answer(request, subject_slug, course_slug, question_slug, answer_key)
         answer.delete()
     return HttpResponseRedirect(reverse('show_question', args=(subject_slug, course_slug, question_slug)))
 
+# Page for deleting a question
 @login_required
 def delete_question(request, subject_slug, course_slug, question_slug):
     question = Question.objects.get(slug = question_slug)
@@ -517,6 +525,7 @@ def delete_question(request, subject_slug, course_slug, question_slug):
         question.delete()
     return HttpResponseRedirect(reverse('show_course', args=(subject_slug, course_slug)))
 
+# Deprecated
 @login_required
 def answer_question(request, subject_slug, course_slug, question_slug):
     form = AnswerForm()
@@ -549,6 +558,7 @@ def answer_question(request, subject_slug, course_slug, question_slug):
     context_dict['question'] = question
     return render(request,'gliocas_app/answer_question.html', context = context_dict)
 
+# Page for answering a question
 @login_required
 def answer_question_new(request, subject_slug, course_slug, question_slug):
     try:
@@ -574,7 +584,7 @@ def answer_question_new(request, subject_slug, course_slug, question_slug):
             print(form.errors)
             return show_question(request, subject_slug, course_slug, question_slug, form.errors)
 
-
+# Deprecated
 @login_required
 def reply_answer(request, subject_slug, course_slug, question_slug, answer_key):
     form = ReplyForm()
@@ -609,6 +619,7 @@ def reply_answer(request, subject_slug, course_slug, question_slug, answer_key):
     context_dict['replies'] = Reply.objects.filter(answer=answer)
     return render(request,'gliocas_app/reply_answer.html', context = context_dict)
 
+# Page for replying to an answer
 @login_required
 def reply_answer_new(request, subject_slug, course_slug, question_slug, answer_key):
     form = ReplyForm()
@@ -635,12 +646,16 @@ def reply_answer_new(request, subject_slug, course_slug, question_slug, answer_k
             return show_question(request, subject_slug, course_slug, question_slug, form.errors)
     return HttpResponseRedirect(reverse('show_question', args=(subject_slug, course_slug, question_slug)))
 
+# Logout page
 @login_required
 def user_logout(request):
     logout(request)
 
     return HttpResponseRedirect(reverse('home'))
 
+# User page. Links to lists of questions and answers posted by the user
+# If a user is visiting their own page, it also shows the course they
+# are following
 def user(request, username):       
     context_dict = {'username' : username}
     try:
@@ -674,7 +689,7 @@ def user(request, username):
 
     return render(request, 'gliocas_app/user.html', context_dict)
 
-
+# Page that contains all questions posted by a user
 def user_questions(request, username):
     context_dict = {'username' : username, 'objectname' : 'questions'}
     try:
@@ -687,6 +702,7 @@ def user_questions(request, username):
     
     return render(request, 'gliocas_app/user_questions.html', context_dict)
 
+# Page that contains all answers posted by a user
 def user_answers(request, username):
     context_dict = {'username' : username, 'objectname' : 'answers'}
     try:
