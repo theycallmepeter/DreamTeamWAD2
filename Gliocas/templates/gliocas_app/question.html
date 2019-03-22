@@ -58,9 +58,6 @@
 				<a href="{% url 'delete_answer' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug answer_key=answer.pk  %}" class="btn btn-primary btn-sm"> Delete</a>
 			{% endif %}
 			</br>
-			{% if user.is_authenticated %}
-				You have {% answerVoted answer user %} this
-			{% endif %}
             {% for reply in replies %}
 			<ul>
             {% if reply.answer.pk == answer.pk %}
