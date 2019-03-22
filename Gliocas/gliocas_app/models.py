@@ -3,7 +3,8 @@ from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
 
-
+# Function for setting the user attribute of questions, answers and replies to
+# be an special account when a user account is deleted
 def get_sentinel_user():
     user = User.objects.get_or_create(username='Deleted')[0]
     user.email = 'obiwan@kenobi.com'
@@ -11,14 +12,7 @@ def get_sentinel_user():
     user.set_password(user.password)
     return user
 
-'''
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return self.user.username
-'''
-
+# Subjects are things like MAthematics or Computing Science
 class Subject(models.Model):
     maxLength = 64
     name = models.CharField(max_length=maxLength, unique=True)
@@ -31,6 +25,7 @@ class Subject(models.Model):
     def __str__(self):
         return self.name
 
+# Courses are things like OOSE 2 or WAD 2
 class Course(models.Model):
     maxLength = 64
     name = models.CharField(max_length=maxLength, unique=True)
@@ -60,6 +55,7 @@ class Question(models.Model):
     def __str__(self):
         return self.title
 
+# Answer to questions
 class Answer(models.Model):
     textLength = 32768
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
@@ -72,6 +68,7 @@ class Answer(models.Model):
     def __str__(self):
         return self.text
 
+# Reply to answers
 class Reply(models.Model):
     textLength = 32768
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
@@ -86,6 +83,8 @@ class Reply(models.Model):
     def __str__(self):
         return self.text
 
+# Model that represents a many-to-many relationship between user and course
+# that consists on the user following the question
 class Followed(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     poster = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -96,6 +95,8 @@ class Followed(models.Model):
     def __str__(self):
         return self.course.name + " followed by " + self.poster.username
 
+# Model that represents a many-to-many relationship between user and question
+# that consists on the user liking/disliking the question
 class UpvoteQuestion(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -108,6 +109,8 @@ class UpvoteQuestion(models.Model):
         else:
             return self.question.title + " downvoted by " + self.user.username
 
+# Model that represents a many-to-many relationship between user and answer
+# that consists on the user liking/disliking the answer
 class UpvoteAnswer(models.Model):
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -120,6 +123,8 @@ class UpvoteAnswer(models.Model):
         else:
             return "Answer with pk " + str(self.answer.pk) + " downvoted by " + self.user.username
 
+# Model that represents a many-to-many relationship between user and reply
+# that consists on the user liking/disliking the reply
 class UpvoteReply(models.Model):
     reply = models.ForeignKey(Reply, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
