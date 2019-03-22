@@ -19,7 +19,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_DIRS = [STATIC_DIR, ]
 print(BASE_DIR,STATIC_DIR)
@@ -33,7 +33,7 @@ SECRET_KEY = '5!0fd8x0%8nypfay4qwct@+-+&ow+c2=jn0(9)qk(-03h%)tmp'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['hodobox.pythonanywhere.com']
+ALLOWED_HOSTS = ['hodobox.pythonanywhere.com','127.0.0.1']
 
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_HOST_USER= '2333065n'
