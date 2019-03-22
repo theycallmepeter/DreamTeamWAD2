@@ -1,4 +1,5 @@
 {% extends 'gliocas_app/base.html' %}
+{% load upvotescore %}
 
 {% block title_block %}
 {{ course }}
@@ -17,7 +18,7 @@
                     type="button">UNFOLLOW</button>
                 {% else %}
                 <h4 class="card-title mb-3">You are not following this course.</h4>
-                <button id="follow" data-courseslug="{{course.slug}}" data-subjectslug="{{subject.slug}}" class="btn btn-lg btn-block btn-outline-primary rounded-pill"
+                <button id="follow" data-courseslug="{{course.slug}}" data-subjectslug="{{subject.slug}}" class="btn btn-lg btn-block btn-primary rounded-pill"
                     type="button">FOLLOW</button>
                 {% endif %}
                 <a href="{% url 'add_question' subject.slug course.slug %}" class="btn btn-lg btn-block btn-outline-primary rounded-pill">POST</a>
@@ -28,22 +29,30 @@
     {% if questions %}
     <div class="col-md-12 col-lg-8">
         {% for question in questions %}
-        <a href="{% url 'show_question' subject.slug course.slug question.slug %}">
-            <div class="card my-3 rounded shadow">
+        <div class="card my-3 rounded shadow">
+            <a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug%}">
                 <div class="card-body">
-                    <h5 class="card-title">{{ question.title }}</h5>
+                    <h2 class="card-title"> {{ question.title }} </h2>
+                    <p class="card-subtitle text-muted">
+                        By <a href="{% url 'user' question.poster.username %}">{{ question.poster }}</a> on {{ question.date }}
+                    </p>
+                    <p class="card-subtitle text-muted">
+
+                        {% questionscore question %} upvotes | {{question.views}} views
+                    </p>
+                    <hr />
+                    <p> {{ question.text }} </p>
+                    {% if question.picture %}
+                    <img src="{{ MEDIA_URL }}{{ question.picture }}" class="img-thumbnail" alt="image" />
+                    {% endif %}
+                    {% if user == question.poster %}
+                    <hr/>
+                    <button href="{% url 'delete_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}" class="btn btn-sm btn-outline-danger rounded-pill">Delete</button>
+                    {% endif %}
                 </div>
-            </div>
-        </a>
-        {% if user == question.poster %}
-        <a href="{% url 'delete_question' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}">
-            <div class="card my-3 rounded shadow">
-                <div class="card-body">
-                    <h5 class="card-title">Delete</h5>
-                </div>
-            </div>
-        </a>
-        {% endif %}
+            </a>
+        </div>
+
         {% endfor %}
     </div>
     {% else %}
@@ -52,24 +61,6 @@
             <strong>There are no questions.</strong>
             {% endif %}
         </div>
-    </div>
-    <div id = "form-div">
-        <form id="question_form"  method="post" action="{% url 'add_question_new' subject_slug=subject.slug course_slug=course.slug %}" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% for hidden in form.hidden_fields %}
-                    {{ hidden }}
-                {% endfor %}
-                {% for field in form.visible_fields %}
-                    {{ field.errors }}
-                    {{ field.help_text }}
-                    {{ field }}
-                {% endfor %}
-                {{ form.errors }}
-                {{ form.non_field_errors }}
-
-            <input type="submit" name="submit" value="Ask Question" />
-        </form>
-        <button id="cancel" class="btn btn-primary btn-sm" type="button">Cancel</button>
     </div>
 </div>
 {% endblock %}

@@ -21,7 +21,7 @@ class QuestionForm(forms.ModelForm):
 
 class AnswerForm(forms.ModelForm):
     textLength = 32768
-    text = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Your text here...'}), max_length=textLength, required = True)
+    text = forms.CharField(widget=forms.Textarea(attrs={'rows': 3, 'placeholder': 'Your text here...'}), max_length=textLength, required = True)
     date = forms.DateTimeField(widget=forms.HiddenInput(), initial=timezone.now)
     picture = forms.ImageField(required = False)
 
@@ -31,7 +31,7 @@ class AnswerForm(forms.ModelForm):
 
 class ReplyForm(forms.ModelForm):
     textLength = 32768
-    text = forms.CharField(widget=forms.Textarea, max_length=textLength, help_text="Please enter the text of your reply.", required = True)
+    text = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Your text here...'}), max_length=textLength, required = True)
     date = forms.DateTimeField(widget=forms.HiddenInput(), initial=timezone.now)
 
     class Meta:

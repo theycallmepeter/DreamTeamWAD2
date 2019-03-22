@@ -2,41 +2,40 @@
 {% load upvotescore %}
 
 {% block title_block %}
-    Search
+Search
 {% endblock %}
 
 {% block body_block %}
-	<div>
-		<h1>Search</h1>
-		<br/>
-		<div>
-			{% if result_list %}
-			<h3>Results</h3>
-			<br/>
-				<div class="list-group">
-					{% for question in result_list %}
-						<div class="list-group-item">
-							<h4 class="list-group-item-heading">
-								<a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug %}">{{ question.title }}</a>
-							</h4>
-							<p class="list-group-item-text">{{ question.text }}</p>
-							{% if question.picture %}
-								<img src="{{ MEDIA_URL }}{{ question.picture }}" class="img-thumbnail" alt="image" />
-							{%endif%}
-							<li><a href="{% url 'user' question.poster.username %}">{{ question.poster }}</a></li>
-							<li>{{question.views}} views</li>
-							<li>{% questionscore question %} upvotes</li>
-							<li>{{question.date}}</li>
-							<li><a href="{% url 'show_course' question.course.subject.slug question.course.slug%}">{{question.course.name}}</a></li>
-							<li><a href="{% url 'show_subject' question.course.subject.slug%}">{{question.course.subject.name}}</a></li>
-						</div>
-					{% endfor %}
-				</div>
-			{% else %}
-				{% if user_query %}
-					<div>No results</div>
-				{% endif %}
-			{% endif %}
-		</div>
+<h1 class="mt-1"> SEARCH </h1>
+<div class="row">
+	{% if result_list %}
+	<div class="list-group">
+		{% for question in result_list %}
+		<div class="card rounded shadow">
+				<a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug%}">
+					<div class="card-body">
+						<h2 class="card-title"> {{ question.title }} </h2>
+						<p class="card-subtitle text-muted">
+							By <a href="{% url 'user' question.poster.username %}">{{ question.poster }}</a> on {{ question.date }}
+						</p>
+						<p class="card-subtitle text-muted">
+							
+							{% questionscore question %} upvotes | {{question.views}} views
+						</p>
+						<hr />
+						<p> {{ question.text }} </p>
+						{% if question.picture %}
+						<img src="{{ MEDIA_URL }}{{ question.picture }}" class="img-thumbnail" alt="image" />
+						{% endif %}
+					</div>
+				</a>
+			</div>
+		{% endfor %}
 	</div>
+	{% else %}
+	{% if user_query %}
+	<div>No results</div>
+	{% endif %}
+	{% endif %}
+</div>
 {% endblock %}

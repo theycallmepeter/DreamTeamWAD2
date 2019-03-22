@@ -6,11 +6,10 @@
 {% endblock %}
 
 {% block body_block %}
-<h1 class="mt-1"> USER</h1>
+<h1 class="mt-1">USER PROFILE</h1>
 
 <div class="card my-3 rounded shadow">
 	<div class="card-body">
-		<div class="mb-5">
 			{% if exists %}
 			
 							<h2 class="card-title"> {{username}} </h2>
@@ -41,6 +40,5 @@
 				<h3> User '{{ username }}' does not exist. </h3>
 			{% endif %}
 		</div>
-	</div>
 </div>
 {% endblock %}
