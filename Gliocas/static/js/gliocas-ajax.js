@@ -8,18 +8,18 @@ $(document).on('click','#likeq', function(){
 	$.get('/gliocas_app/likequestion/', {question_slug: questionslug, like: like}, function(data){
 		switch (data){
 			case "Unliked":
-				$('#likeq.likeq').removeClass("btn-success");
+				$('#likeq.likeq').removeClass("btn-primary");
 				break;
 			case "Undisliked":
 				$('#likeq.dislikeq').removeClass("btn-danger");
 				break;
 			case "Liked":
-				$('#likeq.likeq').addClass("btn-success");
+				$('#likeq.likeq').addClass("btn-primary");
 				$('#likeq.dislikeq').removeClass("btn-danger");
 				break;
 			case "Disliked":
 				$('#likeq.dislikeq').addClass("btn-danger");
-				$('#likeq.likeq').removeClass("btn-success");
+				$('#likeq.likeq').removeClass("btn-primary");
 				break;
 		};
 	});
@@ -69,7 +69,7 @@ $(document).on('click','#liker', function(){
 				break;
 			case "Disliked":
 				$('#liker.disliker'+replykey).addClass("btn-danger");
-				$('#liker.liker'+replykey).removeClass("btn-success");
+				$('#liker.liker'+replykey).removeClass("btn-primary");
 				break;
 		};
 	});

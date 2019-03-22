@@ -83,10 +83,10 @@
                         <ul>{{ reply.text }}</ul>
                         <p>By <strong><a href="{% url 'user' reply.poster.username %}">{{reply.poster}}</a></strong> on {{ reply.date }}</p>
                         <!-- <button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="liker{{reply.pk}} btn btn-primary btn-sm" type="button">Like</button>
-				<button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="disliker{{reply.pk}} btn btn-primary btn-sm" type="button">Dislike</button> 
+				<button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="disliker{{reply.pk}} btn btn-primary btn-sm" type="button">Dislike</button> -->
                         {% if user.is_authenticated %}
                         <div class="voted{{reply.pk}}" style="display:none">{% replyVoted reply user %}</div>
-                        {% endif %}-->
+                        {% endif %}
                         
                         <button id="liker" data-replykey="{{reply.pk}}" data-like="1" class="liker{{reply.pk}} btn btn-sm btn-outline-primary rounded-pill" type="button">Like</button>
                         <button id="liker" data-replykey="{{reply.pk}}" data-like="0" class="disliker{{reply.pk}} btn btn-sm btn-outline-primary rounded-pill" type="button">Dislike</button>
