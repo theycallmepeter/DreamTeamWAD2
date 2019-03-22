@@ -33,6 +33,10 @@
 			<div class="votedq" style="display:none">{% questionVoted question user %}</div>
 		{% endif %}
 		<hr />
+		{% if errors %}
+			<div>{{errors}}</div>
+			<hr />
+		{% endif %}
         <h4>Answers</h4>
         <hr />
         {% if answers %}
@@ -86,9 +90,6 @@
 					{{ field }}
 				{% endfor %}
 
-				{{ replyform.errors }}
-				{{ replyform.non_field_errors }}
-
 				<input type="submit" name="submit" value="Add Reply"/>	
 			</form>
 		    <button id="reply" data-answerkey="{{answer.pk}}" class="reply{{answer.pk}} btn btn-primary btn-sm" type="button">Reply</button>
@@ -103,16 +104,13 @@
         <form id="answer_form" method="post" action="{% url 'answer_question_new' subject_slug=subject.slug course_slug=course.slug question_slug=question.slug %}" style="display:none" enctype="multipart/form-data">
 		 	{% csrf_token %}
 		 	{% for hidden in answerform.hidden_fields %}
-					{{ hidden }}
-				{% endfor %}
-				{% for field in answerform.visible_fields %}
-					{{ field.errors }}
-					{{ field.help_text }}
-					{{ field }}
-				{% endfor %}
-
-			{{ answerform.errors }}
-			{{ answerform.non_field_errors }}
+				{{ hidden }}
+			{% endfor %}
+			{% for field in answerform.visible_fields %}
+				{{ field.errors }}
+				{{ field.help_text }}
+				{{ field }}
+			{% endfor %}
 
 		<input type="submit" name="submit" value="Add Answer"/>	
 		</form>

@@ -86,7 +86,7 @@ def show_course(request, subject_slug, course_slug):
     context_dict['form'] = form
     return render(request, 'gliocas_app/course.html', context = context_dict)
 
-def show_question(request, subject_slug, course_slug, question_slug):
+def show_question(request, subject_slug, course_slug, question_slug, errors = None):
     context_dict = {}
     answerform = AnswerForm()
     replyform = ReplyForm()
@@ -105,6 +105,8 @@ def show_question(request, subject_slug, course_slug, question_slug):
         context_dict['replies'] = replies
         context_dict['subject'] = parent_subject
         context_dict['course'] = parent_course
+        if errors:
+            context_dict['errors'] = errors
         response = render(request,'gliocas_app/question.html', context = context_dict)
         visited = visitor_cookie_handler(request, response, str(question.pk))
         if not visited:
@@ -570,7 +572,7 @@ def answer_question_new(request, subject_slug, course_slug, question_slug):
                 return HttpResponseRedirect(reverse('show_question', args=(subject_slug, course_slug, question_slug)))
         else:
             print(form.errors)
-            return HttpResponseRedirect(reverse('show_question', args=(subject_slug, course_slug, question_slug)))
+            return show_question(request, subject_slug, course_slug, question_slug, form.errors)
 
 
 @login_required
@@ -630,6 +632,7 @@ def reply_answer_new(request, subject_slug, course_slug, question_slug, answer_k
                 reply.save()
         else:
             print(form.errors)
+            return show_question(request, subject_slug, course_slug, question_slug, form.errors)
     return HttpResponseRedirect(reverse('show_question', args=(subject_slug, course_slug, question_slug)))
 
 @login_required
