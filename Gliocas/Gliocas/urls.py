@@ -25,5 +25,5 @@ from gliocas_app import views
 urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^gliocas_app/', include('gliocas_app.urls')),
-    url(r'^admin/', admin.site.urls),
+    url(r'^admin/', admin.site.urls), 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
