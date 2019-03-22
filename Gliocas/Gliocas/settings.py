@@ -31,7 +31,7 @@ SECRET_KEY = '5!0fd8x0%8nypfay4qwct@+-+&ow+c2=jn0(9)qk(-03h%)tmp'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['hodobox.pythonanywhere.com']
 
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_HOST_USER= '2333065n'
