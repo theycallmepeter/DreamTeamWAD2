@@ -9,8 +9,8 @@ class QuestionForm(forms.ModelForm):
     titleLength = 256
     textLength = 32768
 
-    title = forms.CharField(max_length=titleLength, help_text="Please enter how you'd like to title your question.", required = True)
-    text = forms.CharField(widget=forms.Textarea, max_length=textLength, help_text="Please enter the text of your question.", required = True)
+    title = forms.CharField(max_length=titleLength, widget=forms.TextInput(attrs={'placeholder': 'Your title here...'}), required = True)
+    text = forms.CharField(max_length=textLength,  widget=forms.Textarea(attrs={'placeholder': 'Your text here...'}), required = True)
     date = forms.DateTimeField(widget=forms.HiddenInput(), initial=timezone.now)
     views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
     picture = forms.ImageField(required = False)
@@ -40,7 +40,8 @@ class ReplyForm(forms.ModelForm):
 
 
 class UserForm(forms.ModelForm):
-
+    username = forms.CharField(widget=forms.TextInput, required = True)
+    email = forms.CharField(widget=forms.TextInput, required = True)
     password = forms.CharField(widget=forms.PasswordInput())
     confirm_password=forms.CharField(widget=forms.PasswordInput())
     class Meta:
@@ -57,6 +58,7 @@ class UserForm(forms.ModelForm):
                 "password and confirm_password does not match"
             )
 
+#Not used anymore
 class CourseForm(forms.ModelForm):
     maxLength = 64
     name = forms.CharField(max_length=maxLength, help_text="Please enter the short name of your course (e.g. 2A)", required = True)
@@ -65,6 +67,7 @@ class CourseForm(forms.ModelForm):
         model = Course
         fields = ('name',)
 
+#Not used anymore
 class SubjectForm(forms.ModelForm):
     maxLength = 64
     name = forms.CharField(max_length=maxLength, help_text="Please enter the subject you'd like to add.", required = True)

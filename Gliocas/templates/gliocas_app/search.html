@@ -1,4 +1,5 @@
 {% extends 'gliocas_app/base.html' %}
+{% load upvotescore %}
 
 {% block title_block %}
     Search
@@ -6,27 +7,12 @@
 
 {% block body_block %}
 	<div>
-		<h1>Search page</h1>
+		<h1>Search</h1>
 		<br/>
-		<form class="form-inline" id="user_form"
-			method="post" action="{% url 'search' %}">
-			{% csrf_token %}
-			<div class="form-group">
-				{% if user_query %}
-				<input class="form-control" type="text" size="50"
-					name="query" value="{{ user_query }}" id="query"/>
-				{% else %}
-				<input class="form-control" type="text" size="50"
-					name="query" value="" id="query"/>
-				{% endif %}
-			</div>
-			<button class="btn btn-primary" type="submit" name="submit"
-				value="Search">Search</button>
-		</form>
-		
 		<div>
 			{% if result_list %}
 			<h3>Results</h3>
+			<br/>
 				<div class="list-group">
 					{% for question in result_list %}
 						<div class="list-group-item">
@@ -34,6 +20,14 @@
 								<a href="{% url 'show_question' question.course.subject.slug question.course.slug question.slug %}">{{ question.title }}</a>
 							</h4>
 							<p class="list-group-item-text">{{ question.text }}</p>
+							{% if question.picture %}
+								<img src="{{ MEDIA_URL }}{{ question.picture }}" class="img-thumbnail" alt="image" />
+							{%endif%}
+							By <a href="{% url 'user' question.poster.username %}">{{ question.poster }}</a> at {{ question.date }}
+							<br/>
+							{% questionscore question %} upvotes {{question.views}} views
+							<li><a href="{% url 'show_course' question.course.subject.slug question.course.slug%}">{{question.course.name}}</a>
+							<a href="{% url 'show_subject' question.course.subject.slug%}">{{question.course.subject.name}}</a></li>
 						</div>
 					{% endfor %}
 				</div>

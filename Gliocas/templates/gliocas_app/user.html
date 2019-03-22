@@ -17,7 +17,7 @@
 				<h4> Your followed courses </h4>
 				{% for course in followed %}
 					<li><a href="{% url 'show_course' course.subject.slug course.slug %}"> {{ course.name }}</a></li>
-					<li><a href="{% url 'follow' course.subject.slug course.slug %}"> Unfollow this course </a></li>
+					<button id="follow" data-courseslug="{{course.slug}}" data-subjectslug="{{subject.slug}}" class="btn btn-lg btn-block btn-outline-primary rounded-pill" type="button">UNFOLLOW</button>
 					<br>
 				{% endfor %}
 				{% if questions %}

@@ -1,28 +1,41 @@
 {% extends 'gliocas_app/base.html' %}
 
 {% block title_block %}
-    Add course
+Add course
 {% endblock %}
 
 {% block body_block %}
-    <h3> This is where you can add a course to {{ subject }} </h3>
+<h3> This is where you can add a course to {{ subject }} </h3>
 
-	<div>
-		 <form id="course_form" method="post" action=  ".">
-		 	{% csrf_token %}
-		 	{% for hidden in form.hidden_fields %}
-		 		{{ hidden }}
-		 	{% endfor %}
-		 	{% for field in form.visible_fields %}
-		 		{{ field.errors }}
-		 		{{ field.help_text }}
-		 		{{ field }}
-		 	{% endfor %}
+<div>
+	<h1 class="mt-1"> About </h1>
+	<!-- <a href = "{% url 'subjects' %}"> Subjects </a> -->
+	<div class="row">
+		<div class="col">
+			<div class="card my-3 rounded shadow">
+				<div class="card-body">
+					<h2 class="card-title">Title</h2>
+					<form id="course_form" method="post" action=".">
+						{% csrf_token %}
+						{% for hidden in form.hidden_fields %}
+						{{ hidden }}
+						{% endfor %}
+						{% for field in form.visible_fields %}
+						{{ field.errors }}
+						{{ field.help_text }}
+						{{ field }}
+						{% endfor %}
 
-			{{ form.errors }}
-			{{ form.non_field_errors }}
+						{{ form.errors }}
+						{{ form.non_field_errors }}
 
-		<input type="submit" name="submit" value="Add Course"/>	
-	</form>
-	</div>	
+						<input type="submit" name="submit" value="Add Course" />
+					</form>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+</div>
 {% endblock %}

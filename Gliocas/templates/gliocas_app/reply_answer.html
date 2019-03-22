@@ -1,18 +1,18 @@
 {% extends 'gliocas_app/base.html' %}
-
+{% load upvotescore %}
 {% block title_block %}
-    Add question
+    Reply to answer
 {% endblock %}
 
 {% block body_block %}
-    <h3> Replying to: {{ question.poster }} - - - {{ question.title }} </h3>
+    <h3> Replying to: {{ question.poster }} - {% questionscore question %} - {{ question.title }} </h3>
     <h4> {{question.text}}</h4>
     {% if answer %}
         <ul>
-            <li>{{answer.poster}} - - - {{ answer.text }}</li>
+            <li>{{answer.poster}} - {% answerscore answer %} - {{ answer.text }}</li>
                 {% for reply in replies %}
                 	{% if reply.answer.pk == answer.pk %}
-                		<li style="padding-left: 50px;">{{reply.poster}} - - - {{ reply.text }}</li>
+                		<li style="padding-left: 50px;">{{reply.poster}} - {% replyscore reply %} - {{ reply.text }}</li>
                		{% endif %}
                 {% endfor %}
         </ul>
@@ -22,19 +22,19 @@
 	<div>
 		 <form id="question_form" method="post" action=  ".">
 		 	{% csrf_token %}
-		 	{% for hidden in form.hidden_fields %}
+		 	{% for hidden in replyform.hidden_fields %}
 		 		{{ hidden }}
 		 	{% endfor %}
-		 	{% for field in form.visible_fields %}
+		 	{% for field in replyform.visible_fields %}
 		 		{{ field.errors }}
 		 		{{ field.help_text }}
 		 		{{ field }}
 		 	{% endfor %}
 
-			{{ form.errors }}
-			{{ form.non_field_errors }}
+			{{ replyform.errors }}
+			{{ replyform.non_field_errors }}
 
 		<input type="submit" name="submit" value="Add Reply"/>	
-	</form>
+		</form>
 	</div>	
 {% endblock %}
