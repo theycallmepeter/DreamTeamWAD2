@@ -100,9 +100,9 @@ $(document).on('click','#follow', function(){
 	jQuery.get('/gliocas_app/followcourse/', {course_slug: courseslug, subject_slug:subjectslug}, function(data){
 		if (data==="Followed"){
 			//thing to do if followed
-			$('#follow').text('UNFOLLOW');
+			$('#follow.follow' + courseslug).text('UNFOLLOW');
 		} else {
-			$('#follow').text('FOLLOW');
+			$('#follow.follow' + courseslug).text('FOLLOW');
 			//thing to do if unfollowed
 		}
 	});

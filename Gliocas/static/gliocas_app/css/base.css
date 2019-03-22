@@ -62,6 +62,18 @@ a:active {
     background-image: linear-gradient(to right, rgb(138, 4, 172) , rgb(25, 3, 148)) !important;
 }
 
+#title {
+    color: white !important;
+}
+
+#title:hover {
+    color: white !important;
+}
+
+#title:visited {
+    color: white !important;
+}
+
 #footer {
     position: relative;
     left: 0;

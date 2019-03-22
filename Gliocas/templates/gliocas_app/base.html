@@ -27,7 +27,7 @@
 
     <!-- ajax -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="{% static "js/gliocas-ajax.js" %}"></script>
+    <script src="{% static 'js/gliocas-ajax.js' %}"></script>
 
 
     <title>
@@ -64,6 +64,13 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                </li>
+				{% else %}
+				<li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">Register</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
                 </li>
                 {%endif%}
                 <li class="nav-item mr-2">

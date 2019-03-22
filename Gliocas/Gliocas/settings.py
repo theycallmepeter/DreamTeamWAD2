@@ -19,10 +19,10 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_DIRS = [STATIC_DIR, ]
-print(BASE_DIR,STATIC_DIR)
+#print(BASE_DIR,STATIC_DIR)
 MEDIA_DIR = os.path.join(BASE_DIR,'media')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -33,7 +33,7 @@ SECRET_KEY = '5!0fd8x0%8nypfay4qwct@+-+&ow+c2=jn0(9)qk(-03h%)tmp'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['hodobox.pythonanywhere.com']
+#ALLOWED_HOSTS = ['hodobox.pythonanywhere.com']
 
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_HOST_USER= '2333065n'
